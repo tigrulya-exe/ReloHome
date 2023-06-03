@@ -1,5 +1,9 @@
 package exe.tigrulya.relohome.connector.listam.parser
 
+import exe.tigrulya.relohome.connector.HtmlDomParser
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.map
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.time.Instant
@@ -7,14 +11,10 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatterBuilder
 import java.util.*
 
-interface DomParser {
-    fun parse(document: Document): Any
-}
-
 class ListAmDomParser(
     instantFormat: String = "EEEE, MMMM dd, yyyy HH:mm",
     private val zoneId: ZoneId = ZoneId.of("Asia/Yerevan")
-) : DomParser {
+) : HtmlDomParser<Any> {
 
     private val dateTimeFormatter = DateTimeFormatterBuilder()
         .appendPattern(instantFormat)

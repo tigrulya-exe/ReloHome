@@ -10,7 +10,9 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/external-connectors" />
-            <option value="$PROJECT_DIR$/external-connectors/external-connectors-listam" />
+            <option value="$PROJECT_DIR$/external-connectors/connector-base" />
+            <option value="$PROJECT_DIR$/external-connectors/connector-listam" />
+            <option value="$PROJECT_DIR$/external-connectors/connector-model" />
           </set>
         </option>
       </GradleProjectSettings>
