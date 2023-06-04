@@ -1,5 +1,7 @@
 rootProject.name = "ReloHome"
-include("external-connectors")
-include("external-connectors:connector-listam")
-include("external-connectors:connector-base")
-include("external-connectors:connector-model")
+include("flat-ads-fetchers")
+include("flat-ads-fetchers:fetcher-listam")
+include("flat-ads-fetchers:fetcher-base")
+include("flat-ads-fetchers:fetcher-model")
+include("flat-ads-handler")
+include("flat-ads-notifier")
