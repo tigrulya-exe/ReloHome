@@ -1,9 +1,6 @@
-package exe.tigrulya.relohome.parser
+package exe.tigrulya.relohome.listam.parser
 
 import exe.tigrulya.relohome.connector.HtmlDomParser
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.map
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.time.Instant

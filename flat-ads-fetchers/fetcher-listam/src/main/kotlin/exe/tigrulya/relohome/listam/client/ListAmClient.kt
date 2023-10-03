@@ -1,9 +1,9 @@
-package exe.tigrulya.relohome.client
+package exe.tigrulya.relohome.listam.client
 
 import exe.tigrulya.relohome.connector.ExternalParseableSiteClient
-import exe.tigrulya.relohome.parser.ListAmDomParser
-import exe.tigrulya.relohome.parser.ListAmFlatAd
-import exe.tigrulya.relohome.parser.ListAmFlatAdInfo
+import exe.tigrulya.relohome.listam.parser.ListAmDomParser
+import exe.tigrulya.relohome.listam.parser.ListAmFlatAd
+import exe.tigrulya.relohome.listam.parser.ListAmFlatAdInfo
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 

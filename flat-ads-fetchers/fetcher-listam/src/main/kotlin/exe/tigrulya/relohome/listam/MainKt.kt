@@ -1,4 +1,4 @@
-package exe.tigrulya.relohome
+package exe.tigrulya.relohome.listam
 
 import exe.tigrulya.relohome.connector.ExternalFetcherRunner
 import kotlinx.coroutines.runBlocking

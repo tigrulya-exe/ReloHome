@@ -1,4 +1,4 @@
-package exe.tigrulya.relohome.parser
+package exe.tigrulya.relohome.listam.parser
 
 import java.time.Instant
 
