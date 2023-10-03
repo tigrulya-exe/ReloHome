@@ -1,4 +1,3 @@
-import groovyjarjarantlr4.v4.codegen.target.JavaTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -19,7 +18,7 @@ subprojects {
 
 
     tasks.withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "11"
+        kotlinOptions.jvmTarget = "17"
     }
 
     val kotestVersion = "5.6.2"

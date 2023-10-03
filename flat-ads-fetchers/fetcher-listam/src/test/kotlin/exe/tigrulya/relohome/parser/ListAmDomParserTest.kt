@@ -1,4 +1,4 @@
-package exe.tigrulya.relohome.connector.listam.parser
+package exe.tigrulya.relohome.parser
 
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe

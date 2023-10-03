@@ -5,7 +5,6 @@ import exe.tigrulya.relohome.handler.gateway.FlatAdServiceGateway
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.buffer
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.runBlocking
@@ -28,7 +27,7 @@ abstract class AbstractExternalConnector<T> : ExternalConnector<T> {
     protected abstract suspend fun fetchBatch(collector: FlowCollector<T>)
 }
 
-class ExternalConnectorRunner<T>(
+class ExternalFetcherRunner<T>(
     private val connector: ExternalConnector<T>,
     private val flatAdMapper: FlatAdMapper<T>,
     private val outCollector: FlatAdServiceGateway = FlatAdServiceGateway.create()

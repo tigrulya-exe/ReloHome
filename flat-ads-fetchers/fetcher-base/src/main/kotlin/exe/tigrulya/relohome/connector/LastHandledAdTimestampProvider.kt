@@ -1,7 +1,6 @@
 package exe.tigrulya.relohome.connector
 
 import java.time.Instant
-import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalUnit
 
 interface LastHandledAdTimestampProvider {

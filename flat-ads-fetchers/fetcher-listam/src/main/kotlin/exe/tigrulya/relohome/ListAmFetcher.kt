@@ -1,17 +1,14 @@
-package exe.tigrulya.relohome.connector.listam
+package exe.tigrulya.relohome
 
 import exe.tigrulya.relohome.connector.AbstractExternalConnector
-import exe.tigrulya.relohome.connector.ExternalConnector
 import exe.tigrulya.relohome.connector.FlatAdMapper
 import exe.tigrulya.relohome.connector.LastHandledAdTimestampProvider
 import exe.tigrulya.relohome.connector.WindowTillNowTimestampProvider
-import exe.tigrulya.relohome.connector.listam.fetcher.ListAmClient
-import exe.tigrulya.relohome.connector.listam.parser.ListAmFlatAd
+import exe.tigrulya.relohome.client.ListAmClient
+import exe.tigrulya.relohome.parser.ListAmFlatAd
 import exe.tigrulya.relohome.connector.model.City
 import exe.tigrulya.relohome.connector.model.FlatAd
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.flow
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -25,10 +22,9 @@ object ListAmFlatAdMapper : FlatAdMapper<ListAmFlatAd> {
             country = "Armenia"
         )
     )
-
 }
 
-class ListAmConnector(
+class ListAmFetcher(
     private val baseUrl: String = "https://www.list.am",
     private val lastHandledAdTimestampProvider: LastHandledAdTimestampProvider
     = WindowTillNowTimestampProvider(2, ChronoUnit.MINUTES)

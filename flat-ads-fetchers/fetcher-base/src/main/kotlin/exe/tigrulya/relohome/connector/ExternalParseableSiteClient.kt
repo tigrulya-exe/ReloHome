@@ -4,6 +4,7 @@ import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.logging.*
 import io.ktor.client.utils.*
 import io.ktor.http.*
 import io.ktor.http.content.*
@@ -46,19 +47,31 @@ fun <T> Configuration.domConverter(parser: HtmlDomParser<T>, baseUrl: String) {
 }
 
 open class ExternalSiteClient<T>(
-    protected val baseUrl: String,
-    protected val htmlDomParser: HtmlDomParser<T>
+    protected val baseUrl: String
 ) {
     protected val httpClient = HttpClient(CIO) {
         BrowserUserAgent()
         defaultRequest {
             url(baseUrl)
         }
-        install(ContentNegotiation) {
+        install(Logging) {
+            level = LogLevel.ALL
+        }
+        configureHttpClient(this)
+    }
+
+    protected open fun configureHttpClient(config:  HttpClientConfig<CIOEngineConfig>) {
+        // no-op
+    }
+}
+
+open class ExternalParseableSiteClient<T>(
+    baseUrl: String,
+    protected val htmlDomParser: HtmlDomParser<T>
+) : ExternalSiteClient<T>(baseUrl) {
+    override fun configureHttpClient(config:  HttpClientConfig<CIOEngineConfig>) {
+        config.install(ContentNegotiation) {
             domConverter(htmlDomParser, baseUrl)
         }
-//        install(Logging) {
-//            level = LogLevel.INFO
-//        }
     }
 }
