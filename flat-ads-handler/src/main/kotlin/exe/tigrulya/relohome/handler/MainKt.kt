@@ -12,8 +12,9 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
 
 fun main() {
+    // todo replace with migration tool
     // use connection pooling via Database.connect(dataSource)
-    Database.connect("jdbc:sqlite:D:/IdeaProjects/ReloHome/flat-ads-handler/sqlite.db")
+    Database.connect("jdbc:sqlite:/Users/tigrulya/IdeaProjects/ReloHome/.dev/sqlite.db")
 
     transaction {
         SchemaUtils.create(Users, Cities, Countries)

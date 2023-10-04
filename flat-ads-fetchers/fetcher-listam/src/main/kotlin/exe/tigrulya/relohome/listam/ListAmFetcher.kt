@@ -1,6 +1,6 @@
 package exe.tigrulya.relohome.listam
 
-import exe.tigrulya.relohome.connector.AbstractExternalConnector
+import exe.tigrulya.relohome.connector.AbstractExternalFetcher
 import exe.tigrulya.relohome.connector.FlatAdMapper
 import exe.tigrulya.relohome.connector.LastHandledAdTimestampProvider
 import exe.tigrulya.relohome.connector.WindowTillNowTimestampProvider
@@ -25,28 +25,28 @@ object ListAmFlatAdMapper : FlatAdMapper<ListAmFlatAd> {
 }
 
 class ListAmFetcher(
-    private val baseUrl: String = "https://www.list.am",
-    private val lastHandledAdTimestampProvider: LastHandledAdTimestampProvider
+    baseUrl: String = "https://www.list.am",
+    lastHandledAdTimestampProvider: LastHandledAdTimestampProvider
     = WindowTillNowTimestampProvider(2, ChronoUnit.MINUTES)
-) : AbstractExternalConnector<ListAmFlatAd>() {
+) : AbstractExternalFetcher<ListAmFlatAd>(lastHandledAdTimestampProvider) {
     private val client = ListAmClient(baseUrl)
+    private lateinit var lastHandledPageAdTime: Instant
 
-    override suspend fun fetchBatch(collector: FlowCollector<ListAmFlatAd>) {
-        var pageNum = 1
+    override suspend fun fetchPage(collector: FlowCollector<ListAmFlatAd>, page: Int): FetchResult {
+        lastHandledPageAdTime = lastHandledAdTime
+        val ads = client.fetchAds(page)
 
-        // used just for testing
+        val unseenAds = ads
+            .filter { it.lastModified > lastHandledAdTime }
+            .map { it.id }
+            .map { client.fetchAd(it) }
+            //TODO .onEach { update lastHandledPageAdTime }
+            .map { collector.emit(it) }
 
-        val lastHandledAdTime = lastHandledAdTimestampProvider.provide() ?: Instant.now()
-        do {
-            val ads = client.fetchAds(pageNum)
-            val unseenAds = ads
-                .filter { it.lastModified > lastHandledAdTime }
-                .map { it.id }
-                .map { client.fetchAd(it) }
-                .map { collector.emit(it) }
-
-            ++pageNum
-            // TODO: send mapped ads to core service via kafka
-        } while (unseenAds.size == ads.size)
+        return if (unseenAds.size != ads.size) {
+            FetchResult.NextPageRequired
+        } else {
+            FetchResult.Completed(lastHandledPageAdTime)
+        }
     }
 }

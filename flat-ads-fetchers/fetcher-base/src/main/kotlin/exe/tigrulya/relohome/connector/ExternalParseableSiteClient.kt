@@ -46,7 +46,7 @@ fun <T> Configuration.domConverter(parser: HtmlDomParser<T>, baseUrl: String) {
     register(ContentType.Text.Html, converter)
 }
 
-open class ExternalSiteClient<T>(
+abstract class ExternalSiteClient<T>(
     protected val baseUrl: String
 ) {
     protected val httpClient = HttpClient(CIO) {
@@ -55,7 +55,7 @@ open class ExternalSiteClient<T>(
             url(baseUrl)
         }
         install(Logging) {
-            level = LogLevel.ALL
+            level = LogLevel.NONE
         }
         configureHttpClient(this)
     }
@@ -65,13 +65,13 @@ open class ExternalSiteClient<T>(
     }
 }
 
-open class ExternalParseableSiteClient<T>(
-    baseUrl: String,
-    protected val htmlDomParser: HtmlDomParser<T>
-) : ExternalSiteClient<T>(baseUrl) {
+abstract class ExternalParseableSiteClient<T>(baseUrl: String)
+    : ExternalSiteClient<T>(baseUrl) {
     override fun configureHttpClient(config:  HttpClientConfig<CIOEngineConfig>) {
         config.install(ContentNegotiation) {
-            domConverter(htmlDomParser, baseUrl)
+            domConverter(htmlDomParser(), baseUrl)
         }
     }
+
+    abstract fun htmlDomParser(): HtmlDomParser<T>
 }

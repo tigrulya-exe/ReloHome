@@ -1,12 +1,13 @@
 package exe.tigrulya.relohome.ssge
 
-import exe.tigrulya.relohome.connector.AbstractExternalConnector
+import exe.tigrulya.relohome.connector.AbstractExternalFetcher
 import exe.tigrulya.relohome.connector.FlatAdMapper
 import exe.tigrulya.relohome.connector.LastHandledAdTimestampProvider
 import exe.tigrulya.relohome.connector.WindowTillNowTimestampProvider
-import exe.tigrulya.relohome.ssge.client.SsGeClient
 import exe.tigrulya.relohome.connector.model.City
 import exe.tigrulya.relohome.connector.model.FlatAd
+import exe.tigrulya.relohome.connector.util.LoggerProperty
+import exe.tigrulya.relohome.ssge.client.SsGeClient
 import exe.tigrulya.relohome.ssge.model.GetSsGeFlatAdsRequest
 import exe.tigrulya.relohome.ssge.model.SsGeFlatAd
 import kotlinx.coroutines.flow.FlowCollector
@@ -17,7 +18,10 @@ object SsGeFlatAdMapper : FlatAdMapper<SsGeFlatAd> {
     override fun toFlatAd(externalFlatAd: SsGeFlatAd) = FlatAd(
         id = externalFlatAd.applicationId.toString(),
         price = externalFlatAd.price.priceUsd.toString(),
-        description = "New flat: ${externalFlatAd.applicationId} - price ${externalFlatAd.price.priceGeo}",
+        description = """
+            New flat from SS.GE: ${externalFlatAd.applicationId}, price: ${externalFlatAd.price.priceGeo}
+            ${externalFlatAd.description}
+        """.trimIndent(),
         // TODO
         city = City(
             name = "Tbilisi",
@@ -27,25 +31,30 @@ object SsGeFlatAdMapper : FlatAdMapper<SsGeFlatAd> {
 }
 
 class SsGeFetcher(
-    private val baseUrl: String = "https://api-gateway.ss.ge/v1/",
-    private val lastHandledAdTimestampProvider: LastHandledAdTimestampProvider
-    = WindowTillNowTimestampProvider(2, ChronoUnit.MINUTES)
-) : AbstractExternalConnector<SsGeFlatAd>() {
+    baseUrl: String = "https://api-gateway.ss.ge/v1/",
+    lastHandledAdTimestampProvider: LastHandledAdTimestampProvider
+    = WindowTillNowTimestampProvider(10, ChronoUnit.MINUTES)
+) : AbstractExternalFetcher<SsGeFlatAd>(lastHandledAdTimestampProvider) {
     private val client = SsGeClient(baseUrl)
+    private lateinit var lastHandledPageAdTime: Instant
+    private val logger by LoggerProperty()
 
-    override suspend fun fetchBatch(collector: FlowCollector<SsGeFlatAd>) {
-        var pageNum = 1
+    override suspend fun fetchPage(collector: FlowCollector<SsGeFlatAd>, page: Int): FetchResult {
+        lastHandledPageAdTime = lastHandledAdTime
+        val ads = client.fetchAds(
+            GetSsGeFlatAdsRequest(page = page)
+        )
 
-        // used just for testing
-        val lastHandledAdTime = lastHandledAdTimestampProvider.provide() ?: Instant.now()
-        do {
-            val ads = client.fetchAds(
-                GetSsGeFlatAdsRequest(page = pageNum))
-            val unseenAds = ads
-                .filter { it.orderDate.toInstant() > lastHandledAdTime }
-                .map { collector.emit(it) }
+        val unseenAds = ads
+            .filter { it.orderDate > lastHandledAdTime }
+            .onEach { lastHandledPageAdTime = maxOf(lastHandledPageAdTime, it.orderDate) }
+            .map { collector.emit(it) }
 
-            ++pageNum
-        } while (unseenAds.size == ads.size)
+        logger.info("Fetched ${unseenAds.size} ads")
+        return if (unseenAds.size != ads.size) {
+            FetchResult.NextPageRequired
+        } else {
+            FetchResult.Completed(lastHandledPageAdTime)
+        }
     }
 }

@@ -21,7 +21,7 @@ class InPlaceFlatAdServiceGateway : FlatAdServiceGateway {
     private val flatAdService: FlatAdService
 
     init {
-        Database.connect("jdbc:sqlite:D:/IdeaProjects/ReloHome/flat-ads-handler/sqlite.db")
+        Database.connect("jdbc:sqlite:/Users/tigrulya/IdeaProjects/ReloHome/.dev/sqlite.db")
 
         val userService = UserService()
         flatAdService = FlatAdService(userService)
