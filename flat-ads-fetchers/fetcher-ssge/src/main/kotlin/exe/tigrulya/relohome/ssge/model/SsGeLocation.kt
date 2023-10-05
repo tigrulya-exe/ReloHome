@@ -1,6 +1,5 @@
 package exe.tigrulya.relohome.ssge.model
 
-import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonValue
 
 data class SsGeLocation(

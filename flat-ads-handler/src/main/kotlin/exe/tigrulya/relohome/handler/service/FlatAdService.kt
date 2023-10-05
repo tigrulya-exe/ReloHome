@@ -6,7 +6,7 @@ class FlatAdService(
     private val userService: UserService
 ) {
     fun handleAd(flatAd: FlatAd) {
-        val userNames = userService.getUsersFrom(flatAd.city)
+        val userNames = userService.getUsersFrom(flatAd.address.city)
             .map { it.name }
 
         println("Send $flatAd to $userNames")

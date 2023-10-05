@@ -41,8 +41,8 @@ data class FlatAdImageContainer(
 )
 
 data class FlatPrice(
+    val priceUsd: Int,
     val priceGeo: Int?,
-    val priceUsd: Int?,
     val currencyType: Currency?
 )
 

@@ -4,8 +4,7 @@ import exe.tigrulya.relohome.connector.AbstractExternalFetcher
 import exe.tigrulya.relohome.connector.FlatAdMapper
 import exe.tigrulya.relohome.connector.LastHandledAdTimestampProvider
 import exe.tigrulya.relohome.connector.WindowTillNowTimestampProvider
-import exe.tigrulya.relohome.connector.model.City
-import exe.tigrulya.relohome.connector.model.FlatAd
+import exe.tigrulya.relohome.connector.model.*
 import exe.tigrulya.relohome.connector.util.LoggerProperty
 import exe.tigrulya.relohome.ssge.client.SsGeClient
 import exe.tigrulya.relohome.ssge.model.GetSsGeFlatAdsRequest
@@ -15,19 +14,49 @@ import java.time.Instant
 import java.time.temporal.ChronoUnit
 
 object SsGeFlatAdMapper : FlatAdMapper<SsGeFlatAd> {
-    override fun toFlatAd(externalFlatAd: SsGeFlatAd) = FlatAd(
-        id = externalFlatAd.applicationId.toString(),
-        price = externalFlatAd.price.priceUsd.toString(),
-        description = """
-            New flat from SS.GE: ${externalFlatAd.applicationId}, price: ${externalFlatAd.price.priceGeo}
-            ${externalFlatAd.description}
-        """.trimIndent(),
-        // TODO
-        city = City(
-            name = "Tbilisi",
-            country = "Georgis"
+    override fun toFlatAd(externalFlatAd: SsGeFlatAd): FlatAd {
+        val address = with(externalFlatAd.address) {
+            Address(
+                city = City(
+                    name = "Tbilisi",
+                    country = "Georgis"
+                ),
+                district = districtTitle,
+                subDistrict = subdistrictTitle,
+                street = streetTitle,
+                //TODO add here location parse from gmaps from description
+            )
+        }
+
+        val price = with(externalFlatAd.price) {
+            Price(
+                amount = this.priceUsd,
+                currency = Price.Currency.USD
+            )
+        }
+
+        val flatInfo = FlatInfo(
+
         )
-    )
+
+        val contacts = Contacts(
+
+        )
+
+        val pictures = listOf<Picture>()
+
+        return FlatAd(
+            id = externalFlatAd.applicationId.toString(),
+            title = externalFlatAd.title,
+            address = address,
+            price = price,
+            description = externalFlatAd.description,
+            info = flatInfo,
+            contacts = contacts,
+            serviceId = SsGeFetcher.FETCHER_ID,
+            pictures = pictures
+        )
+    }
 }
 
 class SsGeFetcher(
@@ -35,6 +64,10 @@ class SsGeFetcher(
     lastHandledAdTimestampProvider: LastHandledAdTimestampProvider
     = WindowTillNowTimestampProvider(10, ChronoUnit.MINUTES)
 ) : AbstractExternalFetcher<SsGeFlatAd>(lastHandledAdTimestampProvider) {
+    companion object {
+        const val FETCHER_ID = "ss.ge"
+    }
+
     private val client = SsGeClient(baseUrl)
     private lateinit var lastHandledPageAdTime: Instant
     private val logger by LoggerProperty()
