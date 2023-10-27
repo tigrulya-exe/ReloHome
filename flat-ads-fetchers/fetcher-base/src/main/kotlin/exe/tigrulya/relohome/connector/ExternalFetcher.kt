@@ -1,6 +1,6 @@
 package exe.tigrulya.relohome.connector
 
-import exe.tigrulya.relohome.connector.model.FlatAd
+import exe.tigrulya.relohome.fetcher.model.FlatAd
 import exe.tigrulya.relohome.handler.gateway.FlatAdServiceGateway
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow

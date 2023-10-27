@@ -1,6 +1,6 @@
 package exe.tigrulya.relohome.handler.model
 
-import exe.tigrulya.relohome.connector.model.City
+import exe.tigrulya.relohome.fetcher.model.City
 
 enum class UserState {
     NEW,

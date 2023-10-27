@@ -1,4 +1,4 @@
-package exe.tigrulya.relohome.connector.model
+package exe.tigrulya.relohome.fetcher.model
 
 data class City(
     val name: String,
@@ -38,8 +38,8 @@ data class FlatInfo(
     val spaceSquareMeters: Int?,
     val rooms: Int?,
     val bedrooms: Int?,
-    val buildingType: BuildingType?,
-    val flatType: FlatType?
+    val buildingType: BuildingType? = null,
+    val flatType: FlatType? = null
 ) {
     enum class BuildingType {
         OLD,
@@ -55,7 +55,7 @@ data class FlatInfo(
 
 data class Contacts(
     val flatServiceLink: String,
-    val phoneNumber: String?,
+    val phoneNumber: String? = null,
     val messengerIds: Map<Messenger, String> = mapOf()
 ) {
     enum class Messenger {

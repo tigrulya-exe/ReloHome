@@ -6,8 +6,8 @@ import exe.tigrulya.relohome.connector.LastHandledAdTimestampProvider
 import exe.tigrulya.relohome.connector.WindowTillNowTimestampProvider
 import exe.tigrulya.relohome.listam.client.ListAmClient
 import exe.tigrulya.relohome.listam.parser.ListAmFlatAd
-import exe.tigrulya.relohome.connector.model.City
-import exe.tigrulya.relohome.connector.model.FlatAd
+import exe.tigrulya.relohome.fetcher.model.City
+import exe.tigrulya.relohome.fetcher.model.FlatAd
 import kotlinx.coroutines.flow.FlowCollector
 import java.time.Instant
 import java.time.temporal.ChronoUnit

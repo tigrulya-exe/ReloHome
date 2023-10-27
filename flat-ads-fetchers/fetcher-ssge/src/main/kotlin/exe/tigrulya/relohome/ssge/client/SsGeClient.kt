@@ -11,6 +11,7 @@ import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.cookies.*
+import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.jackson.*
@@ -31,6 +32,9 @@ class SsGeClient(
                 registerModule(JavaTimeModule())
             }
         }
+        config.install(Logging) {
+            level = LogLevel.NONE
+        }
     }
 
     suspend fun fetchAds(request: GetSsGeFlatAdsRequest): List<SsGeFlatAd> {
@@ -40,6 +44,7 @@ class SsGeClient(
             .post {
                 url("RealEstate/LegendSearch")
                 contentType(ContentType.Application.Json)
+                header("Accept-Language", "en")
                 header("Host", "api-gateway.ss.ge")
                 bearerAuth(authToken)
                 setBody(request)

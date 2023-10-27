@@ -1,6 +1,6 @@
 package exe.tigrulya.relohome.handler.service
 
-import exe.tigrulya.relohome.connector.model.City
+import exe.tigrulya.relohome.fetcher.model.City
 import exe.tigrulya.relohome.handler.model.User
 import exe.tigrulya.relohome.handler.model.UserCreateDto
 import exe.tigrulya.relohome.handler.model.UserState

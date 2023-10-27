@@ -1,6 +1,6 @@
 package exe.tigrulya.relohome.handler.service
 
-import exe.tigrulya.relohome.connector.model.FlatAd
+import exe.tigrulya.relohome.fetcher.model.FlatAd
 
 class FlatAdService(
     private val userService: UserService

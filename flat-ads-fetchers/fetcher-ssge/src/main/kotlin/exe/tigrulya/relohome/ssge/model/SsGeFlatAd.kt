@@ -2,14 +2,8 @@ package exe.tigrulya.relohome.ssge.model
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonFormat
-import com.fasterxml.jackson.annotation.JsonFormat.Feature
 import com.fasterxml.jackson.annotation.JsonValue
-import com.fasterxml.jackson.annotation.OptBoolean
 import java.time.Instant
-import java.time.LocalDateTime
-import java.time.OffsetDateTime
-import java.time.ZonedDateTime
-import kotlin.reflect.jvm.internal.impl.descriptors.Visibilities.Local
 
 enum class EstateType(@get:JsonValue val id: Int) {
     APARTMENT(5),
@@ -55,7 +49,7 @@ data class SsGeFlatAd(
     val createDate: Instant,
     val description: String?,
     // "2-room-flat-for-rent-didi-digomi-7661118"
-    val detail: String?,
+    val detailUrl: String?,
     val floorNumber: String,
     val totalAmountOfFloor: Int,
     val numberOfBedrooms: Int,

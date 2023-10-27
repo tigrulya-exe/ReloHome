@@ -54,9 +54,9 @@ abstract class ExternalSiteClient<T>(
         defaultRequest {
             url(baseUrl)
         }
-        install(Logging) {
-            level = LogLevel.NONE
-        }
+//        install(Logging) {
+//            level = LogLevel.NONE
+//        }
         configureHttpClient(this)
     }
 

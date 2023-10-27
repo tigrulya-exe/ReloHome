@@ -3,6 +3,7 @@ val logbackVersion = "1.2.10"
 
 subprojects {
     dependencies {
+        implementation(project(":flat-ads-base"))
         implementation("io.ktor:ktor-client-core:$ktorVersion")
         implementation("io.ktor:ktor-client-cio:$ktorVersion")
         implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")

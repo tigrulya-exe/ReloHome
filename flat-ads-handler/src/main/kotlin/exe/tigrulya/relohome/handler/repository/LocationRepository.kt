@@ -1,6 +1,6 @@
 package exe.tigrulya.relohome.handler.repository
 
-import exe.tigrulya.relohome.connector.model.City
+import exe.tigrulya.relohome.fetcher.model.City
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID

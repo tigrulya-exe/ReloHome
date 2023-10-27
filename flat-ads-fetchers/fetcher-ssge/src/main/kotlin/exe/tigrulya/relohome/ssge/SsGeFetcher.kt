@@ -6,7 +6,9 @@ import exe.tigrulya.relohome.connector.LastHandledAdTimestampProvider
 import exe.tigrulya.relohome.connector.WindowTillNowTimestampProvider
 import exe.tigrulya.relohome.connector.model.*
 import exe.tigrulya.relohome.connector.util.LoggerProperty
+import exe.tigrulya.relohome.fetcher.model.*
 import exe.tigrulya.relohome.ssge.client.SsGeClient
+import exe.tigrulya.relohome.ssge.model.FlatAdImageContainer
 import exe.tigrulya.relohome.ssge.model.GetSsGeFlatAdsRequest
 import exe.tigrulya.relohome.ssge.model.SsGeFlatAd
 import kotlinx.coroutines.flow.FlowCollector
@@ -19,7 +21,7 @@ object SsGeFlatAdMapper : FlatAdMapper<SsGeFlatAd> {
             Address(
                 city = City(
                     name = "Tbilisi",
-                    country = "Georgis"
+                    country = "Georgia"
                 ),
                 district = districtTitle,
                 subDistrict = subdistrictTitle,
@@ -36,14 +38,24 @@ object SsGeFlatAdMapper : FlatAdMapper<SsGeFlatAd> {
         }
 
         val flatInfo = FlatInfo(
-
+            floor = externalFlatAd.floorNumber.toInt(),
+            totalFloors = externalFlatAd.totalAmountOfFloor,
+            spaceSquareMeters = externalFlatAd.totalArea,
+            // todo
+            rooms = externalFlatAd.numberOfBedrooms,
+            bedrooms = externalFlatAd.numberOfBedrooms
         )
 
         val contacts = Contacts(
-
+            flatServiceLink = "https://home.ss.ge/en/real-estate/${externalFlatAd.detailUrl}",
+            // todo
+            phoneNumber = null
         )
 
-        val pictures = listOf<Picture>()
+        val pictures = externalFlatAd.appImages
+            ?.sortedBy { it.orderNo }
+            ?.map { it.toPicture() }
+            ?: listOf()
 
         return FlatAd(
             id = externalFlatAd.applicationId.toString(),
@@ -56,6 +68,10 @@ object SsGeFlatAdMapper : FlatAdMapper<SsGeFlatAd> {
             serviceId = SsGeFetcher.FETCHER_ID,
             pictures = pictures
         )
+    }
+
+    private fun FlatAdImageContainer.toPicture(): Picture {
+        return Picture(fileName)
     }
 }
 
