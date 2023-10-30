@@ -1,6 +1,6 @@
 package exe.tigrulya.relohome.listam.parser
 
-import exe.tigrulya.relohome.connector.HtmlDomParser
+import exe.tigrulya.relohome.fetcher.HtmlDomParser
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import java.time.Instant

@@ -1,13 +1,9 @@
-package exe.tigrulya.relohome.connector
+package exe.tigrulya.relohome.fetcher
 
-import exe.tigrulya.relohome.fetcher.model.FlatAd
-import exe.tigrulya.relohome.handler.gateway.FlatAdServiceGateway
+import exe.tigrulya.relohome.api.FlatAdHandlerGateway
+import exe.tigrulya.relohome.model.FlatAd
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.buffer
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runBlocking
 import java.time.Instant
 import kotlin.time.Duration
@@ -46,7 +42,7 @@ abstract class AbstractExternalFetcher<T>(
         do {
             when (val fetchResult = fetchPage(collector, pageNum)) {
                 is FetchResult.NextPageRequired -> ++pageNum
-                is FetchResult.Completed ->  {
+                is FetchResult.Completed -> {
                     lastHandledAdInBatchTime = maxOf(
                         lastHandledAdInBatchTime,
                         fetchResult.lastAdTimestamp
@@ -65,7 +61,7 @@ abstract class AbstractExternalFetcher<T>(
     ): FetchResult
 
     sealed interface FetchResult {
-        class Completed(val lastAdTimestamp: Instant): FetchResult
+        class Completed(val lastAdTimestamp: Instant) : FetchResult
         object NextPageRequired : FetchResult
     }
 }
@@ -73,12 +69,12 @@ abstract class AbstractExternalFetcher<T>(
 class ExternalFetcherRunner<T>(
     private val connector: ExternalFetcher<T>,
     private val flatAdMapper: FlatAdMapper<T>,
-    private val outCollector: FlatAdServiceGateway = FlatAdServiceGateway.create()
+    private val outCollector: FlatAdHandlerGateway
 ) {
     fun run() = runBlocking {
         connector.fetchAds()
             .map { flatAdMapper.toFlatAd(it) }
             .buffer()
-            .collect { outCollector.handleFlatAd(it) }
+            .collect { outCollector.handle(it) }
     }
 }

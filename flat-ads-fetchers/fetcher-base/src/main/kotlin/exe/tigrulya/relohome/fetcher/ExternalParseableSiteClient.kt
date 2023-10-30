@@ -1,10 +1,9 @@
-package exe.tigrulya.relohome.connector
+package exe.tigrulya.relohome.fetcher
 
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.plugins.logging.*
 import io.ktor.client.utils.*
 import io.ktor.http.*
 import io.ktor.http.content.*

@@ -1,4 +1,4 @@
-package exe.tigrulya.relohome.fetcher.model
+package exe.tigrulya.relohome.model
 
 data class City(
     val name: String,
@@ -29,6 +29,10 @@ data class Price(
         GEL,
         AMD,
         RUB
+    }
+
+    override fun toString(): String {
+        return "$amount $currency"
     }
 }
 
@@ -67,7 +71,7 @@ data class Contacts(
     }
 }
 
-data class Picture(
+data class Image(
     val url: String
 )
 
@@ -80,5 +84,5 @@ data class FlatAd(
     val description: String?,
     val contacts: Contacts,
     val serviceId: String,
-    val pictures: List<Picture> = listOf(),
+    val images: List<Image> = listOf(),
 )

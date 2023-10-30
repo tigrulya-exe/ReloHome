@@ -1,4 +1,4 @@
-package exe.tigrulya.relohome.connector.util
+package exe.tigrulya.relohome.util
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -7,7 +7,6 @@ import kotlin.reflect.KProperty
 
 /**
  * Delegate, which provides logger for each class
- * TODO: move to shared module
  */
 class LoggerProperty : ReadOnlyProperty<Any?, Logger> {
 

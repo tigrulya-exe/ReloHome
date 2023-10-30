@@ -1,79 +1,15 @@
 package exe.tigrulya.relohome.ssge
 
-import exe.tigrulya.relohome.connector.AbstractExternalFetcher
-import exe.tigrulya.relohome.connector.FlatAdMapper
-import exe.tigrulya.relohome.connector.LastHandledAdTimestampProvider
-import exe.tigrulya.relohome.connector.WindowTillNowTimestampProvider
-import exe.tigrulya.relohome.connector.model.*
-import exe.tigrulya.relohome.connector.util.LoggerProperty
-import exe.tigrulya.relohome.fetcher.model.*
+import exe.tigrulya.relohome.fetcher.AbstractExternalFetcher
+import exe.tigrulya.relohome.fetcher.LastHandledAdTimestampProvider
+import exe.tigrulya.relohome.fetcher.WindowTillNowTimestampProvider
+import exe.tigrulya.relohome.util.LoggerProperty
 import exe.tigrulya.relohome.ssge.client.SsGeClient
-import exe.tigrulya.relohome.ssge.model.FlatAdImageContainer
 import exe.tigrulya.relohome.ssge.model.GetSsGeFlatAdsRequest
 import exe.tigrulya.relohome.ssge.model.SsGeFlatAd
 import kotlinx.coroutines.flow.FlowCollector
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-
-object SsGeFlatAdMapper : FlatAdMapper<SsGeFlatAd> {
-    override fun toFlatAd(externalFlatAd: SsGeFlatAd): FlatAd {
-        val address = with(externalFlatAd.address) {
-            Address(
-                city = City(
-                    name = "Tbilisi",
-                    country = "Georgia"
-                ),
-                district = districtTitle,
-                subDistrict = subdistrictTitle,
-                street = streetTitle,
-                //TODO add here location parse from gmaps from description
-            )
-        }
-
-        val price = with(externalFlatAd.price) {
-            Price(
-                amount = this.priceUsd,
-                currency = Price.Currency.USD
-            )
-        }
-
-        val flatInfo = FlatInfo(
-            floor = externalFlatAd.floorNumber.toInt(),
-            totalFloors = externalFlatAd.totalAmountOfFloor,
-            spaceSquareMeters = externalFlatAd.totalArea,
-            // todo
-            rooms = externalFlatAd.numberOfBedrooms,
-            bedrooms = externalFlatAd.numberOfBedrooms
-        )
-
-        val contacts = Contacts(
-            flatServiceLink = "https://home.ss.ge/en/real-estate/${externalFlatAd.detailUrl}",
-            // todo
-            phoneNumber = null
-        )
-
-        val pictures = externalFlatAd.appImages
-            ?.sortedBy { it.orderNo }
-            ?.map { it.toPicture() }
-            ?: listOf()
-
-        return FlatAd(
-            id = externalFlatAd.applicationId.toString(),
-            title = externalFlatAd.title,
-            address = address,
-            price = price,
-            description = externalFlatAd.description,
-            info = flatInfo,
-            contacts = contacts,
-            serviceId = SsGeFetcher.FETCHER_ID,
-            pictures = pictures
-        )
-    }
-
-    private fun FlatAdImageContainer.toPicture(): Picture {
-        return Picture(fileName)
-    }
-}
 
 class SsGeFetcher(
     baseUrl: String = "https://api-gateway.ss.ge/v1/",
@@ -84,9 +20,10 @@ class SsGeFetcher(
         const val FETCHER_ID = "ss.ge"
     }
 
+    private val logger by LoggerProperty()
+
     private val client = SsGeClient(baseUrl)
     private lateinit var lastHandledPageAdTime: Instant
-    private val logger by LoggerProperty()
 
     override suspend fun fetchPage(collector: FlowCollector<SsGeFlatAd>, page: Int): FetchResult {
         lastHandledPageAdTime = lastHandledAdTime

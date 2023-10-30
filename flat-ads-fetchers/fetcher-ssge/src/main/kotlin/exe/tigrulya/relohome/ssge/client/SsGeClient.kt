@@ -2,7 +2,7 @@ package exe.tigrulya.relohome.ssge.client
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import exe.tigrulya.relohome.connector.ExternalSiteClient
+import exe.tigrulya.relohome.fetcher.ExternalSiteClient
 import exe.tigrulya.relohome.ssge.model.GetSsGeFlatAdsRequest
 import exe.tigrulya.relohome.ssge.model.SsGeFlatAd
 import exe.tigrulya.relohome.ssge.model.SsGeFlatAdsContainer

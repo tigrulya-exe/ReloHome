@@ -1,7 +1,6 @@
 package exe.tigrulya.relohome.listam.client
 
-import exe.tigrulya.relohome.connector.ExternalParseableSiteClient
-import exe.tigrulya.relohome.connector.HtmlDomParser
+import exe.tigrulya.relohome.fetcher.ExternalParseableSiteClient
 import exe.tigrulya.relohome.listam.parser.ListAmDomParser
 import exe.tigrulya.relohome.listam.parser.ListAmFlatAd
 import exe.tigrulya.relohome.listam.parser.ListAmFlatAdInfo

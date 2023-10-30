@@ -1,4 +1,4 @@
-package exe.tigrulya.relohome.connector
+package exe.tigrulya.relohome.fetcher
 
 import org.jsoup.nodes.Document
 

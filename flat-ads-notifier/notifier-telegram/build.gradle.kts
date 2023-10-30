@@ -2,9 +2,11 @@ plugins {
     application
 }
 
-val telegramBotsVersion = "6.0.1"
+val telegramBotsVersion = "6.8.0"
 
 dependencies {
+    implementation(project(":flat-ads-base"))
+
     implementation("org.telegram:telegrambots:$telegramBotsVersion")
     implementation("org.telegram:telegrambots-abilities:$telegramBotsVersion")
 }

@@ -1,6 +1,4 @@
-package exe.tigrulya.relohome.handler.model
-
-import exe.tigrulya.relohome.fetcher.model.City
+package exe.tigrulya.relohome.model
 
 enum class UserState {
     NEW,
@@ -10,12 +8,14 @@ enum class UserState {
 
 data class UserCreateDto(
     val id: Long,
-    val name: String
+    val name: String,
+    val externalId: String
 )
 
 data class User(
     val id: Long,
     val name: String,
+    val externalId: String,
     val state: UserState
 )
 

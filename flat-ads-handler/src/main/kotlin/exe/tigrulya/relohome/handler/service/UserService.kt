@@ -1,13 +1,13 @@
 package exe.tigrulya.relohome.handler.service
 
-import exe.tigrulya.relohome.fetcher.model.City
-import exe.tigrulya.relohome.handler.model.User
-import exe.tigrulya.relohome.handler.model.UserCreateDto
-import exe.tigrulya.relohome.handler.model.UserState
 import exe.tigrulya.relohome.handler.repository.Cities
 import exe.tigrulya.relohome.handler.repository.CityEntity
 import exe.tigrulya.relohome.handler.repository.UserEntity
 import exe.tigrulya.relohome.handler.repository.Users
+import exe.tigrulya.relohome.model.City
+import exe.tigrulya.relohome.model.User
+import exe.tigrulya.relohome.model.UserCreateDto
+import exe.tigrulya.relohome.model.UserState
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -16,6 +16,7 @@ class UserService {
     fun registerUser(user: UserCreateDto) {
         UserEntity.new(user.id) {
             name = user.name
+            externalId = externalId
             state = UserState.NEW
         }
     }

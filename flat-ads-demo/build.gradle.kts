@@ -1,7 +1,19 @@
+plugins {
+    application
+}
+
+val telegramBotsVersion = "6.8.0"
 val exposedVersion = "0.40.1"
 
 dependencies {
     implementation(project(":flat-ads-base"))
+    implementation(project(":flat-ads-handler"))
+    implementation(project(":flat-ads-fetchers:fetcher-ssge"))
+    implementation(project(":flat-ads-fetchers:fetcher-base"))
+    implementation(project(":flat-ads-notifier:notifier-telegram"))
+
+    implementation("org.telegram:telegrambots:$telegramBotsVersion")
+    implementation("org.telegram:telegrambots-abilities:$telegramBotsVersion")
 
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")

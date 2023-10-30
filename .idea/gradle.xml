@@ -9,13 +9,15 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/flat-ads-base" />
+            <option value="$PROJECT_DIR$/flat-ads-demo" />
             <option value="$PROJECT_DIR$/flat-ads-fetchers" />
             <option value="$PROJECT_DIR$/flat-ads-fetchers/fetcher-base" />
             <option value="$PROJECT_DIR$/flat-ads-fetchers/fetcher-listam" />
-            <option value="$PROJECT_DIR$/flat-ads-fetchers/fetcher-model" />
             <option value="$PROJECT_DIR$/flat-ads-fetchers/fetcher-ssge" />
             <option value="$PROJECT_DIR$/flat-ads-handler" />
             <option value="$PROJECT_DIR$/flat-ads-notifier" />
+            <option value="$PROJECT_DIR$/flat-ads-notifier/notifier-telegram" />
           </set>
         </option>
       </GradleProjectSettings>

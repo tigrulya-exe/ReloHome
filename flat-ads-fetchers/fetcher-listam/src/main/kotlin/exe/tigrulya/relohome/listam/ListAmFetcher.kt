@@ -1,9 +1,9 @@
 package exe.tigrulya.relohome.listam
 
-import exe.tigrulya.relohome.connector.AbstractExternalFetcher
-import exe.tigrulya.relohome.connector.FlatAdMapper
-import exe.tigrulya.relohome.connector.LastHandledAdTimestampProvider
-import exe.tigrulya.relohome.connector.WindowTillNowTimestampProvider
+import exe.tigrulya.relohome.fetcher.AbstractExternalFetcher
+import exe.tigrulya.relohome.fetcher.FlatAdMapper
+import exe.tigrulya.relohome.fetcher.LastHandledAdTimestampProvider
+import exe.tigrulya.relohome.fetcher.WindowTillNowTimestampProvider
 import exe.tigrulya.relohome.listam.client.ListAmClient
 import exe.tigrulya.relohome.listam.parser.ListAmFlatAd
 import exe.tigrulya.relohome.fetcher.model.City

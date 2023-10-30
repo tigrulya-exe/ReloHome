@@ -1,4 +1,4 @@
-package exe.tigrulya.relohome.connector
+package exe.tigrulya.relohome.fetcher
 
 import java.time.Instant
 import java.time.temporal.TemporalUnit
