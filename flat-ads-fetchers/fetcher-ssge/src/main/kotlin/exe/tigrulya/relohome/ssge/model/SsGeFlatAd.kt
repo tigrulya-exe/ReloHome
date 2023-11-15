@@ -55,7 +55,7 @@ data class SsGeFlatAd(
     val numberOfBedrooms: Int,
     // meh, shitty format from backend
     @JsonFormat(
-        pattern = "yyyy-MM-dd'T'HH:mm:ss.[SSSSSSS][SSSSSS][SSSSS][SSSS][XXX]",
+        pattern = "yyyy-MM-dd'T'HH:mm:ss.[SSSSSSS][SSSSSS][SSSSS][SSSS][SSS][XXX]",
         timezone = "Asia/Tbilisi"
     )
     val orderDate: Instant,

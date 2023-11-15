@@ -16,6 +16,12 @@ import org.telegram.telegrambots.bots.DefaultBotOptions
 import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow
+import org.telegram.telegrambots.meta.api.objects.webapp.WebAppInfo
 import java.net.URL
 import java.nio.channels.Channels
 import java.nio.channels.ReadableByteChannel
@@ -27,8 +33,62 @@ class ReloHomeBot(botToken: String, botUsername: String, private val creatorId: 
 
     private val logger by LoggerProperty()
 
+    private val keyboardM1: InlineKeyboardMarkup
+    private val keyboardM2: InlineKeyboardMarkup
+
+    private val testKeyboardMarkup: ReplyKeyboardMarkup
+
     override fun creatorId(): Long {
         return creatorId
+    }
+
+    init {
+        val next = InlineKeyboardButton.builder()
+            .text("Next").callbackData("next")
+            .build()
+
+        val back = InlineKeyboardButton.builder()
+            .text("Back").callbackData("back")
+            .build()
+
+        val url = InlineKeyboardButton.builder()
+            .text("Tutorial")
+            .url("https://core.telegram.org/bots/api")
+            .build()
+
+        keyboardM1 = InlineKeyboardMarkup.builder()
+            .keyboardRow(listOf(next)).build()
+
+        keyboardM2 = InlineKeyboardMarkup.builder()
+            .keyboardRow(listOf(back))
+            .keyboardRow(listOf(url))
+            .build()
+
+
+        val webappButton = KeyboardButton.builder()
+            .text("Change settings")
+            .webApp(
+                WebAppInfo.builder()
+                    .url("https://127.0.0.1:8787/new-user-form.html")
+                    .build()
+            )
+            .build()
+
+        testKeyboardMarkup = ReplyKeyboardMarkup.builder()
+            .keyboardRow(
+                KeyboardRow(listOf(webappButton))
+            ).build()
+
+//        execute(SetChatMenuButton().apply {
+//            menuButton = MenuButtonWebApp.builder()
+//                .text("Change settings")
+//                .webAppInfo(
+//                    WebAppInfo.builder()
+//                        .url("https://127.0.0.1:8787/new-user-form.html")
+//                        .build()
+//                )
+//                .build()
+//        })
     }
 
     fun defaultAbility(): Ability {
@@ -42,10 +102,65 @@ class ReloHomeBot(botToken: String, botUsername: String, private val creatorId: 
             .build()
     }
 
+    fun showInlineMenuAbility(): Ability {
+        return Ability
+            .builder()
+            .name("show_menu")
+            .locality(Locality.ALL)
+            .privacy(Privacy.PUBLIC)
+            .action { showInlineMenuAction(it) }
+            .enableStats()
+            .build()
+    }
+
+    private fun showInlineMenuAction(context: MessageContext) {
+        val message = context.update().message
+
+        val sendMessage = SendMessage().apply {
+            chatId = message.from.id.toString()
+            parseMode = "HTML"
+            replyMarkup = keyboardM1
+            text = "inline yopta"
+        }
+
+        execute(sendMessage)
+    }
+
+    fun showReplyMenuAbility(): Ability {
+        return Ability
+            .builder()
+            .name("show_reply_menu")
+            .locality(Locality.ALL)
+            .privacy(Privacy.PUBLIC)
+            .action { showReplyMenuAction(it) }
+            .enableStats()
+            .build()
+    }
+
+    private fun showReplyMenuAction(context: MessageContext) {
+        val message = context.update().message
+
+        val sendMessage = SendMessage().apply {
+            chatId = message.from.id.toString()
+            parseMode = "HTML"
+            text = "Hello, my friend!"
+            replyMarkup = testKeyboardMarkup
+        }
+
+        execute(sendMessage)
+    }
+
+
     private fun defaultAction(context: MessageContext) {
         val update = context.update()
         val message = update.message
         val source = message.from
+
+        message.webAppData?.let {
+            silent.send("Get data from web app ${it.data}", source.id)
+            return
+        }
+
         silent.send("Test, new beeeaach-" + ThreadLocalRandom.current().nextInt(), source.id)
     }
 
