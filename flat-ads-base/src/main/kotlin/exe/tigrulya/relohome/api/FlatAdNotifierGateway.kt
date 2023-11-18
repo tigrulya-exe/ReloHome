@@ -1,8 +1,7 @@
 package exe.tigrulya.relohome.api
 
 import exe.tigrulya.relohome.model.FlatAd
-import exe.tigrulya.relohome.model.User
 
 interface FlatAdNotifierGateway {
-    fun onNewAd(user: User, flatAd: FlatAd)
+    fun onNewAd(userId: String, flatAd: FlatAd)
 }

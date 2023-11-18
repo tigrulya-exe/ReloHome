@@ -1,5 +1,6 @@
 package exe.tigrulya.relohome.notifier.telegram
 
+import exe.tigrulya.relohome.api.grpc.GrpcUserHandlerGateway
 import org.telegram.telegrambots.meta.TelegramBotsApi
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession
 
@@ -12,7 +13,9 @@ fun main() {
     val reloHomeBot = ReloHomeBot(
         BOT_TOKEN,
         BOT_USERNAME,
-        MY_ID
+        MY_ID,
+        GrpcUserHandlerGateway("localhost:8999"),
+        JsonSearchOptionsDeserializer()
     )
     botsApi.registerBot(reloHomeBot)
 }

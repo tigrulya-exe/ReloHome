@@ -27,6 +27,8 @@ subprojects {
         implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.21.1")
         implementation("org.apache.logging.log4j:log4j-core:2.21.1")
 
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+
         testImplementation(kotlin("test"))
         testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
         testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")

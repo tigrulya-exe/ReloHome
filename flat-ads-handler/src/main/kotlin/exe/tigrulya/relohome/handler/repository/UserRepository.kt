@@ -9,9 +9,13 @@ import org.jetbrains.exposed.dao.id.LongIdTable
 
 object Users : LongIdTable() {
     var name = varchar("name", 128)
-    var externalId = varchar("externalId", 128)
-    var location = reference("cityId", Cities).nullable()
+    var externalId = varchar("external_id", 128)
+    var location = reference("city_id", Cities).nullable()
     var state = enumerationByName<UserState>("state", 10)
+
+    fun getByExternalId(externalId: String) = UserEntity.find {
+        Users.externalId eq externalId
+    }.firstOrNull() ?: throw IllegalArgumentException("Wrong user id")
 }
 
 class UserEntity(id: EntityID<Long>) : LongEntity(id) {

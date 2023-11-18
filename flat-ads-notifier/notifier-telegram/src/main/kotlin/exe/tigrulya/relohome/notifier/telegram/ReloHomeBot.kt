@@ -1,10 +1,13 @@
 package exe.tigrulya.relohome.notifier.telegram
 
 import exe.tigrulya.relohome.api.FlatAdNotifierGateway
+import exe.tigrulya.relohome.api.UserHandlerGateway
 import exe.tigrulya.relohome.model.FlatAd
 import exe.tigrulya.relohome.model.Image
 import exe.tigrulya.relohome.model.User
+import exe.tigrulya.relohome.model.UserSearchOptionsDto
 import exe.tigrulya.relohome.util.LoggerProperty
+import kotlinx.coroutines.runBlocking
 import org.telegram.abilitybots.api.bot.AbilityBot
 import org.telegram.abilitybots.api.objects.Ability
 import org.telegram.abilitybots.api.objects.Locality
@@ -27,9 +30,28 @@ import java.nio.channels.Channels
 import java.nio.channels.ReadableByteChannel
 import java.util.concurrent.ThreadLocalRandom
 
-
-class ReloHomeBot(botToken: String, botUsername: String, private val creatorId: Long) :
+class ReloHomeBot(
+    botToken: String,
+    botUsername: String,
+    private val creatorId: Long,
+    private val userHandlerGateway: UserHandlerGateway,
+    private val searchOptionsDeserializer: SearchOptionsDeserializer
+) :
     AbilityBot(botToken, botUsername, createToggle(), createBotOptions()), FlatAdNotifierGateway {
+
+    companion object {
+        private fun createToggle(): AbilityToggle {
+            val customToggle = CustomToggle()
+            customToggle.turnOff("demote")
+            return customToggle
+        }
+
+        private fun createBotOptions(): DefaultBotOptions {
+            val options = DefaultBotOptions()
+            options.getUpdatesTimeout = 120
+            return options
+        }
+    }
 
     private val logger by LoggerProperty()
 
@@ -37,10 +59,6 @@ class ReloHomeBot(botToken: String, botUsername: String, private val creatorId: 
     private val keyboardM2: InlineKeyboardMarkup
 
     private val testKeyboardMarkup: ReplyKeyboardMarkup
-
-    override fun creatorId(): Long {
-        return creatorId
-    }
 
     init {
         val next = InlineKeyboardButton.builder()
@@ -91,13 +109,18 @@ class ReloHomeBot(botToken: String, botUsername: String, private val creatorId: 
 //        })
     }
 
+
+    override fun creatorId(): Long {
+        return creatorId
+    }
+
     fun defaultAbility(): Ability {
         return Ability
             .builder()
             .name(DEFAULT)
             .locality(Locality.ALL)
             .privacy(Privacy.PUBLIC)
-            .action { context: MessageContext -> defaultAction(context) }
+            .action { defaultAction(it) }
             .enableStats()
             .build()
     }
@@ -157,44 +180,38 @@ class ReloHomeBot(botToken: String, botUsername: String, private val creatorId: 
         val source = message.from
 
         message.webAppData?.let {
-            silent.send("Get data from web app ${it.data}", source.id)
+            handleSearchOptions(source.id.toString(), it.data)
+            silent.send("Successfully sent data from web app to server: ${it.data}", source.id)
             return
         }
 
         silent.send("Test, new beeeaach-" + ThreadLocalRandom.current().nextInt(), source.id)
     }
 
-    companion object {
-        private fun createToggle(): AbilityToggle {
-            val customToggle = CustomToggle()
-            customToggle.turnOff("demote")
-            return customToggle
-        }
-
-        private fun createBotOptions(): DefaultBotOptions {
-            val options = DefaultBotOptions()
-            options.getUpdatesTimeout = 120
-            return options
-        }
+    // todo mb use some coroutine-friendly tg bot framework
+    private fun handleSearchOptions(userId: String, rawSearchOptions: String) = runBlocking {
+        val searchOptions = searchOptionsDeserializer.deserialize(rawSearchOptions)
+        userHandlerGateway.setSearchOptions(userId, searchOptions)
     }
 
-    override fun onNewAd(user: User, flatAd: FlatAd) {
-        logger.info("Send ad ${flatAd.id} to ${user.id}")
+    override fun onNewAd(userId: String, flatAd: FlatAd) {
+        logger.info("Send ad ${flatAd.id} to $userId")
         // todo move template to file
         val adText = """
             ${flatAd.title}
-            
+
             ${flatAd.description}
+
             Price: ${flatAd.price}
             Link: ${flatAd.contacts.flatServiceLink}
         """.trimIndent()
 
         if (flatAd.images.isEmpty()) {
-            sendAdWithoutImages(user.externalId, adText)
+            sendAdWithoutImages(userId, adText)
             return
         }
 
-        sendAdWithImages(user.externalId, adText, flatAd.images)
+        sendAdWithImages(userId, adText, flatAd.images)
     }
 
     private fun sendAdWithImages(userId: String, text: String, images: List<Image>) {

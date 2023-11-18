@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Start TG Bot" type="JetRunConfigurationType">
+    <option name="MAIN_CLASS_NAME" value="exe.tigrulya.relohome.notifier.telegram.MainKt" />
+    <module name="ReloHome.flat-ads-notifier.notifier-telegram.main" />
+    <shortenClasspath name="NONE" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

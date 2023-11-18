@@ -1,39 +1,56 @@
 package exe.tigrulya.relohome.handler.service
 
-import exe.tigrulya.relohome.handler.repository.Cities
-import exe.tigrulya.relohome.handler.repository.CityEntity
-import exe.tigrulya.relohome.handler.repository.UserEntity
-import exe.tigrulya.relohome.handler.repository.Users
-import exe.tigrulya.relohome.model.City
-import exe.tigrulya.relohome.model.User
-import exe.tigrulya.relohome.model.UserCreateDto
-import exe.tigrulya.relohome.model.UserState
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.select
+import exe.tigrulya.relohome.handler.repository.*
+import exe.tigrulya.relohome.model.*
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class UserService {
     fun registerUser(user: UserCreateDto) {
-        UserEntity.new(user.id) {
+        UserEntity.new {
             name = user.name
             externalId = externalId
             state = UserState.NEW
         }
     }
 
-    fun setLocation(userId: Long, city: City) {
+    fun setLocation(externalId: String, city: City) {
         transaction {
-            val userEntity = UserEntity.findById(userId)
-                ?: throw IllegalArgumentException("Wrong user id")
-
-            val cityEntity = CityEntity.find { Cities.name eq city.name }
-                .firstOrNull()
-                ?: throw IllegalArgumentException("Wrong city")
+            val userEntity = Users.getByExternalId(externalId)
+            val cityEntity = Cities.getByName(city.name)
 
             userEntity.location = cityEntity
+            userEntity.state = UserState.CITY_PROVIDED
+        }
+    }
 
-            //TODO replace it to following when html page with options will be added:
-            // userEntity.state = UserState.CITY_PROVIDED
+    fun setSearchOptions(externalUserId: String, searchOptions: UserSearchOptionsDto) {
+        transaction {
+            val userEntity = Users.getByExternalId(externalUserId)
+
+            if (!userEntity.state.canSetSearchOptions()) {
+                throw IllegalStateException("Please, provide city first")
+            }
+
+            // todo replace with update
+            // UserSearchOptions.update {
+
+            UserSearchOptionsEntity.new {
+                externalId = userEntity.externalId
+                searchOptions.priceRange.apply {
+                    priceFrom = from
+                    priceTo = to
+                }
+                searchOptions.roomRange.apply {
+                    roomsFrom = from
+                    roomsTo = to
+                }
+                // we know that we already set the location of user because of his state
+                cityName = userEntity.location?.name!!
+                subDistricts = searchOptions.subDistricts.let {
+                    if (it.isEmpty()) null else it.joinToString(",")
+                }
+            }
             userEntity.state = UserState.SEARCH_OPTIONS_PROVIDED
         }
     }

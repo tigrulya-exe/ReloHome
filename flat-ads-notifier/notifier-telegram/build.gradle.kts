@@ -9,6 +9,8 @@ dependencies {
 
     implementation("org.telegram:telegrambots:$telegramBotsVersion")
     implementation("org.telegram:telegrambots-abilities:$telegramBotsVersion")
+
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.+")
 }
 
 application {

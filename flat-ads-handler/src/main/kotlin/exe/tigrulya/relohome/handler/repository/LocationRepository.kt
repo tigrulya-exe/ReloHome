@@ -12,7 +12,11 @@ object Countries : LongIdTable() {
 
 object Cities : LongIdTable() {
     val name = varchar("name", 50)
-    val country = reference("countryId", Countries)
+    val country = reference("country_id", Countries)
+
+    fun getByName(name: String) = CityEntity.find { Cities.name eq name }
+        .firstOrNull()
+        ?: throw IllegalArgumentException("Wrong city")
 }
 
 class CountryEntity(id: EntityID<Long>) : LongEntity(id) {

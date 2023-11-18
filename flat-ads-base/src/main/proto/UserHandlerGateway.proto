@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package exe.tigrulya.relohome.api;
+
+service UserHandlerGateway {
+  rpc RegisterUser(UserCreateRequest) returns (Empty);
+
+  rpc SetLocation(SetLocationRequest) returns (Empty);
+
+  rpc SetSearchOptions(SetSearchOptionsRequest) returns (Empty);
+}
+
+message UserCreateRequest {
+  string name = 1;
+  string externalId = 2;
+}
+
+message SetLocationRequest {
+  string externalId = 1;
+  string city = 2;
+  string country = 3;
+}
+
+message SetSearchOptionsRequest {
+  string externalId = 1;
+  NumRange priceRange = 2;
+  NumRange roomRange = 3;
+  repeated string subDistricts = 4;
+}
+
+message NumRange {
+  optional int32 to = 1;
+  optional int32 from = 2;
+}
+
+message Empty {
+
+}
