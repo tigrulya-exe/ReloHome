@@ -44,7 +44,7 @@ class ListAmFetcher(
             .map { collector.emit(it) }
 
         return if (unseenAds.size != ads.size) {
-            FetchResult.NextPageRequired
+            FetchResult.NextPageRequired(lastHandledPageAdTime)
         } else {
             FetchResult.Completed(lastHandledPageAdTime)
         }

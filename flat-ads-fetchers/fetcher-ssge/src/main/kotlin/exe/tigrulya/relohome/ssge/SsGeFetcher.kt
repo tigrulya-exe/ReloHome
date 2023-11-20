@@ -36,9 +36,10 @@ class SsGeFetcher(
             .onEach { lastHandledPageAdTime = maxOf(lastHandledPageAdTime, it.orderDate) }
             .map { collector.emit(it) }
 
-        logger.info("Fetched ${unseenAds.size} ads")
-        return if (unseenAds.size != ads.size) {
-            FetchResult.NextPageRequired
+        logger.info("Fetched ${unseenAds.size} ads from page $page")
+        // ss.ge use to put some "premium" ads on the first page
+        return if (page == 1 || unseenAds.size == ads.size) {
+            FetchResult.NextPageRequired(lastHandledPageAdTime)
         } else {
             FetchResult.Completed(lastHandledPageAdTime)
         }

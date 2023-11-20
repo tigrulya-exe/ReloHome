@@ -6,6 +6,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runBlocking
 import java.time.Instant
+import kotlin.math.max
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -24,7 +25,7 @@ abstract class AbstractExternalFetcher<T>(
     private val pageFetchDelay: Duration = 5.seconds
 ) : ExternalFetcher<T> {
 
-    protected lateinit var lastHandledAdTime: Instant
+    lateinit var lastHandledAdTime: Instant
 
     override fun fetchAds(): Flow<T> = flow {
         while (true) {
@@ -40,15 +41,11 @@ abstract class AbstractExternalFetcher<T>(
         lastHandledAdTime = lastHandledAdTimestampProvider.provide() ?: Instant.now()
         var lastHandledAdInBatchTime = lastHandledAdTime
         do {
-            when (val fetchResult = fetchPage(collector, pageNum)) {
+            val fetchResult = fetchPage(collector, pageNum)
+            lastHandledAdInBatchTime = maxOf(lastHandledAdInBatchTime, fetchResult.lastAdTimestamp)
+            when (fetchResult) {
                 is FetchResult.NextPageRequired -> ++pageNum
-                is FetchResult.Completed -> {
-                    lastHandledAdInBatchTime = maxOf(
-                        lastHandledAdInBatchTime,
-                        fetchResult.lastAdTimestamp
-                    )
-                    break
-                }
+                is FetchResult.Completed -> break
             }
             delay(pageFetchDelay)
         } while (true)
@@ -60,9 +57,10 @@ abstract class AbstractExternalFetcher<T>(
         page: Int
     ): FetchResult
 
-    sealed interface FetchResult {
-        class Completed(val lastAdTimestamp: Instant) : FetchResult
-        object NextPageRequired : FetchResult
+    sealed class FetchResult(val lastAdTimestamp: Instant) {
+
+        class Completed(lastAdTimestamp: Instant) : FetchResult(lastAdTimestamp)
+        class NextPageRequired(lastAdTimestamp: Instant) : FetchResult(lastAdTimestamp)
     }
 }
 

@@ -4,11 +4,9 @@ import exe.tigrulya.relohome.api.FlatAdNotifierGateway
 import exe.tigrulya.relohome.api.UserHandlerGateway
 import exe.tigrulya.relohome.model.FlatAd
 import exe.tigrulya.relohome.model.Image
-import exe.tigrulya.relohome.model.User
-import exe.tigrulya.relohome.model.UserSearchOptionsDto
 import exe.tigrulya.relohome.util.LoggerProperty
 import kotlinx.coroutines.runBlocking
-import org.telegram.abilitybots.api.bot.AbilityBot
+import org.telegram.abilitybots.api.bot.DefaultAbilities
 import org.telegram.abilitybots.api.objects.Ability
 import org.telegram.abilitybots.api.objects.Locality
 import org.telegram.abilitybots.api.objects.MessageContext
@@ -35,21 +33,32 @@ class ReloHomeBot(
     botUsername: String,
     private val creatorId: Long,
     private val userHandlerGateway: UserHandlerGateway,
-    private val searchOptionsDeserializer: SearchOptionsDeserializer
-) :
-    AbilityBot(botToken, botUsername, createToggle(), createBotOptions()), FlatAdNotifierGateway {
+    private val searchOptionsDeserializer: SearchOptionsDeserializer,
+    requestsPerSecond: Int = 10
+) : RateLimitingAbilityBot(botToken, botUsername, createToggle(), createBotOptions(), requestsPerSecond),
+    FlatAdNotifierGateway {
 
     companion object {
         private fun createToggle(): AbilityToggle {
-            val customToggle = CustomToggle()
-            customToggle.turnOff("demote")
-            return customToggle
+            return CustomToggle().apply {
+                turnOff(DefaultAbilities.CLAIM)
+                turnOff(DefaultAbilities.DEMOTE)
+                turnOff(DefaultAbilities.UNBAN)
+                turnOff(DefaultAbilities.BACKUP)
+                turnOff(DefaultAbilities.BAN)
+                turnOff(DefaultAbilities.UNBAN)
+                turnOff(DefaultAbilities.COMMANDS)
+                turnOff(DefaultAbilities.PROMOTE)
+                turnOff(DefaultAbilities.REPORT)
+                turnOff(DefaultAbilities.STATS)
+                turnOff(DefaultAbilities.RECOVER)
+            }
         }
 
         private fun createBotOptions(): DefaultBotOptions {
-            val options = DefaultBotOptions()
-            options.getUpdatesTimeout = 120
-            return options
+            return DefaultBotOptions().apply {
+                getUpdatesTimeout = 120
+            }
         }
     }
 

@@ -26,7 +26,6 @@ import java.time.temporal.ChronoUnit
 
 private const val MY_ID: Long = 479226955
 private const val BOT_USERNAME = "relo_home_bot"
-private const val BOT_TOKEN = "NOPE"
 
 fun main() {
     StartUtils.runMigrations()
@@ -36,7 +35,7 @@ fun main() {
 
     val botsApi = TelegramBotsApi(DefaultBotSession::class.java)
     val reloHomeBot = ReloHomeBot(
-        BOT_TOKEN,
+        System.getenv("BOT_TOKEN"),
         BOT_USERNAME,
         MY_ID,
         GrpcUserHandlerGateway("localhost:8999"),
@@ -50,7 +49,7 @@ fun main() {
     runBlocking {
         val runner = ExternalFetcherRunner(
             connector = SsGeFetcher(
-                lastHandledAdTimestampProvider = WindowTillNowTimestampProvider(250, ChronoUnit.HOURS)
+                lastHandledAdTimestampProvider = WindowTillNowTimestampProvider(90, ChronoUnit.MINUTES)
             ),
             flatAdMapper = SsGeFlatAdMapper(),
             outCollector = InPlaceFlatAdHandlerGateway(flatAdService)
