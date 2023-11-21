@@ -1,15 +1,15 @@
-val ktorVersion = "2.2.2"
+val ktorVersion by properties
 val logbackVersion = "1.2.10"
 
 subprojects {
     dependencies {
         implementation(project(":flat-ads-base"))
-        implementation("io.ktor:ktor-client-core:$ktorVersion")
-        implementation("io.ktor:ktor-client-cio:$ktorVersion")
-        implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
-        implementation("io.ktor:ktor-serialization-gson:$ktorVersion")
-        implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
-        implementation("io.ktor:ktor-client-logging:$ktorVersion")
+        implementation("io.ktor:ktor-client-core")
+        implementation("io.ktor:ktor-client-cio")
+        implementation("io.ktor:ktor-client-content-negotiation")
+        implementation("io.ktor:ktor-serialization-gson")
+        implementation("io.ktor:ktor-serialization-jackson")
+        implementation("io.ktor:ktor-client-logging")
         implementation("ch.qos.logback:logback-classic:$logbackVersion")
     }
 }

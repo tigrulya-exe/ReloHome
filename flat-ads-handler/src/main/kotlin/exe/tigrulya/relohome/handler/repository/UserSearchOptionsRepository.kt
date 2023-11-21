@@ -1,5 +1,6 @@
 package exe.tigrulya.relohome.handler.repository
 
+import exe.tigrulya.relohome.handler.repository.Users.uniqueIndex
 import exe.tigrulya.relohome.model.NumRange
 import exe.tigrulya.relohome.model.UserSearchOptionsDto
 import org.jetbrains.exposed.dao.LongEntity
@@ -9,7 +10,7 @@ import org.jetbrains.exposed.dao.id.LongIdTable
 
 object UserSearchOptions : LongIdTable() {
     // for fast search
-    var externalId = varchar("external_id", 128)
+    var externalId = varchar("external_id", 128).uniqueIndex()
 
     // for fast search
     var cityName = varchar("city_name", 50)
@@ -20,6 +21,10 @@ object UserSearchOptions : LongIdTable() {
 
     // for fast search
     var subDistricts = varchar("sub_districts", 1024).nullable()
+
+    fun getByExternalId(externalId: String) = UserSearchOptionsEntity.find {
+        UserSearchOptions.externalId eq externalId
+    }.firstOrNull() ?: throw IllegalArgumentException("Wrong user id")
 }
 
 class UserSearchOptionsEntity(id: EntityID<Long>) : LongEntity(id) {

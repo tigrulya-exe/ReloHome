@@ -1,18 +1,34 @@
 package exe.tigrulya.relohome.handler
 
+import com.github.mustachejava.DefaultMustacheFactory
+import exe.tigrulya.relohome.handler.controller.configureRouting
 import exe.tigrulya.relohome.handler.db.HikariPooledDataSourceFactory
 import exe.tigrulya.relohome.handler.db.migration.MigrationManager
 import exe.tigrulya.relohome.handler.repository.*
-import exe.tigrulya.relohome.handler.server.FlatAdsHandlerGrpcServer
 import exe.tigrulya.relohome.model.UserState
+import io.ktor.server.application.*
+import io.ktor.server.mustache.*
+import io.ktor.server.plugins.callloging.*
+import io.ktor.server.request.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.slf4j.event.*
 
-fun main() {
+fun main(args: Array<String>) {
     StartUtils.runMigrations()
-    val server = FlatAdsHandlerGrpcServer(8999)
-    server.start()
+    io.ktor.server.netty.EngineMain.main(args)
+}
+
+fun Application.module() {
+    configureRouting()
+    install(Mustache) {
+        mustacheFactory = DefaultMustacheFactory("templates")
+    }
+    install(CallLogging) {
+        level = Level.INFO
+        filter { call -> call.request.path().startsWith("/") }
+    }
 }
 
 object StartUtils {

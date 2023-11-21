@@ -55,6 +55,10 @@ class UserService {
         }
     }
 
+    fun getSearchOptions(externalId: String) = transaction {
+        UserSearchOptions.getByExternalId(externalId)
+    }
+
     fun getUsersFrom(city: City): List<User> {
         val rows = Users.innerJoin(Cities)
             .slice(Users.columns)

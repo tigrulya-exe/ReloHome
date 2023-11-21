@@ -67,8 +67,6 @@ class ReloHomeBot(
     private val keyboardM1: InlineKeyboardMarkup
     private val keyboardM2: InlineKeyboardMarkup
 
-    private val testKeyboardMarkup: ReplyKeyboardMarkup
-
     init {
         val next = InlineKeyboardButton.builder()
             .text("Next").callbackData("next")
@@ -92,19 +90,6 @@ class ReloHomeBot(
             .build()
 
 
-        val webappButton = KeyboardButton.builder()
-            .text("Change settings")
-            .webApp(
-                WebAppInfo.builder()
-                    .url("https://127.0.0.1:8787/new-user-form.html")
-                    .build()
-            )
-            .build()
-
-        testKeyboardMarkup = ReplyKeyboardMarkup.builder()
-            .keyboardRow(
-                KeyboardRow(listOf(webappButton))
-            ).build()
 
 //        execute(SetChatMenuButton().apply {
 //            menuButton = MenuButtonWebApp.builder()
@@ -171,6 +156,20 @@ class ReloHomeBot(
 
     private fun showReplyMenuAction(context: MessageContext) {
         val message = context.update().message
+
+        val webappButton = KeyboardButton.builder()
+            .text("Change settings")
+            .webApp(
+                WebAppInfo.builder()
+                    .url("https://127.0.0.1:8443/forms/tg_form/${message.from.id}")
+                    .build()
+            )
+            .build()
+
+        val testKeyboardMarkup: ReplyKeyboardMarkup = ReplyKeyboardMarkup.builder()
+            .keyboardRow(
+                KeyboardRow(listOf(webappButton))
+            ).build()
 
         val sendMessage = SendMessage().apply {
             chatId = message.from.id.toString()

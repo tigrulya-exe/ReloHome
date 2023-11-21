@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.8.20"
+    id("io.ktor.plugin") version "2.3.6"
 }
 
 allprojects {
@@ -15,7 +16,7 @@ allprojects {
 
 subprojects {
     apply(plugin = "kotlin")
-
+    apply(plugin = "io.ktor.plugin")
 
     tasks.withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "17"

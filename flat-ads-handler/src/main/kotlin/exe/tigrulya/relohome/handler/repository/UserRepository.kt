@@ -9,7 +9,7 @@ import org.jetbrains.exposed.dao.id.LongIdTable
 
 object Users : LongIdTable() {
     var name = varchar("name", 128)
-    var externalId = varchar("external_id", 128)
+    var externalId = varchar("external_id", 128).uniqueIndex()
     var location = reference("city_id", Cities).nullable()
     var state = enumerationByName<UserState>("state", 10)
 
