@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>HTML5 Boilerplate</title>
@@ -10,158 +10,94 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
-  </head>
+</head>
 
-  <body>
-    <div class="container px-5 my-5">
-      <form>
+<body>
+<div class="container px-5 my-5">
+    <form>
         <div class="mb-3">
-          <label class="form-label" for="priceFrom">Price from</label>
-          <input class="form-control number-input" id="priceFrom" name="priceFrom" type="number"
-                 placeholder="Price from" value="{{searchData.priceRange.from}}"/>
+            <label class="form-label" for="priceFrom">Price from</label>
+            <input class="form-control number-input" id="priceFrom" name="priceFrom" type="number"
+                   placeholder="Price from" value="{{searchData.priceRange.from}}"/>
         </div>
         <div class="mb-3">
-          <label class="form-label" for="priceTo">Price to</label>
-          <input class="form-control number-input" id="priceTo" name="priceTo" type="number"
-                 placeholder="Price to" value="{{searchData.priceRange.to}}"/>
+            <label class="form-label" for="priceTo">Price to</label>
+            <input class="form-control number-input" id="priceTo" name="priceTo" type="number"
+                   placeholder="Price to" value="{{searchData.priceRange.to}}"/>
         </div>
         <div class="mb-3">
-          <label class="form-label d-block">Subdistrict</label>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" id="avlabari" type="checkbox" name="district_avlabari"/>
-            <label class="form-check-label" for="avlabari">Avlabari</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" id="bagebi" type="checkbox" name="district_bagebi"/>
-            <label class="form-check-label" for="bagebi">Bagebi</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" id="chugureti" type="checkbox" name="district_chugureti"/>
-            <label class="form-check-label" for="chugureti">Chugureti</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" id="didiDigomi" type="checkbox" name="district_didiDigomi"/>
-            <label class="form-check-label" for="didiDigomi">Didi digomi</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" id="didube" type="checkbox" name="district_didube"/>
-            <label class="form-check-label" for="didube">Didube</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" id="digomi" type="checkbox" name="district_digomi"/>
-            <label class="form-check-label" for="digomi">Digomi</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" id="gldani" type="checkbox" name="district_gldani"/>
-            <label class="form-check-label" for="gldani">Gldani</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" id="isani" type="checkbox" name="district_isani"/>
-            <label class="form-check-label" for="isani">Isani</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" id="mtatsminda" type="checkbox" name="district_mtatsminda"/>
-            <label class="form-check-label" for="mtatsminda">Mtatsminda</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" id="nadzaladevi" type="checkbox" name="district_subdistrict"/>
-            <label class="form-check-label" for="nadzaladevi">Nadzaladevi</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" id="ortachala" type="checkbox" name="district_ortachala"/>
-            <label class="form-check-label" for="ortachala">Ortachala</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" id="samgori" type="checkbox" name="district_samgori"/>
-            <label class="form-check-label" for="samgori">Samgori</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" id="saburtalo" type="checkbox" name="district_saburtalo"/>
-            <label class="form-check-label" for="saburtalo">Saburtalo</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" id="sololaki" type="checkbox" name="district_sololaki"/>
-            <label class="form-check-label" for="sololaki">Sololaki</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" id="vake" type="checkbox" name="district_vake"/>
-            <label class="form-check-label" for="vake">Vake</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" id="varketili" type="checkbox" name="district_varketili"/>
-            <label class="form-check-label" for="varketili">Varketili</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" id="vera" type="checkbox" name="district_vera"/>
-            <label class="form-check-label" for="vera">Vera</label>
-          </div>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="roomsFrom">Rooms from</label>
-          <input class="form-control number-input" id="roomsFrom" name="roomsFrom" type="number"
-                 placeholder="Rooms from" value="{{searchData.roomRange.from}}"/>
+            <label class="form-label d-block">Subdistrict</label>
+            {{#searchData.subDistricts}}
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" id="{{name}}" type="checkbox"
+                           name="district_{{name}}" {{#selected}} checked {{/selected}}/>
+                    <label class="form-check-label" for="{{name}}" style="text-transform: capitalize">{{name}}</label>
+                </div>
+            {{/searchData.subDistricts}}
         </div>
         <div class="mb-3">
-          <label class="form-label" for="roomsTo">Rooms to</label>
-          <input class="form-control number-input" id="roomsTo" name="roomsTo" type="number"
-                 placeholder="Rooms to" value="{{searchData.roomRange.to}}"/>
+            <label class="form-label" for="roomsFrom">Rooms from</label>
+            <input class="form-control number-input" id="roomsFrom" name="roomsFrom" type="number"
+                   placeholder="Rooms from" value="{{searchData.roomRange.from}}"/>
         </div>
-      </form>
-    </div>
+        <div class="mb-3">
+            <label class="form-label" for="roomsTo">Rooms to</label>
+            <input class="form-control number-input" id="roomsTo" name="roomsTo" type="number"
+                   placeholder="Rooms to" value="{{searchData.roomRange.to}}"/>
+        </div>
+    </form>
+</div>
 
-    <script>
-      function buildFormJson(formEntries) {
-      let formObject = {
-      priceRange: {
-      from: formEntries["priceFrom"],
-      to: formEntries["priceTo"]
-      },
-      roomRange: {
-      from: formEntries["roomsFrom"],
-      to: formEntries["roomsTo"]
-      },
-      subDistricts: formEntries["districts"]
-      }
-      return JSON.stringify(formObject)
-      }
+<script>
+    function buildFormJson(formEntries) {
+        let formObject = {
+            priceRange: {
+                from: formEntries["priceFrom"],
+                to: formEntries["priceTo"]
+            },
+            roomRange: {
+                from: formEntries["roomsFrom"],
+                to: formEntries["roomsTo"]
+            },
+            subDistricts: formEntries["districts"]
+        }
+        return JSON.stringify(formObject)
+    }
 
-      document.querySelectorAll(".number-input").forEach(input =>
-      input.addEventListener("keypress", function (evt) {
-      if (evt.which !== 8 && evt.which !== 0 && evt.which < 48 || evt.which > 57) {
-      evt.preventDefault();
-      }
-      }))
+    document.querySelectorAll(".number-input").forEach(input =>
+            input.addEventListener("keypress", function (evt) {
+                if (evt.which !== 8 && evt.which !== 0 && evt.which < 48 || evt.which > 57) {
+                    evt.preventDefault();
+                }
+            }))
 
-      let tg = window.Telegram.WebApp; //получаем объект webapp телеграма
+    let tg = window.Telegram.WebApp;
 
-      tg.expand(); //расширяем на все окно
+    tg.expand();
 
-      tg.MainButton.show() // показать кнопку
-      tg.MainButton.enable()
-      tg.MainButton.text = "Submit"; //изменяем текст кнопки
+    tg.MainButton.show()
+    tg.MainButton.enable()
+    tg.MainButton.text = "Submit";
 
-      Telegram.WebApp.onEvent('mainButtonClicked', function(){
-      const form = document.querySelector('form');
-      const data = new FormData(form);
+    Telegram.WebApp.onEvent('mainButtonClicked', function () {
+        const form = document.querySelector('form');
+        const data = new FormData(form);
 
-      const districts = []
-      const formJson = {}
+        const districts = []
+        const formJson = {}
 
-      // Display the key/value pairs
-      for (const [key, value] of data.entries()) {
-      if (key.startsWith("district_")) {
-      districts.push(key.replace("district_", ""))
-      continue
-      }
-      formJson[key] = value
-      }
-      formJson["districts"] = districts
+        for (const [key, value] of data.entries()) {
+            if (key.startsWith("district_")) {
+                districts.push(key.replace("district_", ""))
+                continue
+            }
+            formJson[key] = value
+        }
+        formJson["districts"] = districts
 
-      tg.sendData(buildFormJson(formJson));
-      //при клике на основную кнопку отправляем данные в строковом виде
-      });
-    </script>
-  </body>
+        tg.sendData(buildFormJson(formJson));
+    });
+</script>
+</body>
 
 </html>

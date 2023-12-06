@@ -32,32 +32,42 @@ class UserService {
                 throw IllegalStateException("Please, provide city first")
             }
 
-            // todo replace with update
-            // UserSearchOptions.update {
-
-            UserSearchOptionsEntity.new {
-                externalId = userEntity.externalId
+            UserSearchOptions.upsert(keys = arrayOf(UserSearchOptions.externalId)) {
+                it[externalId] = userEntity.externalId
                 searchOptions.priceRange.apply {
-                    priceFrom = from
-                    priceTo = to
+                    it[priceFrom] = from
+                    it[priceTo] = to
                 }
                 searchOptions.roomRange.apply {
-                    roomsFrom = from
-                    roomsTo = to
+                    it[roomsFrom] = from
+                    it[roomsTo] = to
                 }
                 // we know that we already set the location of user because of his state
-                cityName = userEntity.location?.name!!
-                subDistricts = searchOptions.subDistricts.let {
+                it[cityName] = userEntity.location?.name!!
+                it[subDistricts] = searchOptions.subDistricts.let {
                     if (it.isEmpty()) null else it.joinToString(",")
                 }
             }
+
             userEntity.state = UserState.SEARCH_OPTIONS_PROVIDED
         }
     }
 
-    fun getSearchOptions(externalId: String) = transaction {
-        UserSearchOptions.getByExternalId(externalId)
+    fun getSearchOptions(externalId: String): UserSearchOptionsInfo = transaction {
+        val user = getUserByExternalId(externalId)
+
+        if (!user.state.canSetSearchOptions()) {
+            throw IllegalStateException("Please, provide city")
+        }
+
+        UserSearchOptions.getByExternalId(externalId)?.toDomain()
+            ?: UserSearchOptionsInfo(
+                // we know that user have already provided city
+                cityName = getUserByExternalId(externalId).city!!.name
+            )
     }
+
+    fun getUserByExternalId(externalId: String) = Users.getByExternalId(externalId).toDomain()
 
     fun getUsersFrom(city: City): List<User> {
         val rows = Users.innerJoin(Cities)

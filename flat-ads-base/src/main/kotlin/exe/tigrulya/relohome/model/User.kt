@@ -17,13 +17,22 @@ data class User(
     val id: Long,
     val name: String,
     val externalId: String,
-    val state: UserState
+    val state: UserState,
+    // todo tmp
+    val city: City?
 )
 
-data class NumRange(val from: Int?, val to: Int?)
+data class NumRange(val from: Int? = null, val to: Int? = null)
 
 data class UserSearchOptionsDto(
     val priceRange: NumRange,
     val roomRange: NumRange,
     val subDistricts: List<String>
+)
+
+data class UserSearchOptionsInfo(
+    val priceRange: NumRange = NumRange(),
+    val roomRange: NumRange = NumRange(),
+    val cityName: String,
+    val subDistricts: Set<String> = setOf()
 )

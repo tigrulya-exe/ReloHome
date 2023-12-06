@@ -33,6 +33,7 @@ class UserEntity(id: EntityID<Long>) : LongEntity(id) {
         id = id.value,
         name = name,
         externalId = externalId,
-        state = state
+        state = state,
+        city = location?.toDomain()
     )
 }
