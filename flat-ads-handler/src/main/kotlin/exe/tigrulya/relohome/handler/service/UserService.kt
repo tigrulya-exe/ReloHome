@@ -1,8 +1,10 @@
 package exe.tigrulya.relohome.handler.service
 
-import exe.tigrulya.relohome.handler.repository.*
+import exe.tigrulya.relohome.handler.repository.Cities
+import exe.tigrulya.relohome.handler.repository.UserEntity
+import exe.tigrulya.relohome.handler.repository.UserSearchOptions
+import exe.tigrulya.relohome.handler.repository.Users
 import exe.tigrulya.relohome.model.*
-import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class UserService {
@@ -32,23 +34,11 @@ class UserService {
                 throw IllegalStateException("Please, provide city first")
             }
 
-            UserSearchOptions.upsert(keys = arrayOf(UserSearchOptions.externalId)) {
-                it[externalId] = userEntity.externalId
-                searchOptions.priceRange.apply {
-                    it[priceFrom] = from
-                    it[priceTo] = to
-                }
-                searchOptions.roomRange.apply {
-                    it[roomsFrom] = from
-                    it[roomsTo] = to
-                }
-                // we know that we already set the location of user because of his state
-                it[cityName] = userEntity.location?.name!!
-                it[subDistricts] = searchOptions.subDistricts.let {
-                    if (it.isEmpty()) null else it.joinToString(",")
-                }
-            }
-
+            UserSearchOptions.upsert(
+                userExternalId = userEntity.externalId,
+                searchOptions = searchOptions,
+                userCityName = userEntity.location!!.name
+            )
             userEntity.state = UserState.SEARCH_OPTIONS_PROVIDED
         }
     }
@@ -68,13 +58,4 @@ class UserService {
     }
 
     fun getUserByExternalId(externalId: String) = Users.getByExternalId(externalId).toDomain()
-
-    fun getUsersFrom(city: City): List<User> {
-        val rows = Users.innerJoin(Cities)
-            .slice(Users.columns)
-            .select { Users.state eq UserState.SEARCH_OPTIONS_PROVIDED and (Cities.name eq city.name) }
-            .withDistinct()
-
-        return UserEntity.wrapRows(rows).map { it.toDomain() }.toList()
-    }
 }

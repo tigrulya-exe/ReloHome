@@ -25,5 +25,5 @@ dependencies {
     implementation("io.ktor:ktor-server-call-logging-jvm:2.3.6")
     runtimeOnly("com.mattbertolini:liquibase-slf4j:5.0.0")
 
-    implementation("org.xerial:sqlite-jdbc:3.42.0.0")
+    implementation("org.postgresql:postgresql:42.7.0")
 }

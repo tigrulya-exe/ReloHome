@@ -2,8 +2,8 @@ package exe.tigrulya.relohome.handler.service
 
 import exe.tigrulya.relohome.api.FlatAdHandlerGateway
 import exe.tigrulya.relohome.api.FlatAdNotifierGateway
+import exe.tigrulya.relohome.handler.repository.SubDistricts
 import exe.tigrulya.relohome.handler.repository.UserSearchOptions
-import exe.tigrulya.relohome.model.City
 import exe.tigrulya.relohome.model.FlatAd
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -17,35 +17,10 @@ class FlatAdService(
             .forEach { notifierGateway.onNewAd(it, flatAd) }
     }
 
-    // todo get this info from db
-    // todo replace string with city object
-    fun getDistricts(cityName: String): List<String> {
-        return if (cityName.lowercase() == "tbilisi") {
-            listOf(
-                "avlabari",
-                "bagebi",
-                "chugureti",
-                "didiDigomi",
-                "didube",
-                "digomi",
-                "gldani",
-                "isani",
-                "mtatsminda",
-                "nadzaladevi",
-                "ortachala",
-                "samgori",
-                "saburtalo",
-                "sololaki",
-                "vake",
-                "varketili",
-                "vera"
-            )
-        } else {
-            listOf()
-        }
+    fun getDistricts(cityName: String): List<String> = transaction {
+        SubDistricts.getByCityName(cityName)
     }
 
-    // todo mb use native queries to increase performance
     private fun getUserExternalIdsForFlatAd(flatAd: FlatAd): List<String> = transaction {
 
         addLogger(StdOutSqlLogger)

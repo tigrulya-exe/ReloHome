@@ -45,3 +45,4 @@ bin/
 !.dev/*.key
 !.dev/*.cert
 !.dev/*.sh
+!.dev/*.yaml

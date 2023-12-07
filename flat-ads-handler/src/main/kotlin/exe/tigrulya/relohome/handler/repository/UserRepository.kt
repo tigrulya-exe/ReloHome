@@ -11,7 +11,7 @@ object Users : LongIdTable() {
     var name = varchar("name", 128)
     var externalId = varchar("external_id", 128).uniqueIndex()
     var location = reference("city_id", Cities).nullable()
-    var state = enumerationByName<UserState>("state", 10)
+    var state = enumerationByName<UserState>("state", 64)
 
     fun getByExternalId(externalId: String) = UserEntity.find {
         Users.externalId eq externalId

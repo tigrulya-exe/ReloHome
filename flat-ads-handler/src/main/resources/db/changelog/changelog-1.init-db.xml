@@ -2,11 +2,113 @@
 <databaseChangeLog
     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
-    xmlns:pro="http://www.liquibase.org/xml/ns/pro"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
-        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
-        http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
-    
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+  <changeSet author="tigrulya" id="init_db-1">
+    <createTable tableName="cities">
+      <column autoIncrement="true" name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="cities_pkey"/>
+      </column>
+      <column name="name" type="VARCHAR(50)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="country_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="tigrulya" id="init_db-2">
+    <createTable tableName="countries">
+      <column autoIncrement="true" name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="countries_pkey"/>
+      </column>
+      <column name="name" type="VARCHAR(50)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="tigrulya" id="init_db-3">
+    <createTable tableName="subdistricts">
+      <column autoIncrement="true" name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="subdistricts_pkey"/>
+      </column>
+      <column name="name" type="VARCHAR(50)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="city_id" type="BIGINT">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="tigrulya" id="init_db-4">
+    <createTable tableName="users">
+      <column autoIncrement="true" name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="users_pkey"/>
+      </column>
+      <column name="name" type="VARCHAR(128)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="external_id" type="VARCHAR(128)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="city_id" type="BIGINT"/>
+      <column name="state" type="VARCHAR(64)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="tigrulya" id="init_db-5">
+    <createTable tableName="usersearchoptions">
+      <column autoIncrement="true" name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="usersearchoptions_pkey"/>
+      </column>
+      <column name="external_id" type="VARCHAR(128)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="city_name" type="VARCHAR(50)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="price_from" type="INTEGER"/>
+      <column name="price_to" type="INTEGER"/>
+      <column name="rooms_from" type="INTEGER"/>
+      <column name="rooms_to" type="INTEGER"/>
+      <column name="sub_districts" type="VARCHAR(1024)"/>
+    </createTable>
+  </changeSet>
+
+
+  <changeSet author="tigrulya" id="init_db-6">
+    <addUniqueConstraint columnNames="external_id" constraintName="users_external_id_unique" tableName="users"/>
+  </changeSet>
+
+  <changeSet author="tigrulya" id="init_db-7">
+    <addUniqueConstraint columnNames="external_id" constraintName="usersearchoptions_external_id_unique"
+                         tableName="usersearchoptions"/>
+  </changeSet>
+
+  <changeSet author="tigrulya" id="init_db-8">
+    <addForeignKeyConstraint baseColumnNames="country_id" baseTableName="cities"
+                             constraintName="fk_cities_country_id__id" deferrable="false" initiallyDeferred="false"
+                             onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id"
+                             referencedTableName="countries" validate="true"/>
+  </changeSet>
+
+  <changeSet author="tigrulya" id="init_db-9">
+    <addForeignKeyConstraint baseColumnNames="city_id" baseTableName="subdistricts"
+                             constraintName="fk_subdistricts_city_id__id" deferrable="false" initiallyDeferred="false"
+                             onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id"
+                             referencedTableName="cities" validate="true"/>
+  </changeSet>
+
+  <changeSet author="tigrulya" id="init_db-10">
+    <addForeignKeyConstraint baseColumnNames="city_id" baseTableName="users" constraintName="fk_users_city_id__id"
+                             deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT"
+                             referencedColumnNames="id" referencedTableName="cities" validate="true"/>
+  </changeSet>
+
 </databaseChangeLog>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+  <changeSet author="tigrulya" id="insert_test_data-1">
+    <insert tableName="countries">
+      <column name="id" valueNumeric="1"/>
+      <column name="name" value="Armenia"/>
+    </insert>
+    <insert tableName="countries">
+      <column name="id" valueNumeric="2"/>
+      <column name="name" value="Georgia"/>
+    </insert>
+  </changeSet>
+
+  <changeSet author="tigrulya" id="insert_test_data-2">
+    <insert tableName="cities">
+      <column name="id" valueNumeric="1"/>
+      <column name="name" value="Yerevan"/>
+      <column name="country_id" valueNumeric="1"/>
+    </insert>
+    <insert tableName="cities">
+      <column name="id" valueNumeric="2"/>
+      <column name="name" value="Tbilisi"/>
+      <column name="country_id" valueNumeric="2"/>
+    </insert>
+  </changeSet>
+
+  <changeSet author="tigrulya" id="insert_test_data-3">
+    <insert tableName="subdistricts">
+      <column name="id" valueNumeric="1"/>
+      <column name="name" value="avlabari"/>
+      <column name="city_id" valueNumeric="2"/>
+    </insert>
+    <insert tableName="subdistricts">
+      <column name="id" valueNumeric="2"/>
+      <column name="name" value="bagebi"/>
+      <column name="city_id" valueNumeric="2"/>
+    </insert>
+    <insert tableName="subdistricts">
+      <column name="id" valueNumeric="3"/>
+      <column name="name" value="chugureti"/>
+      <column name="city_id" valueNumeric="2"/>
+    </insert>
+    <insert tableName="subdistricts">
+      <column name="id" valueNumeric="4"/>
+      <column name="name" value="didiDigomi"/>
+      <column name="city_id" valueNumeric="2"/>
+    </insert>
+    <insert tableName="subdistricts">
+      <column name="id" valueNumeric="5"/>
+      <column name="name" value="didube"/>
+      <column name="city_id" valueNumeric="2"/>
+    </insert>
+    <insert tableName="subdistricts">
+      <column name="id" valueNumeric="6"/>
+      <column name="name" value="digomi"/>
+      <column name="city_id" valueNumeric="2"/>
+    </insert>
+    <insert tableName="subdistricts">
+      <column name="id" valueNumeric="7"/>
+      <column name="name" value="gldani"/>
+      <column name="city_id" valueNumeric="2"/>
+    </insert>
+    <insert tableName="subdistricts">
+      <column name="id" valueNumeric="8"/>
+      <column name="name" value="isani"/>
+      <column name="city_id" valueNumeric="2"/>
+    </insert>
+    <insert tableName="subdistricts">
+      <column name="id" valueNumeric="9"/>
+      <column name="name" value="mtatsminda"/>
+      <column name="city_id" valueNumeric="2"/>
+    </insert>
+    <insert tableName="subdistricts">
+      <column name="id" valueNumeric="10"/>
+      <column name="name" value="nadzaladevi"/>
+      <column name="city_id" valueNumeric="2"/>
+    </insert>
+    <insert tableName="subdistricts">
+      <column name="id" valueNumeric="11"/>
+      <column name="name" value="ortachala"/>
+      <column name="city_id" valueNumeric="2"/>
+    </insert>
+    <insert tableName="subdistricts">
+      <column name="id" valueNumeric="12"/>
+      <column name="name" value="samgori"/>
+      <column name="city_id" valueNumeric="2"/>
+    </insert>
+    <insert tableName="subdistricts">
+      <column name="id" valueNumeric="13"/>
+      <column name="name" value="saburtalo"/>
+      <column name="city_id" valueNumeric="2"/>
+    </insert>
+    <insert tableName="subdistricts">
+      <column name="id" valueNumeric="14"/>
+      <column name="name" value="sololaki"/>
+      <column name="city_id" valueNumeric="2"/>
+    </insert>
+    <insert tableName="subdistricts">
+      <column name="id" valueNumeric="15"/>
+      <column name="name" value="vake"/>
+      <column name="city_id" valueNumeric="2"/>
+    </insert>
+    <insert tableName="subdistricts">
+      <column name="id" valueNumeric="16"/>
+      <column name="name" value="varketili"/>
+      <column name="city_id" valueNumeric="2"/>
+    </insert>
+    <insert tableName="subdistricts">
+      <column name="id" valueNumeric="17"/>
+      <column name="name" value="vera"/>
+      <column name="city_id" valueNumeric="2"/>
+    </insert>
+  </changeSet>
+
+  <changeSet author="tigrulya" id="insert_test_data-4">
+    <insert tableName="users">
+      <column name="id" valueNumeric="1"/>
+      <column name="name" value="Ashot"/>
+      <column name="external_id" value="ashot777"/>
+      <column name="city_id" valueNumeric="1"/>
+      <column name="state" value="SEARCH_OPTIONS_PROVIDED"/>
+    </insert>
+    <insert tableName="users">
+      <column name="id" valueNumeric="2"/>
+      <column name="name" value="Tigran"/>
+      <column name="external_id" value="479226955"/>
+      <column name="city_id" valueNumeric="2"/>
+      <column name="state" value="CITY_PROVIDED"/>
+    </insert>
+    <insert tableName="users">
+      <column name="id" valueNumeric="3"/>
+      <column name="name" value="Vako"/>
+      <column name="external_id" value="Vako_unconfirmed"/>
+      <column name="city_id" valueNumeric="1"/>
+      <column name="state" value="CITY_PROVIDED"/>
+    </insert>
+  </changeSet>
+
+</databaseChangeLog>
