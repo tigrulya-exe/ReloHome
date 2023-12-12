@@ -36,12 +36,16 @@ subprojects {
     }
 
     val kotestVersion = "5.6.2"
+    val kafkaVersion by properties
+
     dependencies {
         implementation("org.slf4j:slf4j-api:2.0.9")
         implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.21.1")
         implementation("org.apache.logging.log4j:log4j-core:2.21.1")
 
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+
+        implementation("org.apache.kafka:kafka-clients:$kafkaVersion")
 
         testImplementation(kotlin("test"))
         testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
