@@ -8,7 +8,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.toJavaDuration
 
-class BaseKafkaConsumer<K, V>(
+open class BaseKafkaConsumer<K, V>(
     val topics: List<String>,
     val group: String,
     val bootstrapServers: String,

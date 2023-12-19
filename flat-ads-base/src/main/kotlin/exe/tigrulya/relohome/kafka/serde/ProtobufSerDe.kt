@@ -5,8 +5,8 @@ import com.google.protobuf.Parser
 import org.apache.kafka.common.serialization.Deserializer
 import org.apache.kafka.common.serialization.Serializer
 
-class ProtobufSerializer : Serializer<Message> {
-    override fun serialize(topic: String?, data: Message): ByteArray = data.toByteArray()
+class ProtobufSerializer<T : Message> : Serializer<T> {
+    override fun serialize(topic: String?, data: T): ByteArray = data.toByteArray()
 }
 
 class ProtobufDeserializer<T : Message> : Deserializer<T> {

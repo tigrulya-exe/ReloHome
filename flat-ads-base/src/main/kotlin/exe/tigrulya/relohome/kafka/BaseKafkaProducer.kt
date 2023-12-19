@@ -10,11 +10,9 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 class BaseKafkaProducer<K, V>(
-    val topic: String,
-    val bootstrapServers: String,
-    val keySerializer: Class<Serializer<K>>,
-    val valueSerializer: Class<Serializer<V>>,
-    val additionalConfig: Map<String, String> = mapOf()
+    private val kafkaConfig: KafkaConfig,
+    private val keySerializer: Class<out Serializer<*>>,
+    private val valueSerializer: Class<out Serializer<*>>
 ) {
 
     private val logger by LoggerProperty()
@@ -22,7 +20,7 @@ class BaseKafkaProducer<K, V>(
     private val producer: KafkaProducer<K, V> = KafkaProducer<K, V>(buildConfig())
 
     suspend fun send(key: K, value: V) = suspendCoroutine { continuation ->
-        val record = ProducerRecord(topic, key, value)
+        val record = ProducerRecord(kafkaConfig.topic, key, value)
         producer.send(record) { metadata, exception ->
             exception?.let {
                 logger.error("Error sending record to kafka", exception)
@@ -31,8 +29,8 @@ class BaseKafkaProducer<K, V>(
         }
     }
 
-    private fun buildConfig(): Map<String, String> = additionalConfig.toMutableMap().also {
-        it[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrapServers
+    private fun buildConfig(): Map<String, String> = kafkaConfig.additionalConfig.toMutableMap().also {
+        it[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = kafkaConfig.bootstrapServers
         it[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = keySerializer.name
         it[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = valueSerializer.name
     }

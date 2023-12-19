@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package exe.tigrulya.relohome.api;
+
+message FlatAd {
+  string id = 1;
+  string title = 2;
+  Address address = 3;
+  FlatInfo info = 4;
+  optional int32 priceAmount = 5;
+  optional string priceCurrency = 6;
+  optional string description = 7;
+  Contacts contacts = 8;
+  string serviceId = 9;
+  repeated string images = 10;
+}
+
+message Address {
+  string cityName = 1;
+  string cityCountry = 2;
+  optional string district = 3;
+  optional string subDistrict = 4;
+  optional string street = 5;
+  optional string building = 6;
+  optional double lat = 7;
+  optional double lon = 8;
+  optional string customAddressString = 9;
+}
+
+message FlatInfo {
+  int32 floor = 1;
+  optional int32 totalFloors = 2;
+  optional int32 spaceSquareMeters = 3;
+  optional int32 rooms = 4;
+  optional int32 bedrooms = 5;
+  optional string buildingType = 6;
+  optional string flatType = 7;
+}
+
+message Contacts {
+  string flatServiceLink = 1;
+  optional string phoneNumber = 2;
+  map<string, string> messengerIds = 3;
+}
