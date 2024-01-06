@@ -4,42 +4,41 @@ import exe.tigrulya.relohome.util.LoggerProperty
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.Deserializer
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.time.toJavaDuration
 
 open class BaseKafkaConsumer<K, V>(
-    val topics: List<String>,
-    val group: String,
-    val bootstrapServers: String,
-    val keyDeserializer: Class<Deserializer<K>>,
-    val valueDeserializer: Class<Deserializer<V>>,
-    val fetchTimeout: Duration = 500.milliseconds,
-    val additionalConfig: Map<String, String> = mapOf()
+    val kafkaConfig: KafkaConsumerConfig,
+    val keyDeserializer: Class<out Deserializer<K>>,
+    val valueDeserializer: Class<out Deserializer<*>>
 ) {
 
     private val logger by LoggerProperty()
+    private val isRunning = AtomicBoolean()
 
-    fun consumeWithKey(recordHandler: (K, V) -> Unit) = KafkaConsumer<K, V>(buildConfig()).use {
-        it.subscribe(topics)
-        val timeout = fetchTimeout.toJavaDuration()
-        repeatUntilSome {
+    suspend fun consumeWithKey(recordHandler: suspend (K, V) -> Unit) = KafkaConsumer<K, V>(buildConfig()).use {
+        it.subscribe(kafkaConfig.topics)
+        val timeout = kafkaConfig.fetchTimeout.toJavaDuration()
+
+        while (isRunning.get()) {
             it.poll(timeout)
-                .map { record ->
+                .forEach { record ->
                     logger.debug("Handle incoming record: {}", record)
                     recordHandler.invoke(record.key(), record.value())
                 }
         }
     }
 
-    fun consume(recordHandler: (V) -> Unit) = consumeWithKey { _, value -> recordHandler.invoke(value) }
+    suspend fun consume(recordHandler: suspend (V) -> Unit) = consumeWithKey { _, value -> recordHandler.invoke(value) }
 
-    private fun buildConfig(): Map<String, String> = additionalConfig.toMutableMap().also {
-        it[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrapServers
-        it[ConsumerConfig.GROUP_ID_CONFIG] = group
+    fun stop() {
+        isRunning.set(false)
+    }
+
+    private fun buildConfig(): Map<String, Any> = kafkaConfig.additionalConfig.toMutableMap().also {
+        it[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = kafkaConfig.bootstrapServers
+        it[ConsumerConfig.GROUP_ID_CONFIG] = kafkaConfig.group
         it[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = keyDeserializer.name
         it[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = valueDeserializer.name
     }
-
-    private tailrec fun <T> repeatUntilSome(block: () -> T?): T = block() ?: repeatUntilSome(block)
 }

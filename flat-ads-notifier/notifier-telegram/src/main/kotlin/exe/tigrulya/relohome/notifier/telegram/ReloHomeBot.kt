@@ -202,7 +202,7 @@ class ReloHomeBot(
         userHandlerGateway.setSearchOptions(userId, searchOptions)
     }
 
-    override fun onNewAd(userId: String, flatAd: FlatAd) {
+    override suspend fun onNewAd(userId: String, flatAd: FlatAd) {
         logger.info("Send ad ${flatAd.id} to $userId")
         // todo move template to file
         val adText = """

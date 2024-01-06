@@ -12,7 +12,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 class FlatAdService(
     private val notifierGateway: FlatAdNotifierGateway
 ) : FlatAdHandlerGateway {
-    override fun handle(flatAd: FlatAd) {
+    override suspend fun handle(flatAd: FlatAd) {
         getUserExternalIdsForFlatAd(flatAd)
             .forEach { notifierGateway.onNewAd(it, flatAd) }
     }

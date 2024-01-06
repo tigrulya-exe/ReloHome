@@ -1,10 +1,8 @@
 package exe.tigrulya.relohome.proto
 
 import exe.tigrulya.relohome.api.FlatAdOuterClass
-import exe.tigrulya.relohome.model.Address
-import exe.tigrulya.relohome.model.Contacts
-import exe.tigrulya.relohome.model.FlatAd
-import exe.tigrulya.relohome.model.FlatInfo
+import exe.tigrulya.relohome.model.*
+import java.util.function.Consumer
 import kotlin.reflect.KMutableProperty0
 
 fun FlatAd.toProto(): FlatAdOuterClass.FlatAd = FlatAdOuterClass.FlatAd.newBuilder()
@@ -13,9 +11,9 @@ fun FlatAd.toProto(): FlatAdOuterClass.FlatAd = FlatAdOuterClass.FlatAd.newBuild
         proto.title = title
         proto.address = address.toProto()
         proto.info = info.toProto()
-        nullSafeSet(price?.amount, proto::priceAmount)
-        nullSafeSetEnum(price?.currency, proto::priceCurrency)
-        nullSafeSet(description, proto::description)
+        nullSafeSet(price?.amount, proto::setPriceAmount)
+        nullSafeSetEnum(price?.currency, proto::setPriceCurrency)
+        nullSafeSet(description, proto::setDescription)
         proto.contacts = contacts.toProto()
         proto.serviceId = serviceId
         proto.addAllImages(images.map { it.url })
@@ -26,38 +24,84 @@ fun Address.toProto(): FlatAdOuterClass.Address = FlatAdOuterClass.Address.newBu
     .also { proto ->
         proto.cityName = city.name
         proto.cityCountry = city.country
-        nullSafeSet(district, proto::district)
-        nullSafeSet(subDistrict, proto::subDistrict)
-        nullSafeSet(street, proto::street)
-        nullSafeSet(building, proto::building)
-        nullSafeSet(customAddressString, proto::customAddressString)
-        nullSafeSet(location?.lat, proto::lat)
-        nullSafeSet(location?.lon, proto::lat)
+        nullSafeSet(district, proto::setDistrict)
+        nullSafeSet(subDistrict, proto::setSubDistrict)
+        nullSafeSet(street, proto::setStreet)
+        nullSafeSet(building, proto::setBuilding)
+        nullSafeSet(customAddressString, proto::setCustomAddressString)
+        nullSafeSet(location?.lat, proto::setLat)
+        nullSafeSet(location?.lon, proto::setLon)
     }.build()
 
 fun FlatInfo.toProto(): FlatAdOuterClass.FlatInfo = FlatAdOuterClass.FlatInfo.newBuilder()
     .also { proto ->
         proto.floor = floor
-        nullSafeSet(totalFloors, proto::totalFloors)
-        nullSafeSet(spaceSquareMeters, proto::spaceSquareMeters)
-        nullSafeSet(rooms, proto::rooms)
-        nullSafeSet(bedrooms, proto::bedrooms)
-        nullSafeSetEnum(buildingType, proto::buildingType)
-        nullSafeSetEnum(flatType, proto::flatType)
+        nullSafeSet(totalFloors, proto::setTotalFloors)
+        nullSafeSet(spaceSquareMeters, proto::setSpaceSquareMeters)
+        nullSafeSet(rooms, proto::setRooms)
+        nullSafeSet(bedrooms, proto::setBedrooms)
+        nullSafeSetEnum(buildingType, proto::setBuildingType)
+        nullSafeSetEnum(flatType, proto::setFlatType)
     }.build()
 
 fun Contacts.toProto(): FlatAdOuterClass.Contacts = FlatAdOuterClass.Contacts.newBuilder()
     .also { proto ->
         proto.flatServiceLink = flatServiceLink
-        nullSafeSet(phoneNumber, proto::phoneNumber)
+        nullSafeSet(phoneNumber, proto::setPhoneNumber)
         proto.putAllMessengerIds(messengerIds.mapKeys { it.key.name })
     }.build()
 
-private fun <T> nullSafeSet(from: T?, to: KMutableProperty0<T>) {
-    from?.let { to.set(it) }
+fun FlatAdOuterClass.FlatAd.toDomain(): FlatAd = FlatAd(
+    id = id,
+    title = title,
+    address = address.toDomain(),
+    info = info.toDomain(),
+    price = Price(priceAmount, Price.Currency.valueOf(priceCurrency)),
+    description = description,
+    contacts = contacts.toDomain(),
+    serviceId = serviceId,
+    images = imagesList.map { Image(it) }
+)
+
+fun FlatAdOuterClass.Address.toDomain(): Address = Address(
+    city = City(cityName, cityCountry),
+    district = district,
+    subDistrict = subDistrict,
+    street = street,
+    building = building,
+    customAddressString = customAddressString,
+    location = Location(lat, lon)
+)
+
+fun FlatAdOuterClass.FlatInfo.toDomain(): FlatInfo = FlatInfo(
+    floor = floor,
+    totalFloors = totalFloors,
+    spaceSquareMeters = spaceSquareMeters,
+    rooms = rooms,
+    bedrooms = bedrooms,
+    buildingType = safeValueOf<FlatInfo.BuildingType>(buildingType),
+    flatType = safeValueOf<FlatInfo.FlatType>(flatType)
+)
+
+fun FlatAdOuterClass.Contacts.toDomain(): Contacts = Contacts(
+    flatServiceLink = flatServiceLink,
+    phoneNumber = phoneNumber,
+    messengerIds = messengerIdsMap.mapKeys { Contacts.Messenger.valueOf(it.key) }
+)
+
+
+private fun <T> nullSafeSet(from: T?, to: Consumer<T>) {
+    from?.let { to.accept(it) }
 }
 
-private fun nullSafeSetEnum(from: Enum<*>?, to: KMutableProperty0<String>) {
-    from?.let { to.set(it.name) }
+private fun nullSafeSetEnum(from: Enum<*>?, to: Consumer<String>) {
+    from?.let { to.accept(it.name) }
 }
 
+inline fun <reified T : Enum<T>> safeValueOf(type: String): T? {
+    return try {
+        java.lang.Enum.valueOf(T::class.java, type)
+    } catch (e: IllegalArgumentException) {
+        null
+    }
+}

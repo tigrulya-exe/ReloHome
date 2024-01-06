@@ -9,7 +9,7 @@ import exe.tigrulya.relohome.model.UserCreateDto
 import exe.tigrulya.relohome.model.UserSearchOptionsDto
 import io.grpc.ManagedChannelBuilder
 
-class GrpcUserHandlerGateway(serverUrl: String) : UserHandlerGateway {
+class GrpcUserHandlerClient(serverUrl: String) : UserHandlerGateway {
 
     private val grpcClient: UserHandlerGatewayGrpcKt.UserHandlerGatewayCoroutineStub
 

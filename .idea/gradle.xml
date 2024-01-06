@@ -17,6 +17,7 @@
             <option value="$PROJECT_DIR$/flat-ads-fetchers/fetcher-ssge" />
             <option value="$PROJECT_DIR$/flat-ads-handler" />
             <option value="$PROJECT_DIR$/flat-ads-notifier" />
+            <option value="$PROJECT_DIR$/flat-ads-notifier/notifier-base" />
             <option value="$PROJECT_DIR$/flat-ads-notifier/notifier-telegram" />
           </set>
         </option>

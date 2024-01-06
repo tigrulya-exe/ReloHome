@@ -6,6 +6,7 @@ val telegramBotsVersion = "6.8.0"
 
 dependencies {
     implementation(project(":flat-ads-base"))
+    implementation(project(":flat-ads-notifier:notifier-base"))
 
     implementation("org.telegram:telegrambots:$telegramBotsVersion")
     implementation("org.telegram:telegrambots-abilities:$telegramBotsVersion")

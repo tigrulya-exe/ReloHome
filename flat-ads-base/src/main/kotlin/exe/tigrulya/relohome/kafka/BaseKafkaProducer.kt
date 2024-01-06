@@ -10,7 +10,7 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 class BaseKafkaProducer<K, V>(
-    private val kafkaConfig: KafkaConfig,
+    private val kafkaConfig: KafkaProducerConfig,
     private val keySerializer: Class<out Serializer<*>>,
     private val valueSerializer: Class<out Serializer<*>>
 ) {
@@ -29,7 +29,7 @@ class BaseKafkaProducer<K, V>(
         }
     }
 
-    private fun buildConfig(): Map<String, String> = kafkaConfig.additionalConfig.toMutableMap().also {
+    private fun buildConfig(): Map<String, Any> = kafkaConfig.additionalConfig.toMutableMap().also {
         it[ProducerConfig.BOOTSTRAP_SERVERS_CONFIG] = kafkaConfig.bootstrapServers
         it[ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG] = keySerializer.name
         it[ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG] = valueSerializer.name

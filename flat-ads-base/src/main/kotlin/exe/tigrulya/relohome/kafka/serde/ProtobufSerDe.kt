@@ -12,7 +12,7 @@ class ProtobufSerializer<T : Message> : Serializer<T> {
 class ProtobufDeserializer<T : Message> : Deserializer<T> {
 
     companion object {
-        const val MESSAGE_CLASS: String = "protobuf.deserializer.class"
+        const val MESSAGE_CLASS: String = "protobuf.message.class"
     }
 
     private lateinit var protoParser: Parser<T>
@@ -27,7 +27,7 @@ class ProtobufDeserializer<T : Message> : Deserializer<T> {
             else -> throw IllegalArgumentException("$MESSAGE_CLASS option value's type should be class")
         }
 
-        protoParser = innerClass.getDeclaredConstructor().newInstance().parserForType as Parser<T>
+        protoParser = innerClass.getMethod("parser").invoke(null) as Parser<T>
     }
 
     override fun deserialize(topic: String?, data: ByteArray?): T = protoParser.parseFrom(data)
