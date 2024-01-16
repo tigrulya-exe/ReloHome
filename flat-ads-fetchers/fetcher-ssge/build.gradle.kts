@@ -8,5 +8,5 @@ dependencies {
 }
 
 application {
-    mainClass.set("exe.tigrulya.relohome.connector.listam.MainKt")
+    mainClass.set("exe.tigrulya.relohome.ssge")
 }

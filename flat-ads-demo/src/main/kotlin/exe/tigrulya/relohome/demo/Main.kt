@@ -7,7 +7,6 @@ import exe.tigrulya.relohome.handler.HandlerEntryPoint
 import exe.tigrulya.relohome.kafka.KafkaProducerConfig
 import exe.tigrulya.relohome.notifier.telegram.NotifierEntryPoint
 import exe.tigrulya.relohome.ssge.SsGeFetcher
-import exe.tigrulya.relohome.ssge.SsGeFlatAdMapper
 import kotlinx.coroutines.runBlocking
 import java.time.temporal.ChronoUnit
 import kotlin.concurrent.thread
@@ -25,10 +24,9 @@ fun main(args: Array<String>) {
 
     runBlocking {
         val runner = ExternalFetcherRunner(
-            connector = SsGeFetcher(
+            fetcher = SsGeFetcher(
                 lastHandledAdTimestampProvider = WindowTillNowTimestampProvider(10, ChronoUnit.HOURS)
             ),
-            flatAdMapper = SsGeFlatAdMapper(),
             outCollector = KafkaFlatAdProducer(
                 KafkaProducerConfig(
                     topic = "flat_handler_ads",

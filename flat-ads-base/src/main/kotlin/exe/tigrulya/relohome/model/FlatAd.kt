@@ -38,10 +38,10 @@ data class Price(
 
 data class FlatInfo(
     val floor: Int,
-    val totalFloors: Int?,
-    val spaceSquareMeters: Int?,
-    val rooms: Int?,
-    val bedrooms: Int?,
+    val totalFloors: Int? = null,
+    val spaceSquareMeters: Int? = null,
+    val rooms: Int? = null,
+    val bedrooms: Int? = null,
     val buildingType: BuildingType? = null,
     val flatType: FlatType? = null
 ) {
@@ -80,8 +80,8 @@ data class FlatAd(
     val title: String,
     val address: Address,
     val info: FlatInfo,
-    val price: Price?,
-    val description: String?,
+    val price: Price? = null,
+    val description: String? = null,
     val contacts: Contacts,
     val serviceId: String,
     val images: List<Image> = listOf(),

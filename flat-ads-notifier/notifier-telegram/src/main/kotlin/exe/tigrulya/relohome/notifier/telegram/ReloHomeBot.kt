@@ -205,12 +205,18 @@ class ReloHomeBot(
     override suspend fun onNewAd(userId: String, flatAd: FlatAd) {
         logger.info("Send ad ${flatAd.id} to $userId")
         // todo move template to file
+        // todo move this to ad handler to render template for each fetcher separately
         val adText = """
             ${flatAd.title}
 
             ${flatAd.description}
-
+            
+            Floor: ${flatAd.info.floor}
+            Area: ${flatAd.info.spaceSquareMeters}
+            Address: ${flatAd.address.subDistrict}, ${flatAd.address.street} 
+            
             Price: ${flatAd.price}
+            
             Link: ${flatAd.contacts.flatServiceLink}
         """.trimIndent()
 

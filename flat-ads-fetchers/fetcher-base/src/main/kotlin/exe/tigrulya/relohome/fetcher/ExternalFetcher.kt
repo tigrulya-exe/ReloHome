@@ -6,7 +6,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.runBlocking
 import java.time.Instant
-import kotlin.math.max
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -16,6 +15,8 @@ interface FlatAdMapper<T> {
 
 interface ExternalFetcher<T> {
     fun fetchAds(): Flow<T>
+
+    fun flatAdMapper(): FlatAdMapper<T>
 }
 
 abstract class AbstractExternalFetcher<T>(
@@ -25,7 +26,7 @@ abstract class AbstractExternalFetcher<T>(
     private val pageFetchDelay: Duration = 5.seconds
 ) : ExternalFetcher<T> {
 
-    lateinit var lastHandledAdTime: Instant
+    private lateinit var lastHandledAdTime: Instant
 
     override fun fetchAds(): Flow<T> = flow {
         while (true) {
@@ -41,7 +42,7 @@ abstract class AbstractExternalFetcher<T>(
         lastHandledAdTime = lastHandledAdTimestampProvider.provide() ?: Instant.now()
         var lastHandledAdInBatchTime = lastHandledAdTime
         do {
-            val fetchResult = fetchPage(collector, pageNum)
+            val fetchResult = fetchPage(collector, pageNum, lastHandledAdTime)
             lastHandledAdInBatchTime = maxOf(lastHandledAdInBatchTime, fetchResult.lastAdTimestamp)
             when (fetchResult) {
                 is FetchResult.NextPageRequired -> ++pageNum
@@ -54,7 +55,8 @@ abstract class AbstractExternalFetcher<T>(
 
     protected abstract suspend fun fetchPage(
         collector: FlowCollector<T>,
-        page: Int
+        page: Int,
+        lastHandledAdTime: Instant
     ): FetchResult
 
     sealed class FetchResult(val lastAdTimestamp: Instant) {
@@ -65,12 +67,12 @@ abstract class AbstractExternalFetcher<T>(
 }
 
 class ExternalFetcherRunner<T>(
-    private val connector: ExternalFetcher<T>,
-    private val flatAdMapper: FlatAdMapper<T>,
+    private val fetcher: ExternalFetcher<T>,
     private val outCollector: FlatAdHandlerGateway
 ) {
     fun run() = runBlocking {
-        connector.fetchAds()
+        val flatAdMapper = fetcher.flatAdMapper()
+        fetcher.fetchAds()
             .map { flatAdMapper.toFlatAd(it) }
             .buffer()
             .collect { outCollector.handle(it) }

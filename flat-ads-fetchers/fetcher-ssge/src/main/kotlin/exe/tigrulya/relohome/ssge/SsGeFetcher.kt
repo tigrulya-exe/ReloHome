@@ -1,6 +1,7 @@
 package exe.tigrulya.relohome.ssge
 
 import exe.tigrulya.relohome.fetcher.AbstractExternalFetcher
+import exe.tigrulya.relohome.fetcher.FlatAdMapper
 import exe.tigrulya.relohome.fetcher.LastHandledAdTimestampProvider
 import exe.tigrulya.relohome.fetcher.WindowTillNowTimestampProvider
 import exe.tigrulya.relohome.util.LoggerProperty
@@ -23,10 +24,13 @@ class SsGeFetcher(
     private val logger by LoggerProperty()
 
     private val client = SsGeClient(baseUrl)
-    private lateinit var lastHandledPageAdTime: Instant
 
-    override suspend fun fetchPage(collector: FlowCollector<SsGeFlatAd>, page: Int): FetchResult {
-        lastHandledPageAdTime = lastHandledAdTime
+    override suspend fun fetchPage(
+        collector: FlowCollector<SsGeFlatAd>,
+        page: Int,
+        lastHandledAdTime: Instant
+    ): FetchResult {
+        var lastHandledPageAdTime = lastHandledAdTime
         val ads = client.fetchAds(
             GetSsGeFlatAdsRequest(page = page)
         )
@@ -44,4 +48,6 @@ class SsGeFetcher(
             FetchResult.Completed(lastHandledPageAdTime)
         }
     }
+
+    override fun flatAdMapper(): FlatAdMapper<SsGeFlatAd> = SsGeFlatAdMapper()
 }

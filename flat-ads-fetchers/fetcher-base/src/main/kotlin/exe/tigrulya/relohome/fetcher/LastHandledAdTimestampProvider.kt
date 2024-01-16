@@ -1,17 +1,19 @@
 package exe.tigrulya.relohome.fetcher
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.nio.ByteBuffer
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.time.Instant
 import java.time.temporal.TemporalUnit
-import java.util.*
-import kotlin.concurrent.scheduleAtFixedRate
 import kotlin.io.path.createFile
 import kotlin.io.path.exists
 import kotlin.io.path.readBytes
 import kotlin.io.path.writeBytes
-import kotlin.time.Duration
 
 interface LastHandledAdTimestampProvider {
     fun provide(): Instant?
@@ -50,22 +52,22 @@ class WindowTillNowTimestampProvider(
 
 class FileBackedLastHandledAdTimestampProvider(
     private val snapshotFilePath: Path = Paths.get("last_ad.timestamp"),
-    snapshotPeriod: Duration
 ) : LastHandledAdTimestampProvider, AutoCloseable {
     private var timestamp: Instant? = null
-    private val timer: Timer = Timer("Last handled timestamp snapshot file updater timer", true)
+    private val timestampChannel = Channel<Instant>(
+        capacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
 
     companion object {
-        fun serializeTimestamp(timestamp: Instant?, path: Path) {
-            timestamp?.let {
-                val bytes = ByteBuffer.allocate(Long.SIZE_BYTES)
-                    .putLong(it.toEpochMilli())
-                    .array()
-                path.writeBytes(bytes)
-            }
+        fun serializeTimestamp(timestamp: Instant, path: Path) {
+            val bytes = ByteBuffer.allocate(Long.SIZE_BYTES)
+                .putLong(timestamp.toEpochMilli())
+                .array()
+            path.writeBytes(bytes)
         }
 
-        fun deserializeTimestamp(path: Path): Instant? {
+        fun deserializeTimestamp(path: Path): Instant {
             val epochMilli = ByteBuffer.wrap(path.readBytes()).getLong()
             return Instant.ofEpochMilli(epochMilli)
         }
@@ -77,8 +79,12 @@ class FileBackedLastHandledAdTimestampProvider(
         } else {
             timestamp = deserializeTimestamp(snapshotFilePath)
         }
-        timer.scheduleAtFixedRate(0L, snapshotPeriod.inWholeMilliseconds) {
-            serializeTimestamp(timestamp, snapshotFilePath)
+        runBlocking {
+            launch(Dispatchers.IO) {
+                for (timestamp in timestampChannel) {
+                    serializeTimestamp(timestamp, snapshotFilePath)
+                }
+            }
         }
     }
 
@@ -86,9 +92,10 @@ class FileBackedLastHandledAdTimestampProvider(
 
     override fun update(newVal: Instant) {
         timestamp = newVal
+        timestampChannel.trySend(newVal)
     }
 
     override fun close() {
-        timer.cancel()
+        timestampChannel.close()
     }
 }

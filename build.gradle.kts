@@ -56,6 +56,30 @@ subprojects {
     tasks.test {
         useJUnitPlatform()
     }
+
+    tasks.register<Jar>("fatJar") {
+        group = "build"
+        // TODO
+        manifest.attributes["Main-Class"] = "exe.tigrulya.relohome.notifier.telegram.Main"
+        archiveBaseName.set("${project.name}-fat")
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+        val dependencies = configurations
+            .runtimeClasspath
+            .get()
+            .map {
+                zipTree(it).matching {
+                    exclude(
+                        listOf(
+                            "META-INF/*.RSA", "META-INF/*.SF", "META-INF/*.DSA"
+                        )
+                    )
+                }
+            }
+
+        from(dependencies)
+        with(tasks.jar.get())
+    }
 }
 
 liquibase {
