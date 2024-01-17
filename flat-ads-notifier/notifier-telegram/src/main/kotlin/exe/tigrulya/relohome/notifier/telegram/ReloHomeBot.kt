@@ -4,6 +4,8 @@ import exe.tigrulya.relohome.api.FlatAdNotifierGateway
 import exe.tigrulya.relohome.api.UserHandlerGateway
 import exe.tigrulya.relohome.model.FlatAd
 import exe.tigrulya.relohome.model.Image
+import exe.tigrulya.relohome.notifier.template.MustacheTemplateEngine
+import exe.tigrulya.relohome.notifier.template.TemplateEngine
 import exe.tigrulya.relohome.util.LoggerProperty
 import kotlinx.coroutines.runBlocking
 import org.telegram.abilitybots.api.bot.DefaultAbilities
@@ -34,6 +36,8 @@ class ReloHomeBot(
     private val creatorId: Long,
     private val userHandlerGateway: UserHandlerGateway,
     private val searchOptionsDeserializer: SearchOptionsDeserializer,
+    private val handlerWebUrl: String = "https://127.0.0.1:8443",
+    private val templateEngine: TemplateEngine = MustacheTemplateEngine(),
     requestsPerSecond: Int = 10
 ) : RateLimitingAbilityBot(botToken, botUsername, createToggle(), createBotOptions(), requestsPerSecond),
     FlatAdNotifierGateway {
@@ -88,7 +92,6 @@ class ReloHomeBot(
             .keyboardRow(listOf(back))
             .keyboardRow(listOf(url))
             .build()
-
 
 
 //        execute(SetChatMenuButton().apply {
@@ -161,7 +164,7 @@ class ReloHomeBot(
             .text("Change settings")
             .webApp(
                 WebAppInfo.builder()
-                    .url("https://127.0.0.1:8443/forms/tg_form/${message.from.id}")
+                    .url("${handlerWebUrl}/forms/tg_form/${message.from.id}")
                     .build()
             )
             .build()
@@ -202,30 +205,18 @@ class ReloHomeBot(
         userHandlerGateway.setSearchOptions(userId, searchOptions)
     }
 
-    override suspend fun onNewAd(userId: String, flatAd: FlatAd) {
-        logger.info("Send ad ${flatAd.id} to $userId")
-        // todo move template to file
-        // todo move this to ad handler to render template for each fetcher separately
-        val adText = """
-            ${flatAd.title}
+    override suspend fun onNewAd(userIds: List<String>, flatAd: FlatAd) {
+        logger.info("Send ad ${flatAd.id} to $userIds")
 
-            ${flatAd.description}
-            
-            Floor: ${flatAd.info.floor}
-            Area: ${flatAd.info.spaceSquareMeters}
-            Address: ${flatAd.address.subDistrict}, ${flatAd.address.street} 
-            
-            Price: ${flatAd.price}
-            
-            Link: ${flatAd.contacts.flatServiceLink}
-        """.trimIndent()
+        val flatAdMessage = templateEngine.compile("templates/new-flat-ad.mustache", flatAd)
 
         if (flatAd.images.isEmpty()) {
-            sendAdWithoutImages(userId, adText)
+            // todo maybe send in thread-pool
+            userIds.forEach { sendAdWithoutImages(it, flatAdMessage) }
             return
         }
 
-        sendAdWithImages(userId, adText, flatAd.images)
+        userIds.forEach { sendAdWithImages(it, flatAdMessage, flatAd.images) }
     }
 
     private fun sendAdWithImages(userId: String, text: String, images: List<Image>) {

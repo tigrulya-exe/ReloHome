@@ -11,17 +11,18 @@ import org.apache.kafka.common.serialization.StringDeserializer
 
 class KafkaFlatAdConsumer(kafkaConfig: KafkaConsumerConfig) {
 
-    private val kafkaConsumer = BaseKafkaConsumer<String, FlatAdOuterClass.FlatAd>(
+    private val kafkaConsumer = BaseKafkaConsumer<String, FlatAdOuterClass.FlatAdMessage>(
         kafkaConfig = kafkaConfig.also {
-            it.additionalConfig[ProtobufDeserializer.MESSAGE_CLASS] = FlatAdOuterClass.FlatAd::class.java
+            it.additionalConfig[ProtobufDeserializer.MESSAGE_CLASS] = FlatAdOuterClass.FlatAdMessage::class.java
         },
         keyDeserializer = StringDeserializer::class.java,
         valueDeserializer = ProtobufDeserializer::class.java
     )
 
-    fun handleAds(handler: suspend (String, FlatAd) -> Unit) = runBlocking {
-        kafkaConsumer.consumeWithKey { key, flatAdProto ->
-            handler.invoke(key, flatAdProto.toDomain())
+    fun handleAds(handler: suspend (List<String>, FlatAd) -> Unit) = runBlocking {
+        kafkaConsumer.consume { flatAdProto ->
+            val flatAdMessage = flatAdProto.toDomain()
+            handler.invoke(flatAdMessage.userIds, flatAdMessage.flatAd)
         }
     }
 }

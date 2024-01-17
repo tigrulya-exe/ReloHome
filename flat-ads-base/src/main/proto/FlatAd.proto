@@ -2,6 +2,11 @@ syntax = "proto3";
 
 package exe.tigrulya.relohome.api;
 
+message FlatAdMessage {
+  repeated string userIds = 1;
+  FlatAd flatAd = 2;
+}
+
 message FlatAd {
   string id = 1;
   string title = 2;

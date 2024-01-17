@@ -13,8 +13,8 @@ class FlatAdService(
     private val notifierGateway: FlatAdNotifierGateway
 ) : FlatAdHandlerGateway {
     override suspend fun handle(flatAd: FlatAd) {
-        getUserExternalIdsForFlatAd(flatAd)
-            .forEach { notifierGateway.onNewAd(it, flatAd) }
+        val flatAdReceivers = getUserExternalIdsForFlatAd(flatAd)
+        notifierGateway.onNewAd(flatAdReceivers, flatAd)
     }
 
     fun getDistricts(cityName: String): List<String> = transaction {

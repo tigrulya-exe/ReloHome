@@ -86,3 +86,8 @@ data class FlatAd(
     val serviceId: String,
     val images: List<Image> = listOf(),
 )
+
+data class FlatAdMessage(
+    val userIds: List<String>,
+    val flatAd: FlatAd
+)

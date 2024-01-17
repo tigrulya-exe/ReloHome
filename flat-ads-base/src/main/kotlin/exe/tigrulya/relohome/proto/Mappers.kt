@@ -3,7 +3,12 @@ package exe.tigrulya.relohome.proto
 import exe.tigrulya.relohome.api.FlatAdOuterClass
 import exe.tigrulya.relohome.model.*
 import java.util.function.Consumer
-import kotlin.reflect.KMutableProperty0
+
+fun FlatAdMessage.toProto(): FlatAdOuterClass.FlatAdMessage = FlatAdOuterClass.FlatAdMessage.newBuilder()
+    .also { proto ->
+        proto.addAllUserIds(userIds)
+        proto.flatAd = flatAd.toProto()
+    }.build()
 
 fun FlatAd.toProto(): FlatAdOuterClass.FlatAd = FlatAdOuterClass.FlatAd.newBuilder()
     .also { proto ->
@@ -18,7 +23,6 @@ fun FlatAd.toProto(): FlatAdOuterClass.FlatAd = FlatAdOuterClass.FlatAd.newBuild
         proto.serviceId = serviceId
         proto.addAllImages(images.map { it.url })
     }.build()
-
 
 fun Address.toProto(): FlatAdOuterClass.Address = FlatAdOuterClass.Address.newBuilder()
     .also { proto ->
@@ -50,6 +54,11 @@ fun Contacts.toProto(): FlatAdOuterClass.Contacts = FlatAdOuterClass.Contacts.ne
         nullSafeSet(phoneNumber, proto::setPhoneNumber)
         proto.putAllMessengerIds(messengerIds.mapKeys { it.key.name })
     }.build()
+
+fun FlatAdOuterClass.FlatAdMessage.toDomain(): FlatAdMessage = FlatAdMessage(
+    userIds = userIdsList,
+    flatAd = flatAd.toDomain()
+)
 
 fun FlatAdOuterClass.FlatAd.toDomain(): FlatAd = FlatAd(
     id = id,

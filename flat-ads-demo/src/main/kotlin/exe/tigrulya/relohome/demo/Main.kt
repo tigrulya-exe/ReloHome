@@ -25,7 +25,7 @@ fun main(args: Array<String>) {
     runBlocking {
         val runner = ExternalFetcherRunner(
             fetcher = SsGeFetcher(
-                lastHandledAdTimestampProvider = WindowTillNowTimestampProvider(10, ChronoUnit.HOURS)
+                lastHandledAdTimestampProvider = WindowTillNowTimestampProvider(10, ChronoUnit.MINUTES)
             ),
             outCollector = KafkaFlatAdProducer(
                 KafkaProducerConfig(

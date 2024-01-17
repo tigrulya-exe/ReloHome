@@ -17,9 +17,9 @@ object NotifierEntryPoint {
     fun start(args: Array<String>) {
         val botsApi = TelegramBotsApi(DefaultBotSession::class.java)
         val reloHomeBot = ReloHomeBot(
-            System.getenv("BOT_TOKEN"),
-            BOT_USERNAME,
-            MY_ID,
+            botToken = System.getenv("BOT_TOKEN"),
+            botUsername = BOT_USERNAME,
+            creatorId = MY_ID,
             GrpcUserHandlerClient("localhost:8999"),
             JsonSearchOptionsDeserializer()
         )
@@ -35,8 +35,8 @@ object NotifierEntryPoint {
         val flatAdConsumer = KafkaFlatAdConsumer(kafkaConsumerConfig)
 
         thread {
-            flatAdConsumer.handleAds { userId, flatAd ->
-                reloHomeBot.onNewAd(userId, flatAd)
+            flatAdConsumer.handleAds { userIds, flatAd ->
+                reloHomeBot.onNewAd(userIds, flatAd)
             }
         }
     }
