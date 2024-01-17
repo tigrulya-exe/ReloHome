@@ -29,6 +29,7 @@ class FlatAdService(
             .slice(UserSearchOptions.externalId)
             .select(UserSearchOptions.cityName eq flatAd.address.city.name)
 
+        // todo mb it would be better to use prepared statement here
         flatAd.info.rooms?.let {
             query.andWhere {
                 (UserSearchOptions.roomsTo.isNull() or (UserSearchOptions.roomsTo greaterEq it)) and

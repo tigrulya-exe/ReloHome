@@ -33,9 +33,11 @@ class SsGeClient(
             }
         }
         config.install(Logging) {
-            level = LogLevel.NONE
+            level = LogLevel.BODY
         }
     }
+
+    // "/v1/RealEstate/story-detail/{applicationId}
 
     suspend fun fetchAds(request: GetSsGeFlatAdsRequest): List<SsGeFlatAd> {
         // TODO encapsulate auth token reacquire logic in client

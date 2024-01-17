@@ -19,13 +19,13 @@ fun main(args: Array<String>) {
     }
 
     thread {
-        NotifierEntryPoint.start(args)
+        NotifierEntryPoint.start()
     }
 
     runBlocking {
         val runner = ExternalFetcherRunner(
             fetcher = SsGeFetcher(
-                lastHandledAdTimestampProvider = WindowTillNowTimestampProvider(10, ChronoUnit.MINUTES)
+                lastHandledAdTimestampProvider = WindowTillNowTimestampProvider(20, ChronoUnit.HOURS)
             ),
             outCollector = KafkaFlatAdProducer(
                 KafkaProducerConfig(

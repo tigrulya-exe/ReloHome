@@ -16,6 +16,7 @@ class SsGeFlatAdMapper : FlatAdMapper<SsGeFlatAd> {
                 district = districtTitle,
                 subDistrict = subdistrictTitle,
                 street = streetTitle,
+                building = streetNumber
                 //TODO add here location parse from gmaps from description
             )
         }

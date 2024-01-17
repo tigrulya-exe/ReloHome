@@ -37,4 +37,6 @@ dependencies {
     api("io.grpc:grpc-stub:$grpcVersionJava")
     api("io.grpc:grpc-kotlin-stub:$grpcVersionKotlin")
     implementation("io.grpc:grpc-netty:$grpcVersionJava")
+
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.+")
 }

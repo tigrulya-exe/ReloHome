@@ -21,3 +21,7 @@ class KafkaConsumerConfig(
     bootstrapServers: String,
     additionalConfig: MutableMap<String, Any> = mutableMapOf()
 ) : KafkaConfig(bootstrapServers, additionalConfig)
+
+fun splitTopics(rawTopics: String): List<String> {
+    return rawTopics.split(",")
+}

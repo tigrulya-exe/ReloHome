@@ -1,6 +1,15 @@
 package exe.tigrulya.relohome.handler
 
 import com.github.mustachejava.DefaultMustacheFactory
+import exe.tigrulya.relohome.config.Configuration
+import exe.tigrulya.relohome.handler.config.ConfigOptions.FLAT_AD_HANDLER_DB_URL
+import exe.tigrulya.relohome.handler.config.ConfigOptions.FLAT_AD_HANDLER_GATEWAY_PORT
+import exe.tigrulya.relohome.handler.config.ConfigOptions.KAFKA_FLAT_AD_CONSUMER_BOOTSTRAP_SERVERS
+import exe.tigrulya.relohome.handler.config.ConfigOptions.KAFKA_FLAT_AD_CONSUMER_GROUP
+import exe.tigrulya.relohome.handler.config.ConfigOptions.KAFKA_FLAT_AD_CONSUMER_TOPICS
+import exe.tigrulya.relohome.handler.config.ConfigOptions.KAFKA_FLAT_AD_FETCH_TIMEOUT
+import exe.tigrulya.relohome.handler.config.ConfigOptions.KAFKA_FLAT_AD_PRODUCER_BOOTSTRAP_SERVERS
+import exe.tigrulya.relohome.handler.config.ConfigOptions.KAFKA_FLAT_AD_PRODUCER_TOPIC
 import exe.tigrulya.relohome.handler.controller.configureRouting
 import exe.tigrulya.relohome.handler.db.HikariPooledDataSourceFactory
 import exe.tigrulya.relohome.handler.db.migration.MigrationManager
@@ -11,6 +20,7 @@ import exe.tigrulya.relohome.handler.service.FlatAdService
 import exe.tigrulya.relohome.handler.service.UserService
 import exe.tigrulya.relohome.kafka.KafkaConsumerConfig
 import exe.tigrulya.relohome.kafka.KafkaProducerConfig
+import exe.tigrulya.relohome.kafka.splitTopics
 import io.ktor.server.application.*
 import io.ktor.server.mustache.*
 import io.ktor.server.plugins.callloging.*
@@ -19,7 +29,6 @@ import org.jetbrains.exposed.sql.Database
 import org.slf4j.event.Level
 import javax.sql.DataSource
 import kotlin.concurrent.thread
-import kotlin.time.Duration.Companion.seconds
 
 fun main(args: Array<String>) = HandlerEntryPoint.start(args)
 
@@ -28,20 +37,21 @@ object ServiceRegistry {
     val userService: UserService = UserService()
     val flatAdService: FlatAdService
     val flatAdConsumer: KafkaFlatAdConsumer
+    val config: Configuration = Configuration.fromResource("handler.yaml")
 
     init {
         // todo parse from application properties
         val kafkaConsumerConfig = KafkaConsumerConfig(
-            topics = listOf("flat_handler_ads"),
-            group = "flat_handler",
-            fetchTimeout = 1.seconds,
-            bootstrapServers = "localhost:9094"
+            bootstrapServers = config.get(KAFKA_FLAT_AD_CONSUMER_BOOTSTRAP_SERVERS),
+            topics = splitTopics(config.get(KAFKA_FLAT_AD_CONSUMER_TOPICS)),
+            group = config.get(KAFKA_FLAT_AD_CONSUMER_GROUP),
+            fetchTimeout = config.get(KAFKA_FLAT_AD_FETCH_TIMEOUT)
         )
         flatAdConsumer = KafkaFlatAdConsumer(kafkaConsumerConfig)
 
         val kafkaProducerConfig = KafkaProducerConfig(
-            topic = "flat_notifier_ads",
-            bootstrapServers = "localhost:9094"
+            bootstrapServers = config.get(KAFKA_FLAT_AD_PRODUCER_BOOTSTRAP_SERVERS),
+            topic = config.get(KAFKA_FLAT_AD_PRODUCER_TOPIC)
         )
         val kafkaProducer = KafkaFlatAdProducer(kafkaProducerConfig)
 
@@ -66,11 +76,13 @@ fun Application.module() {
 object HandlerEntryPoint {
     fun start(args: Array<String>) {
         // build db schema
-        StartUtils.runMigrations()
+        val dbUrl = ServiceRegistry.config.get(FLAT_AD_HANDLER_DB_URL)
+        StartUtils.runMigrations(dbUrl)
 
         // start GRPC server
         // todo mb replace with http server?...
-        val server = FlatAdsHandlerGrpcServer(port = 8999, userService = ServiceRegistry.userService)
+        val grpcPort = ServiceRegistry.config.get(FLAT_AD_HANDLER_GATEWAY_PORT)
+        val server = FlatAdsHandlerGrpcServer(port = grpcPort, userService = ServiceRegistry.userService)
         server.start()
 
         // start kafka consumer (async)
@@ -86,14 +98,12 @@ object HandlerEntryPoint {
 }
 
 object StartUtils {
-    private const val DEFAULT_DB_URL = "jdbc:postgresql://localhost:65432/ReloHome?user=root&password=toor"
-
-    fun runMigrations(jdbcUrl: String = DEFAULT_DB_URL) {
+    fun runMigrations(jdbcUrl: String) {
         val dataSource = connectToDb(jdbcUrl)
         MigrationManager.newInstance(dataSource).migrate()
     }
 
-    fun connectToDb(jdbcUrl: String = DEFAULT_DB_URL): DataSource = HikariPooledDataSourceFactory(jdbcUrl)
+    fun connectToDb(jdbcUrl: String): DataSource = HikariPooledDataSourceFactory(jdbcUrl)
         .create()
         .also {
             Database.connect(it)

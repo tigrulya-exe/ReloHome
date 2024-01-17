@@ -11,10 +11,10 @@ import kotlin.time.Duration.Companion.seconds
 private const val MY_ID: Long = 479226955
 private const val BOT_USERNAME = "relo_home_bot"
 
-fun main(args: Array<String>) = NotifierEntryPoint.start(args)
+fun main(args: Array<String>) = NotifierEntryPoint.start()
 
 object NotifierEntryPoint {
-    fun start(args: Array<String>) {
+    fun start() {
         val botsApi = TelegramBotsApi(DefaultBotSession::class.java)
         val reloHomeBot = ReloHomeBot(
             botToken = System.getenv("BOT_TOKEN"),
