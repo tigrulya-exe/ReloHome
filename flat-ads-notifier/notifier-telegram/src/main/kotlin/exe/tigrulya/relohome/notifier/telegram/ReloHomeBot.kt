@@ -233,6 +233,7 @@ class ReloHomeBot(
             }
         // little hack to attach text to group of images
         imagesGroup[0].caption = text
+        imagesGroup[0].parseMode = "Markdown"
 
         val message = SendMediaGroup()
         message.chatId = userId

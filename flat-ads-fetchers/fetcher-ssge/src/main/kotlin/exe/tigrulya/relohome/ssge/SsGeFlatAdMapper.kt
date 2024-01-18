@@ -2,12 +2,14 @@ package exe.tigrulya.relohome.ssge
 
 import exe.tigrulya.relohome.fetcher.FlatAdMapper
 import exe.tigrulya.relohome.model.*
+import exe.tigrulya.relohome.ssge.model.ApplicationPhone
 import exe.tigrulya.relohome.ssge.model.FlatAdImageContainer
 import exe.tigrulya.relohome.ssge.model.SsGeFlatAd
+import exe.tigrulya.relohome.ssge.model.SsGeFlatAdContainer
 
-class SsGeFlatAdMapper : FlatAdMapper<SsGeFlatAd> {
-    override fun toFlatAd(externalFlatAd: SsGeFlatAd): FlatAd {
-        val address = with(externalFlatAd.address) {
+class SsGeFlatAdMapper(private val maxAdImages: Int = 6) : FlatAdMapper<SsGeFlatAdContainer> {
+    override fun toFlatAd(externalFlatAd: SsGeFlatAdContainer): FlatAd = with(externalFlatAd) {
+        val address = with(applicationData.address) {
             Address(
                 city = City(
                     name = "Tbilisi",
@@ -16,12 +18,12 @@ class SsGeFlatAdMapper : FlatAdMapper<SsGeFlatAd> {
                 district = districtTitle,
                 subDistrict = subdistrictTitle,
                 street = streetTitle,
-                building = streetNumber
-                //TODO add here location parse from gmaps from description
+                building = streetNumber,
+                location = getLocation(applicationData)
             )
         }
 
-        val price = with(externalFlatAd.price) {
+        val price = with(applicationData.price) {
             Price(
                 amount = this.priceUsd,
                 currency = Price.Currency.USD
@@ -29,31 +31,31 @@ class SsGeFlatAdMapper : FlatAdMapper<SsGeFlatAd> {
         }
 
         val flatInfo = FlatInfo(
-            floor = externalFlatAd.floorNumber.toInt(),
-            totalFloors = externalFlatAd.totalAmountOfFloor,
-            spaceSquareMeters = externalFlatAd.totalArea,
-            // todo
-            rooms = externalFlatAd.numberOfBedrooms,
-            bedrooms = externalFlatAd.numberOfBedrooms
+            floor = applicationData.floor.toInt(),
+            totalFloors = applicationData.floors.toInt(),
+            spaceSquareMeters = applicationData.totalArea.toInt(),
+            rooms = applicationData.rooms,
+            bedrooms = applicationData.bedrooms
         )
 
         val contacts = Contacts(
-            flatServiceLink = "https://home.ss.ge/en/real-estate/${externalFlatAd.detailUrl}",
-            // todo
-            phoneNumber = null
+            flatServiceLink = externalFlatAd.fullUrl,
+            phoneNumber = getPhoneNumber(applicationData.applicationPhones)
+            // todo add messenger ids
         )
 
-        val pictures = externalFlatAd.appImages
+        val pictures = applicationData.appImages
+            ?.take(maxAdImages)
             ?.sortedBy { it.orderNo }
             ?.map { it.toPicture() }
             ?: listOf()
 
         return FlatAd(
-            id = externalFlatAd.applicationId.toString(),
-            title = externalFlatAd.title,
+            id = applicationData.applicationId.toString(),
+            title = applicationData.title,
             address = address,
             price = price,
-            description = externalFlatAd.description,
+            description = applicationData.description.text,
             info = flatInfo,
             contacts = contacts,
             serviceId = SsGeFetcher.FETCHER_ID,
@@ -63,5 +65,24 @@ class SsGeFlatAdMapper : FlatAdMapper<SsGeFlatAd> {
 
     private fun FlatAdImageContainer.toPicture(): Image {
         return Image(fileName.replace("_Thumb", ""))
+    }
+
+    private fun getLocation(flatAd: SsGeFlatAd): Location? {
+        if (!isCorrectCoordinate(flatAd.locationLatitude) || !isCorrectCoordinate(flatAd.locationLongitude)) {
+            return null
+        }
+        return Location(flatAd.locationLatitude!!, flatAd.locationLongitude!!)
+    }
+
+    private fun isCorrectCoordinate(coordinate: String?): Boolean {
+        return coordinate?.isNotBlank() ?: false
+    }
+
+    private fun getPhoneNumber(applicationPhones: List<ApplicationPhone>): String? {
+        return if (applicationPhones.isEmpty()) {
+            null
+        } else {
+            applicationPhones.first().phoneNumber
+        }
     }
 }

@@ -27,8 +27,8 @@ message Address {
   optional string subDistrict = 4;
   optional string street = 5;
   optional string building = 6;
-  optional double lat = 7;
-  optional double lon = 8;
+  optional string lat = 7;
+  optional string lon = 8;
   optional string customAddressString = 9;
 }
 

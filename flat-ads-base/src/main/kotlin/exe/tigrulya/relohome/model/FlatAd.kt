@@ -6,8 +6,8 @@ data class City(
 )
 
 data class Location(
-    val lat: Double,
-    val lon: Double
+    val lat: String,
+    val lon: String
 )
 
 data class Address(

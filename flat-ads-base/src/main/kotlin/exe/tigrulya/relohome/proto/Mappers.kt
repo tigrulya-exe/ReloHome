@@ -79,7 +79,7 @@ fun FlatAdOuterClass.Address.toDomain(): Address = Address(
     street = street,
     building = building,
     customAddressString = customAddressString,
-    location = Location(lat, lon)
+    location = if (!hasLat() || !hasLon()) null else Location(lat, lon)
 )
 
 fun FlatAdOuterClass.FlatInfo.toDomain(): FlatInfo = FlatInfo(

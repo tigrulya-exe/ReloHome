@@ -29,7 +29,7 @@ data class GetSsGeFlatAdsRequest(
 )
 
 data class FlatAdImageContainer(
-    // https://static.ss.ge/20230906/12_c226770a-a5a9-4daa-8b4a-44bb5943049f_Thumb.jpg
+    // https://static.ss.ge/20230906/12_c226770a-a5a9-4daa-8b4a-44bb5943049f.jpg
     val fileName: String,
     val orderNo: Int
 )
@@ -40,19 +40,45 @@ data class FlatPrice(
     val currencyType: Currency?
 )
 
+data class ApplicationPhone(
+    val phoneNumber: String?,
+    val hasViber: Boolean,
+    val hasWhatsapp: Boolean
+)
+
+data class SsGeFlatAdInfo(
+    val detailUrl: String,
+    @JsonFormat(
+        pattern = "yyyy-MM-dd'T'HH:mm:ss.[SSSSSSS][SSSSSS][SSSSS][SSSS][SSS][XXX]",
+        timezone = "Asia/Tbilisi"
+    )
+    val orderDate: Instant
+)
+
+data class Description(
+    // original string
+    val text: String?,
+    val en: String?,
+    val ka: String?,
+    val ru: String?
+)
+
 // TODO check non-nullable fields
+data class SsGeFlatAdContainer(
+    val applicationData: SsGeFlatAd,
+    val fullUrl: String
+)
+
 data class SsGeFlatAd(
     // 7661118
     val applicationId: Int,
     val address: SsGeLocation,
     val appImages: List<FlatAdImageContainer>?,
-    val createDate: Instant,
-    val description: String?,
-    // "2-room-flat-for-rent-didi-digomi-7661118"
-    val detailUrl: String?,
-    val floorNumber: String,
-    val totalAmountOfFloor: Int,
-    val numberOfBedrooms: Int,
+    val description: Description,
+    val floor: String,
+    val floors: String,
+    val bedrooms: Int,
+    val rooms: Int,
     // meh, shitty format from backend
     @JsonFormat(
         pattern = "yyyy-MM-dd'T'HH:mm:ss.[SSSSSSS][SSSSSS][SSSSS][SSSS][SSS][XXX]",
@@ -60,10 +86,13 @@ data class SsGeFlatAd(
     )
     val orderDate: Instant,
     val title: String,
-    val totalArea: Int,
-    val price: FlatPrice
+    val totalArea: Double,
+    val price: FlatPrice,
+    val applicationPhones: List<ApplicationPhone>,
+    val locationLatitude: String?,
+    val locationLongitude: String?,
 )
 
 data class SsGeFlatAdsContainer(
-    val realStateItemModel: List<SsGeFlatAd>
+    val realStateItemModel: List<SsGeFlatAdInfo>
 )

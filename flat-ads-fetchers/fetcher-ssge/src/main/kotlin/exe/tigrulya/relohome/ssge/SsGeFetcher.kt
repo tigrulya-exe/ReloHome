@@ -7,16 +7,17 @@ import exe.tigrulya.relohome.fetcher.WindowTillNowTimestampProvider
 import exe.tigrulya.relohome.util.LoggerProperty
 import exe.tigrulya.relohome.ssge.client.SsGeClient
 import exe.tigrulya.relohome.ssge.model.GetSsGeFlatAdsRequest
-import exe.tigrulya.relohome.ssge.model.SsGeFlatAd
-import kotlinx.coroutines.flow.FlowCollector
+import exe.tigrulya.relohome.ssge.model.SsGeFlatAdContainer
+import kotlinx.coroutines.flow.*
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
 class SsGeFetcher(
     baseUrl: String = "https://api-gateway.ss.ge/v1/",
     lastHandledAdTimestampProvider: LastHandledAdTimestampProvider
-    = WindowTillNowTimestampProvider(10, ChronoUnit.MINUTES)
-) : AbstractExternalFetcher<SsGeFlatAd>(lastHandledAdTimestampProvider) {
+    = WindowTillNowTimestampProvider(10, ChronoUnit.MINUTES),
+    private val asyncBufferCapacity: Int = 10
+) : AbstractExternalFetcher<SsGeFlatAdContainer>(lastHandledAdTimestampProvider) {
     companion object {
         const val FETCHER_ID = "ss.ge"
     }
@@ -26,28 +27,32 @@ class SsGeFetcher(
     private val client = SsGeClient(baseUrl)
 
     override suspend fun fetchPage(
-        collector: FlowCollector<SsGeFlatAd>,
+        collector: FlowCollector<SsGeFlatAdContainer>,
         page: Int,
         lastHandledAdTime: Instant
     ): FetchResult {
         var lastHandledPageAdTime = lastHandledAdTime
-        val ads = client.fetchAds(
+        val ads = client.fetchAdInfos(
             GetSsGeFlatAdsRequest(page = page)
         )
 
-        val unseenAds = ads
+        val unseenAdsCount = ads
+            .asFlow()
             .filter { it.orderDate > lastHandledAdTime }
             .onEach { lastHandledPageAdTime = maxOf(lastHandledPageAdTime, it.orderDate) }
+            .map { client.fetchAd(it.detailUrl) }
+            .buffer(asyncBufferCapacity)
             .map { collector.emit(it) }
+            .count()
 
-        logger.info("Fetched ${unseenAds.size} ads from page $page")
+        logger.info("Fetched $unseenAdsCount ads from page $page")
         // ss.ge use to put some "premium" ads on the first page
-        return if (page == 1 || unseenAds.size == ads.size) {
+        return if (page == 1 || unseenAdsCount == ads.size) {
             FetchResult.NextPageRequired(lastHandledPageAdTime)
         } else {
             FetchResult.Completed(lastHandledPageAdTime)
         }
     }
 
-    override fun flatAdMapper(): FlatAdMapper<SsGeFlatAd> = SsGeFlatAdMapper()
+    override fun flatAdMapper(): FlatAdMapper<SsGeFlatAdContainer> = SsGeFlatAdMapper()
 }
