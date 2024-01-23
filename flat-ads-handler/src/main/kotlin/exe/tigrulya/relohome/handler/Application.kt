@@ -86,7 +86,7 @@ object HandlerEntryPoint {
         server.start()
 
         // start kafka consumer (async)
-        thread {
+        thread(name = "FlatAdsHandler Kafka consumer") {
             ServiceRegistry.flatAdConsumer.handleAds { flatAd ->
                 ServiceRegistry.flatAdService.handle(flatAd)
             }

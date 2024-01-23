@@ -1,39 +1,20 @@
 package exe.tigrulya.relohome.demo
 
-import exe.tigrulya.relohome.fetcher.ExternalFetcherRunner
-import exe.tigrulya.relohome.fetcher.KafkaFlatAdProducer
-import exe.tigrulya.relohome.fetcher.WindowTillNowTimestampProvider
 import exe.tigrulya.relohome.handler.HandlerEntryPoint
-import exe.tigrulya.relohome.kafka.KafkaProducerConfig
-import exe.tigrulya.relohome.notifier.telegram.NotifierEntryPoint
-import exe.tigrulya.relohome.ssge.SsGeFetcher
-import kotlinx.coroutines.runBlocking
-import java.time.temporal.ChronoUnit
+import exe.tigrulya.relohome.notifier.telegram.TgNotifierEntryPoint
+import exe.tigrulya.relohome.ssge.SsGeFetcherEntryPoint
 import kotlin.concurrent.thread
 
 
 fun main(args: Array<String>) {
 
-    thread {
+    thread(name = "FlatAdsHandlerMain") {
         HandlerEntryPoint.start(args)
     }
 
-    thread {
-        NotifierEntryPoint.start()
+    thread(name = "TgNotifierMain") {
+        TgNotifierEntryPoint.start()
     }
 
-    runBlocking {
-        val runner = ExternalFetcherRunner(
-            fetcher = SsGeFetcher(
-                lastHandledAdTimestampProvider = WindowTillNowTimestampProvider(20, ChronoUnit.HOURS)
-            ),
-            outCollector = KafkaFlatAdProducer(
-                KafkaProducerConfig(
-                    topic = "flat_handler_ads",
-                    bootstrapServers = "localhost:9094"
-                )
-            )
-        )
-        runner.run()
-    }
+    SsGeFetcherEntryPoint.start()
 }

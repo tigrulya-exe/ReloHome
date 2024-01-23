@@ -23,7 +23,7 @@ open class BaseKafkaConsumer<K, V>(
         while (isRunning.get()) {
             it.poll(timeout)
                 .forEach { record ->
-                    logger.info("Handle incoming record: {}", record)
+                    logger.debug("Handle incoming record: {}", record)
                     recordHandler.invoke(record.key(), record.value())
                 }
         }

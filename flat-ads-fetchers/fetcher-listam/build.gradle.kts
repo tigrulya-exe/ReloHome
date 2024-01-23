@@ -9,5 +9,10 @@ dependencies {
 }
 
 application {
-    mainClass.set("exe.tigrulya.relohome.connector.listam.MainKt")
+    mainClass.set("exe.tigrulya.relohome.listam.ListAmFetcherKt")
+}
+
+tasks.named<Jar>("fatJar") {
+    // TODO
+    manifest.attributes["Main-Class"] = "exe.tigrulya.relohome.listam.ListAmFetcherKt"
 }

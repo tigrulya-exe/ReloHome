@@ -16,6 +16,10 @@ dependencies {
     implementation("com.google.guava:guava:32.1.3-jre")
 }
 
+tasks.named<Jar>("fatJar") {
+    manifest.attributes["Main-Class"] = "exe.tigrulya.relohome.notifier.telegram.MainKt"
+}
+
 application {
-    mainClass.set("exe.tigrulya.relohome.connector.listam.MainKt")
+    mainClass.set("exe.tigrulya.relohome.notifier.telegram.MainKt")
 }

@@ -8,5 +8,9 @@ dependencies {
 }
 
 application {
-    mainClass.set("exe.tigrulya.relohome.ssge")
+    mainClass.set("exe.tigrulya.relohome.ssge.MainKt")
+}
+
+tasks.named<Jar>("fatJar") {
+    manifest.attributes["Main-Class"] = "exe.tigrulya.relohome.ssge.MainKt"
 }

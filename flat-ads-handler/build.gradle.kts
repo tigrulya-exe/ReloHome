@@ -27,3 +27,7 @@ dependencies {
 
     implementation("org.postgresql:postgresql:42.7.0")
 }
+
+tasks.named<Jar>("fatJar") {
+    manifest.attributes["Main-Class"] = "exe.tigrulya.relohome.handler.Application"
+}

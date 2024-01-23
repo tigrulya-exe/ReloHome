@@ -59,8 +59,6 @@ subprojects {
 
     tasks.register<Jar>("fatJar") {
         group = "build"
-        // TODO
-        manifest.attributes["Main-Class"] = "exe.tigrulya.relohome.notifier.telegram.Main"
         archiveBaseName.set("${project.name}-fat")
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 

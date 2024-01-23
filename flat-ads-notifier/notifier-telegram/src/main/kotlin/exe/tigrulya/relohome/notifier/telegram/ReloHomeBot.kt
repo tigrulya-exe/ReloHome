@@ -35,8 +35,8 @@ class ReloHomeBot(
     botUsername: String,
     private val creatorId: Long,
     private val userHandlerGateway: UserHandlerGateway,
-    private val searchOptionsDeserializer: SearchOptionsDeserializer,
-    private val handlerWebUrl: String = "https://127.0.0.1:8443",
+    private val handlerWebUrl: String,
+    private val searchOptionsDeserializer: SearchOptionsDeserializer = JsonSearchOptionsDeserializer(),
     private val templateEngine: TemplateEngine = MustacheTemplateEngine(),
     requestsPerSecond: Int = 10
 ) : RateLimitingAbilityBot(botToken, botUsername, createToggle(), createBotOptions(), requestsPerSecond),

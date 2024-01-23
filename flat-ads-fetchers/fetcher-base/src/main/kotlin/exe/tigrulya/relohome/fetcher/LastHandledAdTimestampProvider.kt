@@ -8,8 +8,9 @@ import kotlinx.coroutines.runBlocking
 import java.nio.ByteBuffer
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.time.Duration
 import java.time.Instant
-import java.time.temporal.TemporalUnit
+import kotlin.concurrent.thread
 import kotlin.io.path.createFile
 import kotlin.io.path.exists
 import kotlin.io.path.readBytes
@@ -21,37 +22,30 @@ interface LastHandledAdTimestampProvider {
     fun update(newVal: Instant)
 }
 
-class InMemoryTimestampProvider(private val serviceId: String) : LastHandledAdTimestampProvider {
-    companion object {
-        private val timestamps: MutableMap<String, Instant> = mutableMapOf()
-    }
+class NowTimestampProvider : LastHandledAdTimestampProvider {
+    override fun provide(): Instant = Instant.now()
 
-    override fun provide(): Instant? = timestamps[serviceId]
-
-    override fun update(newVal: Instant) {
-        timestamps[serviceId] = newVal
-    }
+    override fun update(newVal: Instant) {}
 }
 
 class WindowTillNowTimestampProvider(
-    private val amountToSubtract: Long,
-    private val unit: TemporalUnit
+    private val amountToSubtract: Duration,
 ) : LastHandledAdTimestampProvider {
     private var timestamp: Instant? = null
 
     override fun provide(): Instant? {
-        timestamp = timestamp ?: Instant.now().minus(amountToSubtract, unit)
+        timestamp = timestamp ?: Instant.now().minus(amountToSubtract)
         return timestamp
     }
 
     override fun update(newVal: Instant) {
         timestamp = newVal
     }
-
 }
 
 class FileBackedLastHandledAdTimestampProvider(
     private val snapshotFilePath: Path = Paths.get("last_ad.timestamp"),
+    private val delegateTimestampProvider: LastHandledAdTimestampProvider = NowTimestampProvider()
 ) : LastHandledAdTimestampProvider, AutoCloseable {
     private var timestamp: Instant? = null
     private val timestampChannel = Channel<Instant>(
@@ -79,16 +73,19 @@ class FileBackedLastHandledAdTimestampProvider(
         } else {
             timestamp = deserializeTimestamp(snapshotFilePath)
         }
-        runBlocking {
-            launch(Dispatchers.IO) {
-                for (timestamp in timestampChannel) {
-                    serializeTimestamp(timestamp, snapshotFilePath)
+        // todo lol?
+        thread {
+            runBlocking {
+                launch(Dispatchers.IO) {
+                    for (timestamp in timestampChannel) {
+                        serializeTimestamp(timestamp, snapshotFilePath)
+                    }
                 }
             }
         }
     }
 
-    override fun provide(): Instant? = timestamp
+    override fun provide(): Instant? = timestamp ?: delegateTimestampProvider.provide()
 
     override fun update(newVal: Instant) {
         timestamp = newVal

@@ -2,6 +2,7 @@ package exe.tigrulya.relohome.config
 
 import java.nio.file.Files
 import java.nio.file.Path
+import java.time.Duration
 
 data class ConfigOption<T>(
     val name: String,
@@ -43,7 +44,11 @@ class Configuration(configMap: Map<String, Any> = mapOf()) {
             ?: throw IllegalArgumentException("Value not found for option: ${option.name}")
     }
 
-    fun <T: Any> set(option: ConfigOption<T>, value: T) {
+    fun getDuration(option: ConfigOption<String>): Duration {
+        return Duration.parse("PT${get(option)}")
+    }
+
+    fun <T : Any> set(option: ConfigOption<T>, value: T) {
         configMap[option.name] = value
     }
 }

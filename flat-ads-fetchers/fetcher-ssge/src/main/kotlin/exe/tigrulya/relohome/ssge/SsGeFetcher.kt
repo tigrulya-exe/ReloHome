@@ -14,8 +14,7 @@ import java.time.temporal.ChronoUnit
 
 class SsGeFetcher(
     baseUrl: String = "https://api-gateway.ss.ge/v1/",
-    lastHandledAdTimestampProvider: LastHandledAdTimestampProvider
-    = WindowTillNowTimestampProvider(10, ChronoUnit.MINUTES),
+    lastHandledAdTimestampProvider: LastHandledAdTimestampProvider,
     private val asyncBufferCapacity: Int = 10
 ) : AbstractExternalFetcher<SsGeFlatAdContainer>(lastHandledAdTimestampProvider) {
     companion object {

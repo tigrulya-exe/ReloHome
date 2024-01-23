@@ -5,6 +5,10 @@ plugins {
 val telegramBotsVersion = "6.8.0"
 val exposedVersion = "0.40.1"
 
+application {
+    mainClass.set("exe.tigrulya.relohome.demo.MainKt")
+}
+
 dependencies {
     implementation(project(":flat-ads-base"))
     implementation(project(":flat-ads-handler"))
