@@ -1,3 +1,10 @@
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+
+plugins {
+    id("io.ktor.plugin")
+    id("com.bmuschko.docker-remote-api")
+}
+
 val exposedVersion by properties
 val ktorVersion by properties
 val logbackVersion by properties
@@ -29,5 +36,15 @@ dependencies {
 }
 
 tasks.named<Jar>("fatJar") {
-    manifest.attributes["Main-Class"] = "exe.tigrulya.relohome.handler.Application"
+    manifest.attributes["Main-Class"] = "exe.tigrulya.relohome.handler.ApplicationKt"
+}
+
+tasks.register<DockerBuildImage>("buildDockerImage") {
+    dependsOn("fatJar")
+    inputDir.set(file("."))
+    images.add("relohome/${project.name}:${project.version}")
+}
+
+application {
+    mainClass.set("exe.tigrulya.relohome.handler.ApplicationKt")
 }

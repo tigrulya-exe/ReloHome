@@ -2,6 +2,8 @@ val ktorVersion by properties
 val logbackVersion = "1.2.10"
 
 subprojects {
+    apply(plugin = "io.ktor.plugin")
+
     dependencies {
         implementation(project(":flat-ads-base"))
         implementation("io.ktor:ktor-client-core")

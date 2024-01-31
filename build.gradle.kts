@@ -1,9 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import com.bmuschko.gradle.docker.tasks.image.*
 
 plugins {
     kotlin("jvm") version "1.9.21"
-    id("io.ktor.plugin") version "2.3.6"
     id("org.liquibase.gradle") version "2.2.1"
+    id("io.ktor.plugin") version "2.3.6" apply false
+    id("com.bmuschko.docker-remote-api") version "9.4.0" apply false
 }
 
 allprojects {
@@ -29,7 +31,6 @@ allprojects {
 
 subprojects {
     apply(plugin = "kotlin")
-    apply(plugin = "io.ktor.plugin")
 
     tasks.withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "17"
