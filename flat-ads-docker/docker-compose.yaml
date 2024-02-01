@@ -2,7 +2,6 @@
 version: '3.1'
 
 services:
-
   db:
     image: postgres
     restart: always
@@ -14,7 +13,6 @@ services:
       - "65432:5432"
     volumes:
       - ./data:/var/lib/postgresql/data
-
 
   kafka:
     image: docker.io/bitnami/kafka:3.6
@@ -31,3 +29,30 @@ services:
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,EXTERNAL:PLAINTEXT,PLAINTEXT:PLAINTEXT
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+
+  handler:
+    image: relohome/flat-ads-handler:0.3
+    ports:
+      - "8443:8443"
+    volumes:
+      - ./conf:/opt/relohome/conf
+    depends_on:
+      - db
+      - kafka
+
+  fetcher-ssge:
+    image: relohome/fetcher-ssge:0.3
+    volumes:
+      - ./conf:/opt/relohome/conf
+      - ./data:/opt/relohome/data
+    depends_on:
+      - handler
+
+  notifier-tg:
+    image: relohome/notifier-telegram:0.3
+    environment:
+      - BOT_TOKEN=${TG_BOT_TOKEN}
+    volumes:
+      - ./conf:/opt/relohome/conf
+    depends_on:
+      - handler

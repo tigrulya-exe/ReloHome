@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import com.bmuschko.gradle.docker.tasks.image.*
 
 plugins {
     kotlin("jvm") version "1.9.21"
@@ -10,7 +9,7 @@ plugins {
 
 allprojects {
     group = "exe.tigrulya"
-    version = "0.1-SNAPSHOT"
+    version = "0.3"
 
     repositories {
         mavenCentral()

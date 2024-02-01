@@ -46,3 +46,6 @@ bin/
 !.dev/*.cert
 !.dev/*.sh
 !.dev/*.yaml
+
+flat-ads-docker/data/
+flat-ads-docker/.env

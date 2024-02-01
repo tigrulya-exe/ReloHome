@@ -1,0 +1,16 @@
+kafka:
+  flat-ads:
+    producer:
+      bootstrap-servers: 'kafka:9094'
+      topic: 'flat_notifier_ads'
+    consumer:
+      bootstrap-servers: 'kafka:9094'
+      topic: 'flat_handler_ads'
+      group: 'flat_handler'
+
+flat-ads:
+  handler:
+    db:
+      url: 'jdbc:postgresql://postgres:5432/ReloHome?user=root&password=toor'
+    gateway:
+      port: 8999

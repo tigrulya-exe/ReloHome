@@ -1,0 +1,24 @@
+flat-ads:
+  handler:
+    gateway:
+      http:
+        # todo
+        hostname: 'https://127.0.0.1:8443'
+      grpc:
+        hostname: 'handler:8999'
+
+  notifier:
+    telegram:
+      requests:
+        per-second: 10
+      creator:
+        id: 479226955
+      bot:
+        name: 'relo_home_bot'
+
+kafka:
+  flat-ads:
+    consumer:
+      group: 'flat_notifier'
+      topic: 'flat_notifier_ads'
+      bootstrap-servers: 'kafka:9094'

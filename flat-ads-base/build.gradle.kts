@@ -39,4 +39,5 @@ dependencies {
     implementation("io.grpc:grpc-netty:$grpcVersionJava")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.+")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.+")
 }

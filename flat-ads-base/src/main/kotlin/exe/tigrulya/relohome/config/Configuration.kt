@@ -22,7 +22,8 @@ interface Configuration {
             parser: ConfigurationParser = YamlConfigurationParser()
         ): Configuration {
             val resource = Companion::class.java.classLoader.getResource(resourcePath)
-                ?: return MapConfiguration()
+                ?: throw IllegalArgumentException("Configuration resource not found!: $resourcePath")
+//                ?: return MapConfiguration()
             val rawString = Files.readString(Path.of(resource.toURI()))
             return MapConfiguration(parser.parse(rawString))
         }
