@@ -21,4 +21,4 @@ kafka:
     consumer:
       group: 'flat_notifier'
       topic: 'flat_notifier_ads'
-      bootstrap-servers: 'kafka:9094'
+      bootstrap-servers: 'kafka:9092'

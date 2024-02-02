@@ -1,10 +1,10 @@
 kafka:
   flat-ads:
     producer:
-      bootstrap-servers: 'kafka:9094'
+      bootstrap-servers: 'kafka:9092'
       topic: 'flat_notifier_ads'
     consumer:
-      bootstrap-servers: 'kafka:9094'
+      bootstrap-servers: 'kafka:9092'
       topic: 'flat_handler_ads'
       group: 'flat_handler'
 

@@ -1,9 +1,5 @@
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
-
-plugins {
-    id("io.ktor.plugin")
-    id("com.bmuschko.docker-remote-api")
-}
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 val exposedVersion by properties
 val ktorVersion by properties
@@ -35,16 +31,14 @@ dependencies {
     implementation("org.postgresql:postgresql:42.7.0")
 }
 
-tasks.named<Jar>("fatJar") {
-    manifest.attributes["Main-Class"] = "exe.tigrulya.relohome.handler.ApplicationKt"
-}
-
-tasks.register<DockerBuildImage>("buildDockerImage") {
-    dependsOn("fatJar")
-    inputDir.set(file("."))
-    images.add("relohome/${project.name}:${project.version}")
-}
-
 application {
     mainClass.set("exe.tigrulya.relohome.handler.ApplicationKt")
+}
+
+tasks.withType<ShadowJar> {
+    enabled = true
+}
+
+tasks.withType<DockerBuildImage> {
+    enabled = true
 }

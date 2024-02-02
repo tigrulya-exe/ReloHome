@@ -1,9 +1,5 @@
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
-
-plugins {
-    application
-    id("com.bmuschko.docker-remote-api")
-}
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 dependencies {
     implementation(project(":flat-ads-fetchers:fetcher-base"))
@@ -14,12 +10,10 @@ application {
     mainClass.set("exe.tigrulya.relohome.ssge.MainKt")
 }
 
-tasks.named<Jar>("fatJar") {
-    manifest.attributes["Main-Class"] = "exe.tigrulya.relohome.ssge.MainKt"
+tasks.withType<ShadowJar> {
+    enabled = true
 }
 
-tasks.register<DockerBuildImage>("buildDockerImage") {
-    dependsOn("fatJar")
-    inputDir.set(file("."))
-    images.add("relohome/${project.name}:${project.version}")
+tasks.withType<DockerBuildImage> {
+    enabled = true
 }

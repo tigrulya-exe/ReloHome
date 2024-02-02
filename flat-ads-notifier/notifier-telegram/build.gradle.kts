@@ -1,8 +1,8 @@
 import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     application
-    id("com.bmuschko.docker-remote-api")
 }
 
 val telegramBotsVersion = "6.8.0"
@@ -19,16 +19,14 @@ dependencies {
     implementation("com.google.guava:guava:32.1.3-jre")
 }
 
-tasks.named<Jar>("fatJar") {
-    manifest.attributes["Main-Class"] = "exe.tigrulya.relohome.notifier.telegram.MainKt"
-}
-
-tasks.register<DockerBuildImage>("buildDockerImage") {
-    dependsOn("fatJar")
-    inputDir.set(file("."))
-    images.add("relohome/${project.name}:${project.version}")
-}
-
 application {
     mainClass.set("exe.tigrulya.relohome.notifier.telegram.MainKt")
+}
+
+tasks.withType<ShadowJar> {
+    enabled = true
+}
+
+tasks.withType<DockerBuildImage> {
+    enabled = true
 }

@@ -15,7 +15,21 @@ class YamlConfigurationParser : ConfigurationParser {
     }
 
     private fun flattenMap(initial: Map<String, Any>): Map<String, Any> {
-        // TODO do it in func style
-        return initial
+        val result = mutableMapOf<String, Any>()
+        flattenMapRecursive(mutableListOf(), initial, result)
+        return result
+    }
+
+    private fun flattenMapRecursive(keys: MutableList<String>, node: Any, acc: MutableMap<String, Any>) {
+        if (node is java.util.Map<*, *>) {
+            node.forEach { key, value ->
+                keys.add(key as String)
+                flattenMapRecursive(keys, value!!, acc)
+                keys.removeLast()
+            }
+            return
+        }
+
+        acc[keys.joinToString(".")] = node
     }
 }

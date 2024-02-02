@@ -1,14 +1,14 @@
 kafka:
   flat-ads:
     producer:
-      bootstrap-servers: 'kafka:9094'
+      bootstrap-servers: 'kafka:9092'
       topic: 'flat_handler_ads'
 
 flat-ads:
   fetcher:
     timestamp:
       last-handled:
-        window: '10h'
+        window: '20h'
         path: '/opt/relohome/data/ss_ge.timestamp'
     ss-ge:
       buffer:

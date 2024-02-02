@@ -5,6 +5,7 @@ import exe.tigrulya.relohome.api.FlatAdNotifierGateway
 import exe.tigrulya.relohome.handler.repository.SubDistricts
 import exe.tigrulya.relohome.handler.repository.UserSearchOptions
 import exe.tigrulya.relohome.model.FlatAd
+import exe.tigrulya.relohome.util.LoggerProperty
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -12,9 +13,15 @@ import org.jetbrains.exposed.sql.transactions.transaction
 class FlatAdService(
     private val notifierGateway: FlatAdNotifierGateway
 ) : FlatAdHandlerGateway {
+
+    private val logger by LoggerProperty()
+
     override suspend fun handle(flatAd: FlatAd) {
         val flatAdReceivers = getUserExternalIdsForFlatAd(flatAd)
-        notifierGateway.onNewAd(flatAdReceivers, flatAd)
+        if (flatAdReceivers.isNotEmpty()) {
+            logger.info("Send ${flatAd.id} to $flatAdReceivers")
+            notifierGateway.onNewAd(flatAdReceivers, flatAd)
+        }
     }
 
     fun getDistricts(cityName: String): List<String> = transaction {
@@ -40,7 +47,7 @@ class FlatAdService(
         flatAd.price?.amount?.let {
             query.andWhere {
                 (UserSearchOptions.priceTo.isNull() or (UserSearchOptions.priceTo greaterEq it)) and
-                        (UserSearchOptions.priceTo.isNull() or (UserSearchOptions.priceFrom lessEq it))
+                        (UserSearchOptions.priceFrom.isNull() or (UserSearchOptions.priceFrom lessEq it))
             }
         }
 

@@ -2,7 +2,7 @@
 version: '3.1'
 
 services:
-  db:
+  postgres:
     image: postgres
     restart: always
     environment:
@@ -37,14 +37,14 @@ services:
     volumes:
       - ./conf:/opt/relohome/conf
     depends_on:
-      - db
+      - postgres
       - kafka
 
   fetcher-ssge:
     image: relohome/fetcher-ssge:0.3
     volumes:
       - ./conf:/opt/relohome/conf
-      - ./data:/opt/relohome/data
+      - ./:/opt/relohome/data
     depends_on:
       - handler
 

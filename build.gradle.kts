@@ -1,3 +1,5 @@
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -5,6 +7,7 @@ plugins {
     id("org.liquibase.gradle") version "2.2.1"
     id("io.ktor.plugin") version "2.3.6" apply false
     id("com.bmuschko.docker-remote-api") version "9.4.0" apply false
+    id("com.github.johnrengelman.shadow") version "7.1.2" apply false
 }
 
 allprojects {
@@ -30,6 +33,9 @@ allprojects {
 
 subprojects {
     apply(plugin = "kotlin")
+    apply(plugin = "com.bmuschko.docker-remote-api")
+    apply(plugin = "io.ktor.plugin")
+    apply(plugin = "com.github.johnrengelman.shadow")
 
     tasks.withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "17"
@@ -57,26 +63,20 @@ subprojects {
         useJUnitPlatform()
     }
 
-    tasks.register<Jar>("fatJar") {
-        group = "build"
-        archiveBaseName.set("${project.name}-fat")
+    tasks.withType<ShadowJar> {
+        archiveFileName.set("${project.name}-fat-${project.version}.jar")
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        mergeServiceFiles()
 
-        val dependencies = configurations
-            .runtimeClasspath
-            .get()
-            .map {
-                zipTree(it).matching {
-                    exclude(
-                        listOf(
-                            "META-INF/*.RSA", "META-INF/*.SF", "META-INF/*.DSA"
-                        )
-                    )
-                }
-            }
+        enabled = false
+    }
 
-        from(dependencies)
-        with(tasks.jar.get())
+    tasks.register<DockerBuildImage>("buildDockerImage") {
+        dependsOn("shadowJar")
+        inputDir.set(file("."))
+        images.add("relohome/${project.name}:${project.version}")
+
+        enabled = false
     }
 }
 
