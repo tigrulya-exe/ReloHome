@@ -1,4 +1,4 @@
-package exe.tigrulya.relohome.notifier.telegram
+package exe.tigrulya.relohome.notifier.telegram.bot
 
 import com.google.common.util.concurrent.RateLimiter
 import org.telegram.abilitybots.api.bot.AbilityBot

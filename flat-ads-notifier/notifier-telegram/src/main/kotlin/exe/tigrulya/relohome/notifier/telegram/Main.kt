@@ -9,6 +9,7 @@ import exe.tigrulya.relohome.notifier.options.KafkaConfigOptions.KAFKA_FLAT_AD_C
 import exe.tigrulya.relohome.notifier.options.KafkaConfigOptions.KAFKA_FLAT_AD_CONSUMER_GROUP
 import exe.tigrulya.relohome.notifier.options.KafkaConfigOptions.KAFKA_FLAT_AD_CONSUMER_TOPICS
 import exe.tigrulya.relohome.notifier.options.KafkaConfigOptions.KAFKA_FLAT_AD_FETCH_TIMEOUT
+import exe.tigrulya.relohome.notifier.telegram.bot.ReloHomeBot
 import exe.tigrulya.relohome.notifier.telegram.config.ConfigOptions.FLAT_AD_HANDLER_GRPC_GATEWAY_HOSTNAME
 import exe.tigrulya.relohome.notifier.telegram.config.ConfigOptions.FLAT_AD_HANDLER_HTTP_GATEWAY_HOSTNAME
 import exe.tigrulya.relohome.notifier.telegram.config.ConfigOptions.FLAT_AD_NOTIFIER_TG_BOT_NAME

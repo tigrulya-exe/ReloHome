@@ -1,4 +1,4 @@
-package exe.tigrulya.relohome.notifier.telegram
+package exe.tigrulya.relohome.notifier.telegram.serde
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue

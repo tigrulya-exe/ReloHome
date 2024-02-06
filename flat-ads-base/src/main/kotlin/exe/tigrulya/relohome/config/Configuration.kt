@@ -1,5 +1,6 @@
 package exe.tigrulya.relohome.config
 
+import exe.tigrulya.relohome.util.LoggerProperty
 import java.nio.file.Files
 import java.nio.file.Path
 import java.time.Duration
@@ -17,13 +18,18 @@ interface ConfigurationParser {
 
 interface Configuration {
     companion object {
+        private val logger by LoggerProperty()
+
         fun fromResource(
             resourcePath: String,
             parser: ConfigurationParser = YamlConfigurationParser()
         ): Configuration {
             val resource = Companion::class.java.classLoader.getResource(resourcePath)
-                ?: throw IllegalArgumentException("Configuration resource not found!: $resourcePath")
-//                ?: return MapConfiguration()
+//                ?: throw IllegalArgumentException("Configuration resource not found!: $resourcePath")
+            if (resource === null) {
+                logger.warn("Configuration resource $resourcePath not found. Using default configuration.")
+                return MapConfiguration()
+            }
             val rawString = Files.readString(Path.of(resource.toURI()))
             return MapConfiguration(parser.parse(rawString))
         }
