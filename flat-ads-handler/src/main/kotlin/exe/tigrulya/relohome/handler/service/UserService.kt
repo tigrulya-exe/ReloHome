@@ -1,18 +1,18 @@
 package exe.tigrulya.relohome.handler.service
 
 import exe.tigrulya.relohome.handler.repository.Cities
-import exe.tigrulya.relohome.handler.repository.UserEntity
 import exe.tigrulya.relohome.handler.repository.UserSearchOptions
 import exe.tigrulya.relohome.handler.repository.Users
 import exe.tigrulya.relohome.model.*
+import org.jetbrains.exposed.sql.insertIgnore
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class UserService {
     fun registerUser(user: UserCreateDto) {
-        UserEntity.new {
-            name = user.name
-            externalId = externalId
-            state = UserState.NEW
+        Users.insertIgnore {
+            it[name] = user.name
+            it[externalId] = externalId
+            it[state] = UserState.NEW
         }
     }
 

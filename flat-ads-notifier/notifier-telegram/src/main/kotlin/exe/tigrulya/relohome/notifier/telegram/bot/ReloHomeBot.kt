@@ -5,6 +5,7 @@ import exe.tigrulya.relohome.api.UserHandlerGateway
 import exe.tigrulya.relohome.model.FlatAd
 import exe.tigrulya.relohome.model.Image
 import exe.tigrulya.relohome.notifier.telegram.bot.ability.*
+import exe.tigrulya.relohome.notifier.telegram.bot.reply.*
 import exe.tigrulya.relohome.notifier.telegram.serde.JsonSearchOptionsDeserializer
 import exe.tigrulya.relohome.notifier.telegram.serde.SearchOptionsDeserializer
 import exe.tigrulya.relohome.notifier.template.MustacheTemplateEngine
@@ -12,6 +13,7 @@ import exe.tigrulya.relohome.notifier.template.TemplateEngine
 import exe.tigrulya.relohome.util.LoggerProperty
 import org.telegram.abilitybots.api.bot.DefaultAbilities
 import org.telegram.abilitybots.api.objects.Ability
+import org.telegram.abilitybots.api.objects.Reply
 import org.telegram.abilitybots.api.toggle.AbilityToggle
 import org.telegram.abilitybots.api.toggle.CustomToggle
 import org.telegram.telegrambots.bots.DefaultBotOptions
@@ -37,16 +39,7 @@ class ReloHomeBot(
     private val logger by LoggerProperty()
 
     companion object {
-        // todo fix ability dispatch logic
-//        const val ENABLE_BUTTON_TEXT = "🟢 Enable bot"
-//        const val OPTIONS_BUTTON_TEXT = "⚙️ Change settings"
-//        const val SUBSCRIPTION_INFO_BUTTON_TEXT = "💳 Subscription info"
-//        const val STATISTICS_BUTTON_TEXT = "📈 Statistics"
-
-        const val ENABLE_BUTTON_TEXT = "enable_bot"
-        const val OPTIONS_BUTTON_TEXT = "change_settings"
-        const val SUBSCRIPTION_INFO_BUTTON_TEXT = "subscription_info"
-        const val STATISTICS_BUTTON_TEXT = "price_statistics"
+        const val OPTIONS_BUTTON_TEXT = "⚙️ Change settings"
 
         private fun createToggle(): AbilityToggle {
             return CustomToggle().apply {
@@ -84,19 +77,19 @@ class ReloHomeBot(
     }
 
     fun startAbility(): Ability {
-        return StartAbility(handlerWebUrl).ability()
+        return StartAbility(userHandlerGateway, handlerWebUrl).ability()
     }
 
-    fun enableBotAbility(): Ability {
-        return EnableBotAbility().ability()
+    fun enableBotReply(): Reply {
+        return EnableBotReply().reply()
     }
 
-    fun subscriptionInfoAbility(): Ability {
-        return SubscriptionInfoAbility().ability()
+    fun subscriptionInfoReply(): Reply {
+        return SubscriptionInfoReply().reply()
     }
 
-    fun statisticsAbility(): Ability {
-        return StatisticsAbility().ability()
+    fun statisticsReply(): Reply {
+        return StatisticsReply().reply()
     }
 
     override suspend fun onNewAd(userIds: List<String>, flatAd: FlatAd) {
