@@ -13,6 +13,8 @@ object UserSearchOptions : LongIdTable() {
     // for fast search
     var externalId = varchar("external_id", 128).uniqueIndex()
 
+    var enabled = bool("enabled")
+
     // for fast search
     var cityName = varchar("city_name", 50)
     var priceFrom = integer("price_from").nullable()
@@ -30,6 +32,7 @@ object UserSearchOptions : LongIdTable() {
     fun upsert(userExternalId: String, searchOptions: UserSearchOptionsDto, userCityName: String) {
         UserSearchOptions.upsert(keys = arrayOf(externalId)) { entity ->
             entity[externalId] = userExternalId
+            entity[enabled] = searchOptions.enabled
             searchOptions.priceRange.apply {
                 entity[priceFrom] = from
                 entity[priceTo] = to
@@ -51,6 +54,8 @@ class UserSearchOptionsEntity(id: EntityID<Long>) : LongEntity(id) {
     companion object : LongEntityClass<UserSearchOptionsEntity>(UserSearchOptions)
 
     var externalId by UserSearchOptions.externalId
+
+    var enabled by UserSearchOptions.enabled
 
     var priceFrom by UserSearchOptions.priceFrom
 

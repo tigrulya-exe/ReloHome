@@ -32,6 +32,8 @@ services:
 
   handler:
     image: relohome/flat-ads-handler:0.3
+    command:
+      - "-Djava.util.logging.config.file=/opt/relohome/conf/logging.properties"
     ports:
       - "8443:8443"
     volumes:

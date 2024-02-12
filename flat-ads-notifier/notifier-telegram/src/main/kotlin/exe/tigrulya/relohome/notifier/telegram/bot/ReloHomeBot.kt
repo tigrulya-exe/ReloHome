@@ -20,6 +20,10 @@ import org.telegram.telegrambots.bots.DefaultBotOptions
 import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow
+import org.telegram.telegrambots.meta.api.objects.webapp.WebAppInfo
 import java.net.URL
 import java.nio.channels.Channels
 import java.nio.channels.ReadableByteChannel
@@ -77,11 +81,11 @@ class ReloHomeBot(
     }
 
     fun startAbility(): Ability {
-        return StartAbility(userHandlerGateway, handlerWebUrl).ability()
+        return StartAbility(userHandlerGateway).ability()
     }
 
     fun enableBotReply(): Reply {
-        return EnableBotReply().reply()
+        return EnableBotReply(userHandlerGateway).reply()
     }
 
     fun subscriptionInfoReply(): Reply {
@@ -104,6 +108,34 @@ class ReloHomeBot(
         }
 
         userIds.forEach { sendAdWithImages(it, flatAdMessage, flatAd.images) }
+    }
+
+    fun replyKeyboard(userId: String, isEnabled: Boolean = true): ReplyKeyboardMarkup {
+        val enableButton = KeyboardButton.builder()
+            .text(if (isEnabled) EnableBotReply.DISABLED_BOT_BUTTON_TEXT else EnableBotReply.ENABLED_BOT_BUTTON_TEXT)
+            .build()
+
+        val webappButton = KeyboardButton.builder()
+            .text(OPTIONS_BUTTON_TEXT)
+            .webApp(
+                WebAppInfo.builder()
+                    .url("${handlerWebUrl}/forms/tg_form/$userId")
+                    .build()
+            )
+            .build()
+
+        val subscriptionInfoButton = KeyboardButton.builder()
+            .text(SubscriptionInfoReply.SUBSCRIPTION_INFO_BUTTON_TEXT)
+            .build()
+
+        val statisticsButton = KeyboardButton.builder()
+            .text(StatisticsReply.STATISTICS_BUTTON_TEXT)
+            .build()
+
+        return ReplyKeyboardMarkup.builder()
+            .keyboardRow(KeyboardRow(listOf(enableButton, webappButton)))
+            .keyboardRow(KeyboardRow(listOf(subscriptionInfoButton, statisticsButton)))
+            .build()
     }
 
     private fun sendAdWithImages(userId: String, text: String, images: List<Image>) {

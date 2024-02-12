@@ -10,4 +10,5 @@
         http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
     <include file="db/changelog/changelog-1.init-db.xml"/>
     <include file="db/changelog/changelog-2.add-test-data.xml"/>
+    <include file="db/changelog/changelog-3.add-enabled-column.xml"/>
 </databaseChangeLog>

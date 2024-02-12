@@ -6,6 +6,12 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
   <changeSet author="tigrulya" id="init_db-1">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="cities"/>
+      </not>
+    </preConditions>
+
     <createTable tableName="cities">
       <column autoIncrement="true" name="id" type="BIGINT">
         <constraints nullable="false" primaryKey="true" primaryKeyName="cities_pkey"/>
@@ -20,6 +26,12 @@
   </changeSet>
 
   <changeSet author="tigrulya" id="init_db-2">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="countries"/>
+      </not>
+    </preConditions>
+
     <createTable tableName="countries">
       <column autoIncrement="true" name="id" type="BIGINT">
         <constraints nullable="false" primaryKey="true" primaryKeyName="countries_pkey"/>
@@ -31,6 +43,12 @@
   </changeSet>
 
   <changeSet author="tigrulya" id="init_db-3">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="subdistricts"/>
+      </not>
+    </preConditions>
+
     <createTable tableName="subdistricts">
       <column autoIncrement="true" name="id" type="BIGINT">
         <constraints nullable="false" primaryKey="true" primaryKeyName="subdistricts_pkey"/>
@@ -45,6 +63,12 @@
   </changeSet>
 
   <changeSet author="tigrulya" id="init_db-4">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="users"/>
+      </not>
+    </preConditions>
+
     <createTable tableName="users">
       <column autoIncrement="true" name="id" type="BIGINT">
         <constraints nullable="false" primaryKey="true" primaryKeyName="users_pkey"/>
@@ -63,6 +87,12 @@
   </changeSet>
 
   <changeSet author="tigrulya" id="init_db-5">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="usersearchoptions"/>
+      </not>
+    </preConditions>
+
     <createTable tableName="usersearchoptions">
       <column autoIncrement="true" name="id" type="BIGINT">
         <constraints nullable="false" primaryKey="true" primaryKeyName="usersearchoptions_pkey"/>

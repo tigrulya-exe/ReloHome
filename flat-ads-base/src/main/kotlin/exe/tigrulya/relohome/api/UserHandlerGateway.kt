@@ -10,4 +10,6 @@ interface UserHandlerGateway {
     suspend fun setLocation(externalId: String, city: City)
 
     suspend fun setSearchOptions(externalId: String, searchOptions: UserSearchOptionsDto)
+
+    suspend fun toggleSearch(externalId: String): Boolean
 }

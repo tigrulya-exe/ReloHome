@@ -1,11 +1,12 @@
 package exe.tigrulya.relohome.notifier.telegram.bot.reply
 
+import exe.tigrulya.relohome.notifier.telegram.bot.WithReloHomeBotSupport
 import org.telegram.abilitybots.api.bot.BaseAbilityBot
 import org.telegram.abilitybots.api.objects.Reply
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 
-interface ReloHomeReply {
+interface ReloHomeReply: WithReloHomeBotSupport {
     val name: String
 
     fun matches(update: Update): Boolean = update.message.text.startsWith(name)

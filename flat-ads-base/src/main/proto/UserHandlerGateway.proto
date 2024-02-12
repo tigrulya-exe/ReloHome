@@ -8,6 +8,8 @@ service UserHandlerGateway {
   rpc SetLocation(SetLocationRequest) returns (Empty);
 
   rpc SetSearchOptions(SetSearchOptionsRequest) returns (Empty);
+
+  rpc ToggleSearch(ToggleSearchRequest) returns (ToggleSearchResponse);
 }
 
 message UserCreateRequest {
@@ -26,11 +28,20 @@ message SetSearchOptionsRequest {
   NumRange priceRange = 2;
   NumRange roomRange = 3;
   repeated string subDistricts = 4;
+  bool enabled = 5;
 }
 
 message NumRange {
   optional int32 to = 1;
   optional int32 from = 2;
+}
+
+message ToggleSearchRequest {
+  string externalId = 1;
+}
+
+message ToggleSearchResponse {
+  bool searchEnabled = 1;
 }
 
 message Empty {

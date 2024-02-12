@@ -54,6 +54,15 @@ class FlatAdsHandlerGrpcService(
         return UserHandlerGatewayOuterClass.Empty.getDefaultInstance()
     }
 
+    override suspend fun toggleSearch(
+        request: UserHandlerGatewayOuterClass.ToggleSearchRequest
+    ): UserHandlerGatewayOuterClass.ToggleSearchResponse {
+        return UserHandlerGatewayOuterClass.ToggleSearchResponse
+            .newBuilder().apply {
+                searchEnabled = userService.toggleSearch(request.externalId)
+            }.build()
+    }
+
     private fun UserHandlerGatewayOuterClass.NumRange.toDomainNumRange(): NumRange = NumRange(
         if (from < 0) null else from,
         if (to < 0) null else to,

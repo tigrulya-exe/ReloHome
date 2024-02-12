@@ -50,6 +50,15 @@ class GrpcUserHandlerClient(serverUrl: String) : UserHandlerGateway {
         grpcClient.setSearchOptions(request)
     }
 
+    override suspend fun toggleSearch(externalId: String): Boolean {
+        val request = UserHandlerGatewayOuterClass.ToggleSearchRequest
+            .newBuilder().apply {
+                this.externalId = externalId
+            }.build()
+
+        return grpcClient.toggleSearch(request).searchEnabled
+    }
+
     private fun toGrpcNumRange(range: NumRange) = UserHandlerGatewayOuterClass.NumRange.newBuilder().apply {
         from = range.from ?: -1
         to = range.to ?: -1

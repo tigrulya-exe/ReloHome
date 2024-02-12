@@ -19,10 +19,31 @@ class UserService {
     fun setLocation(externalId: String, city: City) {
         transaction {
             val userEntity = Users.getByExternalId(externalId)
-            val cityEntity = Cities.getByName(city.name)
 
-            userEntity.location = cityEntity
+            userEntity.location = Cities.getByName(city.name)
             userEntity.state = UserState.CITY_PROVIDED
+        }
+    }
+
+    // todo tmp, refactor when proper subscription will be added
+    fun enableSubscription(externalId: String) {
+        transaction {
+            val userEntity = Users.getByExternalId(externalId)
+            userEntity.state = UserState.SUBSCRIPTION_PURCHASED
+        }
+    }
+
+    fun toggleSearch(externalId: String): Boolean = transaction {
+        val userEntity = Users.getByExternalId(externalId)
+        if (!userEntity.state.searchOptionsProvided()) {
+            throw IllegalStateException("Please, provide search parameters first")
+        }
+
+        val searchOptions = UserSearchOptions.getByExternalId(externalId)
+            ?: throw IllegalStateException("This should never happen, please contact support.")
+
+        !searchOptions.enabled.also {
+            searchOptions.enabled = it
         }
     }
 

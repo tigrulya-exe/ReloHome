@@ -35,6 +35,7 @@ class FlatAdService(
         val query = UserSearchOptions
             .slice(UserSearchOptions.externalId)
             .select(UserSearchOptions.cityName eq flatAd.address.city.name)
+            .andWhere { UserSearchOptions.enabled eq true }
 
         // todo mb it would be better to use prepared statement here
         flatAd.info.rooms?.let {
