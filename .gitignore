@@ -49,3 +49,5 @@ bin/
 
 flat-ads-docker/data/
 flat-ads-docker/.env
+
+.idea
