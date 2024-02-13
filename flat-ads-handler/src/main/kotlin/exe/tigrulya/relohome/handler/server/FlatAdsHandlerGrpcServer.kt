@@ -3,6 +3,7 @@ package exe.tigrulya.relohome.handler.server
 import exe.tigrulya.relohome.api.UserHandlerGatewayGrpcKt
 import exe.tigrulya.relohome.api.UserHandlerGatewayOuterClass
 import exe.tigrulya.relohome.api.grpc.GrpcServer
+import exe.tigrulya.relohome.error.WithGrpcServerErrorHandling
 import exe.tigrulya.relohome.handler.service.UserService
 import exe.tigrulya.relohome.model.City
 import exe.tigrulya.relohome.model.NumRange
@@ -14,22 +15,22 @@ class FlatAdsHandlerGrpcServer(port: Int, userService: UserService = UserService
 
 class FlatAdsHandlerGrpcService(
     private val userService: UserService
-) : UserHandlerGatewayGrpcKt.UserHandlerGatewayCoroutineImplBase() {
+) : UserHandlerGatewayGrpcKt.UserHandlerGatewayCoroutineImplBase(), WithGrpcServerErrorHandling {
     override suspend fun registerUser(
         request: UserHandlerGatewayOuterClass.UserCreateRequest
-    ): UserHandlerGatewayOuterClass.Empty {
+    ): UserHandlerGatewayOuterClass.Empty = withErrorHandling("registerUser") {
         userService.registerUser(
             UserCreateDto(
                 name = request.name,
                 externalId = request.externalId
             )
         )
-        return UserHandlerGatewayOuterClass.Empty.getDefaultInstance()
+        UserHandlerGatewayOuterClass.Empty.getDefaultInstance()
     }
 
     override suspend fun setLocation(
         request: UserHandlerGatewayOuterClass.SetLocationRequest
-    ): UserHandlerGatewayOuterClass.Empty {
+    ): UserHandlerGatewayOuterClass.Empty = withErrorHandling("setLocation") {
         userService.setLocation(
             externalId = request.externalId,
             city = City(
@@ -37,12 +38,12 @@ class FlatAdsHandlerGrpcService(
                 country = request.country
             )
         )
-        return UserHandlerGatewayOuterClass.Empty.getDefaultInstance()
+        UserHandlerGatewayOuterClass.Empty.getDefaultInstance()
     }
 
     override suspend fun setSearchOptions(
         request: UserHandlerGatewayOuterClass.SetSearchOptionsRequest
-    ): UserHandlerGatewayOuterClass.Empty {
+    ): UserHandlerGatewayOuterClass.Empty = withErrorHandling("setSearchOptions") {
         userService.setSearchOptions(
             externalUserId = request.externalId,
             searchOptions = UserSearchOptionsDto(
@@ -51,13 +52,13 @@ class FlatAdsHandlerGrpcService(
                 subDistricts = request.subDistrictsList
             )
         )
-        return UserHandlerGatewayOuterClass.Empty.getDefaultInstance()
+        UserHandlerGatewayOuterClass.Empty.getDefaultInstance()
     }
 
     override suspend fun toggleSearch(
         request: UserHandlerGatewayOuterClass.ToggleSearchRequest
-    ): UserHandlerGatewayOuterClass.ToggleSearchResponse {
-        return UserHandlerGatewayOuterClass.ToggleSearchResponse
+    ): UserHandlerGatewayOuterClass.ToggleSearchResponse = withErrorHandling("toggleSearch") {
+        UserHandlerGatewayOuterClass.ToggleSearchResponse
             .newBuilder().apply {
                 searchEnabled = userService.toggleSearch(request.externalId)
             }.build()

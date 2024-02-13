@@ -1,5 +1,6 @@
 package exe.tigrulya.relohome.handler.repository
 
+import exe.tigrulya.relohome.error.ReloHomeClientException
 import exe.tigrulya.relohome.model.User
 import exe.tigrulya.relohome.model.UserState
 import org.jetbrains.exposed.dao.LongEntity
@@ -15,7 +16,7 @@ object Users : LongIdTable() {
 
     fun getByExternalId(externalId: String) = UserEntity.find {
         Users.externalId eq externalId
-    }.firstOrNull() ?: throw IllegalArgumentException("Wrong user id")
+    }.firstOrNull() ?: throw ReloHomeClientException("Wrong user id")
 }
 
 class UserEntity(id: EntityID<Long>) : LongEntity(id) {

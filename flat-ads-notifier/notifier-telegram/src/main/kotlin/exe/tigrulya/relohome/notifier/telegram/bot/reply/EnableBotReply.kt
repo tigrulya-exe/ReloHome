@@ -12,9 +12,14 @@ class EnableBotReply(
     companion object {
         const val ENABLED_BOT_BUTTON_TEXT = "🟢 Disable bot"
         const val DISABLED_BOT_BUTTON_TEXT = "🔴 Enable bot"
+
+        private val POSSIBLE_PREFIXES = listOf(ENABLED_BOT_BUTTON_TEXT, DISABLED_BOT_BUTTON_TEXT)
     }
 
     override val name: String = ENABLED_BOT_BUTTON_TEXT
+
+    override fun matches(update: Update): Boolean = POSSIBLE_PREFIXES
+        .any { update.message.text.startsWith(it) }
 
     override fun action(bot: BaseAbilityBot, update: Update): Unit = runBlocking {
         val userId = update.message.from.id.toString()
@@ -22,6 +27,7 @@ class EnableBotReply(
 
         val sendMessage = SendMessage().apply {
             chatId = userId
+
             parseMode = "HTML"
             replyMarkup = unwrapBot(bot).replyKeyboard(userId, searchEnabled)
             text = "The flat ad search is ${if (searchEnabled) "enabled" else "disabled"}"

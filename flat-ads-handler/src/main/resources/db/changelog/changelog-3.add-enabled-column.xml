@@ -13,7 +13,9 @@
     </preConditions>
 
     <addColumn tableName="usersearchoptions">
-      <column name="enabled" type="boolean"/>
+      <column name="enabled" type="boolean" defaultValueBoolean="true">
+        <constraints nullable="false"/>
+      </column>
     </addColumn>
   </changeSet>
 

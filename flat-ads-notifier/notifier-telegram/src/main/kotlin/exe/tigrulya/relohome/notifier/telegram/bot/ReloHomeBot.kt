@@ -112,7 +112,7 @@ class ReloHomeBot(
 
     fun replyKeyboard(userId: String, isEnabled: Boolean = true): ReplyKeyboardMarkup {
         val enableButton = KeyboardButton.builder()
-            .text(if (isEnabled) EnableBotReply.DISABLED_BOT_BUTTON_TEXT else EnableBotReply.ENABLED_BOT_BUTTON_TEXT)
+            .text(if (isEnabled) EnableBotReply.ENABLED_BOT_BUTTON_TEXT else EnableBotReply.DISABLED_BOT_BUTTON_TEXT)
             .build()
 
         val webappButton = KeyboardButton.builder()
