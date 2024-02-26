@@ -3,13 +3,14 @@ package exe.tigrulya.relohome.api.grpc
 import exe.tigrulya.relohome.api.UserHandlerGateway
 import exe.tigrulya.relohome.api.UserHandlerGatewayGrpcKt
 import exe.tigrulya.relohome.api.UserHandlerGatewayOuterClass
+import exe.tigrulya.relohome.error.WithGrpcClientErrorHandling
 import exe.tigrulya.relohome.model.City
 import exe.tigrulya.relohome.model.NumRange
 import exe.tigrulya.relohome.model.UserCreateDto
 import exe.tigrulya.relohome.model.UserSearchOptionsDto
 import io.grpc.ManagedChannelBuilder
 
-class GrpcUserHandlerClient(serverUrl: String) : UserHandlerGateway {
+open class GrpcUserHandlerClient(serverUrl: String) : UserHandlerGateway, WithGrpcClientErrorHandling {
 
     private val grpcClient: UserHandlerGatewayGrpcKt.UserHandlerGatewayCoroutineStub
 
@@ -19,7 +20,7 @@ class GrpcUserHandlerClient(serverUrl: String) : UserHandlerGateway {
     }
 
     // todo mb turn UserHandlerGateway to suspend api
-    override suspend fun registerUser(user: UserCreateDto) {
+    override suspend fun registerUser(user: UserCreateDto) = withErrorHandling {
         val request = UserHandlerGatewayOuterClass.UserCreateRequest.newBuilder()
             .apply {
                 this.externalId = user.externalId
@@ -28,7 +29,7 @@ class GrpcUserHandlerClient(serverUrl: String) : UserHandlerGateway {
         grpcClient.registerUser(request)
     }
 
-    override suspend fun setLocation(externalId: String, city: City) {
+    override suspend fun setLocation(externalId: String, city: City) = withErrorHandling {
         val request = UserHandlerGatewayOuterClass.SetLocationRequest.newBuilder()
             .apply {
                 this.externalId = externalId
@@ -38,7 +39,10 @@ class GrpcUserHandlerClient(serverUrl: String) : UserHandlerGateway {
         grpcClient.setLocation(request)
     }
 
-    override suspend fun setSearchOptions(externalId: String, searchOptions: UserSearchOptionsDto) {
+    override suspend fun setSearchOptions(
+        externalId: String,
+        searchOptions: UserSearchOptionsDto
+    ) = withErrorHandling {
         val request = UserHandlerGatewayOuterClass.SetSearchOptionsRequest
             .newBuilder().apply {
                 this.externalId = externalId
@@ -51,12 +55,16 @@ class GrpcUserHandlerClient(serverUrl: String) : UserHandlerGateway {
     }
 
     override suspend fun toggleSearch(externalId: String): Boolean {
-        val request = UserHandlerGatewayOuterClass.ToggleSearchRequest
-            .newBuilder().apply {
-                this.externalId = externalId
-            }.build()
+        val result = withSilentErrorHandling {
+            val request = UserHandlerGatewayOuterClass.ToggleSearchRequest
+                .newBuilder().apply {
+                    this.externalId = externalId
+                }.build()
 
-        return grpcClient.toggleSearch(request).searchEnabled
+            grpcClient.toggleSearch(request).searchEnabled
+        }
+
+        return result.getOrThrow()
     }
 
     private fun toGrpcNumRange(range: NumRange) = UserHandlerGatewayOuterClass.NumRange.newBuilder().apply {
