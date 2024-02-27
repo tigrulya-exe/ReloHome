@@ -1,13 +1,12 @@
 package exe.tigrulya.relohome.notifier.telegram.bot.reply
 
-import exe.tigrulya.relohome.api.UserHandlerGateway
-import kotlinx.coroutines.runBlocking
+import exe.tigrulya.relohome.api.BlockingUserHandlerGateway
 import org.telegram.abilitybots.api.bot.BaseAbilityBot
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 
 class EnableBotReply(
-    private val userHandlerGateway: UserHandlerGateway
+    private val userHandlerGateway: BlockingUserHandlerGateway
 ) : ReloHomeReply {
     companion object {
         const val ENABLED_BOT_BUTTON_TEXT = "🟢 Disable bot"
@@ -21,9 +20,12 @@ class EnableBotReply(
     override fun matches(update: Update): Boolean = POSSIBLE_PREFIXES
         .any { update.message.text.startsWith(it) }
 
-    override fun action(bot: BaseAbilityBot, update: Update): Unit = runBlocking {
+    override fun action(bot: BaseAbilityBot, update: Update) {
         val userId = update.message.from.id.toString()
-        val searchEnabled = userHandlerGateway.toggleSearch(userId)
+        val searchEnabled = userHandlerGateway.toggleSearch(userId).getOrElse {
+            bot.replyText(update, "Error toggling bot: ${it.message}")
+            return
+        }
 
         val sendMessage = SendMessage().apply {
             chatId = userId

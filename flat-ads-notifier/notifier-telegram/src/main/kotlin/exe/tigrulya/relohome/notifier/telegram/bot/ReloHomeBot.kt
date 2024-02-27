@@ -1,5 +1,6 @@
 package exe.tigrulya.relohome.notifier.telegram.bot
 
+import exe.tigrulya.relohome.api.BlockingUserHandlerGateway
 import exe.tigrulya.relohome.api.FlatAdNotifierGateway
 import exe.tigrulya.relohome.api.UserHandlerGateway
 import exe.tigrulya.relohome.model.FlatAd
@@ -32,7 +33,7 @@ class ReloHomeBot(
     botToken: String,
     botUsername: String,
     private val creatorId: Long,
-    private val userHandlerGateway: UserHandlerGateway,
+    private val userHandlerGateway: BlockingUserHandlerGateway,
     private val handlerWebUrl: String,
     private val searchOptionsDeserializer: SearchOptionsDeserializer = JsonSearchOptionsDeserializer(),
     private val templateEngine: TemplateEngine = MustacheTemplateEngine(),

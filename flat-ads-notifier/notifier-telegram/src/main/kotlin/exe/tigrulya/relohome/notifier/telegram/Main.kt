@@ -1,5 +1,6 @@
 package exe.tigrulya.relohome.notifier.telegram
 
+import exe.tigrulya.relohome.api.blocking
 import exe.tigrulya.relohome.api.grpc.GrpcUserHandlerClient
 import exe.tigrulya.relohome.config.Configuration
 import exe.tigrulya.relohome.kafka.KafkaConsumerConfig
@@ -31,7 +32,7 @@ object TgNotifierEntryPoint {
             botToken = config.getOptional(FLAT_AD_NOTIFIER_TG_TOKEN) ?: System.getenv("BOT_TOKEN"),
             botUsername = config.get(FLAT_AD_NOTIFIER_TG_BOT_NAME),
             creatorId = config.get(FLAT_AD_NOTIFIER_TG_CREATOR_ID),
-            userHandlerGateway = GrpcUserHandlerClient(config.get(FLAT_AD_HANDLER_GRPC_GATEWAY_HOSTNAME)),
+            userHandlerGateway = GrpcUserHandlerClient(config.get(FLAT_AD_HANDLER_GRPC_GATEWAY_HOSTNAME)).blocking(),
             handlerWebUrl = config.get(FLAT_AD_HANDLER_HTTP_GATEWAY_HOSTNAME),
             requestsPerSecond = config.get(FLAT_AD_NOTIFIER_TG_REQUESTS_PER_SEC)
         )

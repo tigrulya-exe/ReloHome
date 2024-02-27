@@ -34,6 +34,7 @@ data class UserSearchOptionsDto(
     val enabled: Boolean = true
 )
 
+// todo add max count of images per ad
 data class UserSearchOptionsInfo(
     val priceRange: NumRange = NumRange(),
     val roomRange: NumRange = NumRange(),

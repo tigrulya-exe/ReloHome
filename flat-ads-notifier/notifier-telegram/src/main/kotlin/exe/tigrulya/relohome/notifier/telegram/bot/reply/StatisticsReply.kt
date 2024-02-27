@@ -11,6 +11,6 @@ class StatisticsReply : ReloHomeReply {
     override val name: String = STATISTICS_BUTTON_TEXT
 
     override fun action(bot: BaseAbilityBot, update: Update) {
-        bot.replyText(update, "Coming soon...")
+        bot.replyText(update, "Collecting enough data to build statistics, come back later")
     }
 }

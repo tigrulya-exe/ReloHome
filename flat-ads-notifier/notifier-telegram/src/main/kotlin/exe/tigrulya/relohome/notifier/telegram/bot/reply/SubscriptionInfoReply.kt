@@ -11,6 +11,6 @@ class SubscriptionInfoReply : ReloHomeReply {
     override val name: String = SUBSCRIPTION_INFO_BUTTON_TEXT
 
     override fun action(bot: BaseAbilityBot, update: Update) {
-        bot.replyText(update, "Coming soon...")
+        bot.replyText(update, "Bot is free at the moment, but it will change soon :)")
     }
 }

@@ -1,34 +1,35 @@
 package exe.tigrulya.relohome.notifier.telegram.bot.ability
 
-import exe.tigrulya.relohome.api.UserHandlerGateway
+import exe.tigrulya.relohome.api.BlockingUserHandlerGateway
 import exe.tigrulya.relohome.notifier.telegram.serde.JsonSearchOptionsDeserializer
 import exe.tigrulya.relohome.notifier.telegram.serde.SearchOptionsDeserializer
-import kotlinx.coroutines.runBlocking
 import org.telegram.abilitybots.api.objects.MessageContext
 
 class DefaultAbility(
-    private val userHandlerGateway: UserHandlerGateway,
+    private val userHandlerGateway: BlockingUserHandlerGateway,
     private val searchOptionsDeserializer: SearchOptionsDeserializer = JsonSearchOptionsDeserializer(),
 ) : ReloHomeAbility {
     override val name: String = "default"
 
     override fun action(context: MessageContext) {
         val update = context.update()
-        val message = update.message
-        val source = message.from
 
-        message.webAppData?.let {
-            handleSearchOptions(source.id.toString(), it.data)
-            context.replyText("Successfully sent data from web app to server: ${it.data}")
+        update.message.webAppData?.let {
+            handleSearchOptions(context, it.data)
             return
         }
 
         context.replyText("Default handler, thread: ${Thread.currentThread().name}")
     }
 
-    // todo mb use some coroutine-friendly tg bot framework
-    private fun handleSearchOptions(userId: String, rawSearchOptions: String) = runBlocking {
+    private fun handleSearchOptions(context: MessageContext, rawSearchOptions: String) {
+        val message = context.update().message
         val searchOptions = searchOptionsDeserializer.deserialize(rawSearchOptions)
-        userHandlerGateway.setSearchOptions(userId, searchOptions)
+
+        val setOptionsResult = userHandlerGateway.setSearchOptions(message.from.id.toString(), searchOptions)
+        val replyText = setOptionsResult.map { "Successfully sent data from web app to server: $rawSearchOptions" }
+            .getOrElse { "Error setting search options: ${it.message}" }
+
+        context.replyText(replyText)
     }
 }

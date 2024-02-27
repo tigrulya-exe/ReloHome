@@ -38,7 +38,8 @@ class UserService {
         }
 
         val searchOptions = UserSearchOptions.getByExternalId(externalId)
-            ?: throw ReloHomeServerException("This should never happen, please contact support.")
+            ?: throw ReloHomeServerException("Illegal state: user is created, but search options not found. " +
+                    "This should never happen.")
 
         with(searchOptions) {
             enabled = !enabled
