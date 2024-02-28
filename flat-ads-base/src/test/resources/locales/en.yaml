@@ -1,0 +1,4 @@
+test:
+  constant:
+    raw: "Hello, dear friends!"
+    with-ctx: "Hello, dear {{name}}!"

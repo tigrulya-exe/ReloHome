@@ -14,6 +14,17 @@ data class ConfigOption<T>(
 
 interface ConfigurationParser {
     fun parse(rawConfig: String): Map<String, Any>
+    fun parseFromResource(resourcePath: String): Map<String, Any> {
+        val resource = ConfigurationParser::class.java.classLoader.getResource(resourcePath)
+            ?: return emptyMap()
+        val rawConfig = Files.readString(Path.of(resource.toURI()))
+        return parse(rawConfig)
+    }
+
+    fun parseFromFile(file: String): Map<String, Any> {
+        val rawConfig = Files.readString(Path.of(file))
+        return parse(rawConfig)
+    }
 }
 
 interface Configuration {
@@ -24,14 +35,12 @@ interface Configuration {
             resourcePath: String,
             parser: ConfigurationParser = YamlConfigurationParser()
         ): Configuration {
-            val resource = Companion::class.java.classLoader.getResource(resourcePath)
-//                ?: throw IllegalArgumentException("Configuration resource not found!: $resourcePath")
-            if (resource === null) {
+            val configs = parser.parseFromResource(resourcePath)
+            if (configs.isEmpty()) {
                 logger.warn("Configuration resource $resourcePath not found. Using default configuration.")
-                return MapConfiguration()
             }
-            val rawString = Files.readString(Path.of(resource.toURI()))
-            return MapConfiguration(parser.parse(rawString))
+
+            return MapConfiguration(configs)
         }
     }
 

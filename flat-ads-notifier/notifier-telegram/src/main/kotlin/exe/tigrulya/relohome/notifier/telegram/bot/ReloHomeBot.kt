@@ -2,15 +2,14 @@ package exe.tigrulya.relohome.notifier.telegram.bot
 
 import exe.tigrulya.relohome.api.BlockingUserHandlerGateway
 import exe.tigrulya.relohome.api.FlatAdNotifierGateway
-import exe.tigrulya.relohome.api.UserHandlerGateway
 import exe.tigrulya.relohome.model.FlatAd
 import exe.tigrulya.relohome.model.Image
 import exe.tigrulya.relohome.notifier.telegram.bot.ability.*
 import exe.tigrulya.relohome.notifier.telegram.bot.reply.*
 import exe.tigrulya.relohome.notifier.telegram.serde.JsonSearchOptionsDeserializer
 import exe.tigrulya.relohome.notifier.telegram.serde.SearchOptionsDeserializer
-import exe.tigrulya.relohome.notifier.template.MustacheTemplateEngine
-import exe.tigrulya.relohome.notifier.template.TemplateEngine
+import exe.tigrulya.relohome.template.ObjectReuseMustacheTemplateEngine
+import exe.tigrulya.relohome.template.TemplateEngine
 import exe.tigrulya.relohome.util.LoggerProperty
 import org.telegram.abilitybots.api.bot.DefaultAbilities
 import org.telegram.abilitybots.api.objects.Ability
@@ -36,7 +35,7 @@ class ReloHomeBot(
     private val userHandlerGateway: BlockingUserHandlerGateway,
     private val handlerWebUrl: String,
     private val searchOptionsDeserializer: SearchOptionsDeserializer = JsonSearchOptionsDeserializer(),
-    private val templateEngine: TemplateEngine = MustacheTemplateEngine(),
+    private val templateEngine: TemplateEngine = ObjectReuseMustacheTemplateEngine(),
     requestsPerSecond: Int = 10
 ) : RateLimitingAbilityBot(botToken, botUsername, createToggle(), createBotOptions(), requestsPerSecond),
     FlatAdNotifierGateway {
