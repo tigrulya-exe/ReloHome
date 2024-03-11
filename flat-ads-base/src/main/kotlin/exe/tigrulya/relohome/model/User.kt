@@ -22,7 +22,8 @@ data class User(
     val externalId: String,
     val state: UserState,
     // todo tmp
-    val city: City?
+    val city: City?,
+    val locale: String?
 )
 
 data class NumRange(val from: Int? = null, val to: Int? = null)

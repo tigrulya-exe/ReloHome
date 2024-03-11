@@ -1,4 +1,4 @@
-package exe.tigrulya.relohome.handler.repository
+package exe.tigrulya.relohome.util
 
 data class LazyMap<K, V>(val initializer: (K) -> V) {
 

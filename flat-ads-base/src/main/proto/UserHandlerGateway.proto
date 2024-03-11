@@ -7,6 +7,8 @@ service UserHandlerGateway {
 
   rpc SetLocation(SetLocationRequest) returns (Empty);
 
+  rpc SetLocale(SetLocaleRequest) returns (Empty);
+
   rpc SetSearchOptions(SetSearchOptionsRequest) returns (Empty);
 
   rpc ToggleSearch(ToggleSearchRequest) returns (ToggleSearchResponse);
@@ -21,6 +23,11 @@ message SetLocationRequest {
   string externalId = 1;
   string city = 2;
   string country = 3;
+}
+
+message SetLocaleRequest {
+  string externalId = 1;
+  string locale = 2;
 }
 
 message SetSearchOptionsRequest {

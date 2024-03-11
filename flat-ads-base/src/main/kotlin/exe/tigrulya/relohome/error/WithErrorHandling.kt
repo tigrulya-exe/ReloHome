@@ -7,7 +7,7 @@ interface WithErrorHandling {
         val loggerProperty by LoggerProperty()
     }
 
-    fun <R> handleClientError(clientException: ReloHomeClientException, actionName: String): R {
+    fun <R> handleClientError(clientException: ReloHomeUserException, actionName: String): R {
         loggerProperty.error("Client error during {}", actionName, clientException)
         throw clientException
     }
@@ -25,7 +25,7 @@ interface WithErrorHandling {
     fun <R> withErrorHandling(actionName: String = "unnamed action", action: () -> R): R {
         return try {
             action.invoke()
-        } catch (clientException: ReloHomeClientException) {
+        } catch (clientException: ReloHomeUserException) {
             handleClientError(clientException, actionName)
         } catch (serverException: ReloHomeServerException) {
             handleServerError(serverException, actionName)

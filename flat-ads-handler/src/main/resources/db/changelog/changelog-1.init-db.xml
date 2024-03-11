@@ -16,7 +16,7 @@
       <column autoIncrement="true" name="id" type="BIGINT">
         <constraints nullable="false" primaryKey="true" primaryKeyName="cities_pkey"/>
       </column>
-      <column name="name" type="VARCHAR(50)">
+      <column name="name" type="VARCHAR(255)">
         <constraints nullable="false"/>
       </column>
       <column name="country_id" type="BIGINT">
@@ -36,7 +36,7 @@
       <column autoIncrement="true" name="id" type="BIGINT">
         <constraints nullable="false" primaryKey="true" primaryKeyName="countries_pkey"/>
       </column>
-      <column name="name" type="VARCHAR(50)">
+      <column name="name" type="VARCHAR(255)">
         <constraints nullable="false"/>
       </column>
     </createTable>
@@ -53,7 +53,7 @@
       <column autoIncrement="true" name="id" type="BIGINT">
         <constraints nullable="false" primaryKey="true" primaryKeyName="subdistricts_pkey"/>
       </column>
-      <column name="name" type="VARCHAR(50)">
+      <column name="name" type="VARCHAR(255)">
         <constraints nullable="false"/>
       </column>
       <column name="city_id" type="BIGINT">
@@ -100,14 +100,14 @@
       <column name="external_id" type="VARCHAR(128)">
         <constraints nullable="false"/>
       </column>
-      <column name="city_name" type="VARCHAR(50)">
+      <column name="city_name" type="VARCHAR(255)">
         <constraints nullable="false"/>
       </column>
       <column name="price_from" type="INTEGER"/>
       <column name="price_to" type="INTEGER"/>
       <column name="rooms_from" type="INTEGER"/>
       <column name="rooms_to" type="INTEGER"/>
-      <column name="sub_districts" type="VARCHAR(1024)"/>
+      <column name="sub_districts" type="VARCHAR(4096)"/>
     </createTable>
   </changeSet>
 

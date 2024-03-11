@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+  <changeSet author="tigrulya" id="add_locale-1">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <tableExists tableName="locales"/>
+      </not>
+    </preConditions>
+
+    <createTable tableName="locales">
+      <column autoIncrement="true" name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="locales_pkey"/>
+      </column>
+      <column name="str_id" type="VARCHAR(32)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="name" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet author="tigrulya" id="add_locale-2">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <columnExists tableName="users" columnName="locale"/>
+      </not>
+    </preConditions>
+
+    <addColumn tableName="users">
+      <column name="locale" type="VARCHAR(255)" defaultValue="en">
+        <constraints nullable="true"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="tigrulya" id="add_locale-3">
+    <preConditions onFail="MARK_RAN">
+      <and>
+        <not>
+          <tableExists tableName="searchoptions"/>
+        </not>
+        <tableExists tableName="usersearchoptions"/>
+      </and>
+    </preConditions>
+
+    <renameTable oldTableName="usersearchoptions" newTableName="searchoptions"/>
+  </changeSet>
+
+</databaseChangeLog>

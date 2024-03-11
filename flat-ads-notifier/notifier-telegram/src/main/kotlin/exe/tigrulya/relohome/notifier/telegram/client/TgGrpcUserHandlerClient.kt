@@ -2,11 +2,11 @@ package exe.tigrulya.relohome.notifier.telegram.client
 
 
 import exe.tigrulya.relohome.api.grpc.GrpcUserHandlerClient
-import exe.tigrulya.relohome.error.ReloHomeClientException
+import exe.tigrulya.relohome.error.ReloHomeUserException
 import exe.tigrulya.relohome.error.ReloHomeServerException
 
 class TgGrpcUserHandlerClient(serverUrl: String) : GrpcUserHandlerClient(serverUrl) {
-    override fun <R> handleClientError(clientException: ReloHomeClientException, actionName: String): Result<R> {
+    override fun <R> handleClientError(clientException: ReloHomeUserException, actionName: String): Result<R> {
         return super.handleClientError(clientException, actionName)
     }
 

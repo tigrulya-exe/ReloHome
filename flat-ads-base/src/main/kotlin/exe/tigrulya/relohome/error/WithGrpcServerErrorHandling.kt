@@ -5,7 +5,7 @@ import io.grpc.Status.INTERNAL
 import io.grpc.StatusException
 
 interface WithGrpcServerErrorHandling: WithErrorHandling {
-    override fun <R> handleClientError(clientException: ReloHomeClientException, actionName: String): R {
+    override fun <R> handleClientError(clientException: ReloHomeUserException, actionName: String): R {
         WithErrorHandling.loggerProperty.error("Client error during {}", actionName, clientException)
 
         val status = FAILED_PRECONDITION

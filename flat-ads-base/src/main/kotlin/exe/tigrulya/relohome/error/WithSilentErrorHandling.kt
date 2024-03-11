@@ -8,7 +8,7 @@ interface WithGrpcClientErrorHandling {
         val loggerProperty by LoggerProperty()
     }
 
-    fun <R> handleClientError(clientException: ReloHomeClientException, actionName: String): Result<R> {
+    fun <R> handleClientError(clientException: ReloHomeUserException, actionName: String): Result<R> {
         loggerProperty.error("Client error during {}", actionName, clientException)
         return Result.failure(clientException)
     }
@@ -29,7 +29,7 @@ interface WithGrpcClientErrorHandling {
         } catch (statusException: StatusException) {
             return when (val cause = statusException.cause) {
                 is ReloHomeServerException -> handleServerError(cause, actionName)
-                is ReloHomeClientException -> handleClientError(cause, actionName)
+                is ReloHomeUserException -> handleClientError(cause, actionName)
                 else -> cause?.let { handleOtherError(it, actionName) }
                     ?: handleOtherError(statusException, actionName)
             }

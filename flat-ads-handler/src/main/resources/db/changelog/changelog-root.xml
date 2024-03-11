@@ -11,4 +11,5 @@
     <include file="db/changelog/changelog-1.init-db.xml"/>
     <include file="db/changelog/changelog-2.add-test-data.xml"/>
     <include file="db/changelog/changelog-3.add-enabled-column.xml"/>
+    <include file="db/changelog/changelog-4.add-locale.xml"/>
 </databaseChangeLog>

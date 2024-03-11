@@ -3,7 +3,7 @@ package exe.tigrulya.relohome.handler.service
 import exe.tigrulya.relohome.api.FlatAdHandlerGateway
 import exe.tigrulya.relohome.api.FlatAdNotifierGateway
 import exe.tigrulya.relohome.handler.repository.SubDistricts
-import exe.tigrulya.relohome.handler.repository.UserSearchOptions
+import exe.tigrulya.relohome.handler.repository.SearchOptions
 import exe.tigrulya.relohome.model.FlatAd
 import exe.tigrulya.relohome.util.LoggerProperty
 import org.jetbrains.exposed.sql.*
@@ -32,33 +32,33 @@ class FlatAdService(
 
         addLogger(StdOutSqlLogger)
 
-        val query = UserSearchOptions
-            .slice(UserSearchOptions.externalId)
-            .select(UserSearchOptions.cityName eq flatAd.address.city.name)
-            .andWhere { UserSearchOptions.enabled eq true }
+        val query = SearchOptions
+            .slice(SearchOptions.externalId)
+            .select(SearchOptions.cityName eq flatAd.address.city.name)
+            .andWhere { SearchOptions.enabled eq true }
 
         // todo mb it would be better to use prepared statement here
         flatAd.info.rooms?.let {
             query.andWhere {
-                (UserSearchOptions.roomsTo.isNull() or (UserSearchOptions.roomsTo greaterEq it)) and
-                        (UserSearchOptions.roomsFrom.isNull() or (UserSearchOptions.roomsFrom lessEq it))
+                (SearchOptions.roomsTo.isNull() or (SearchOptions.roomsTo greaterEq it)) and
+                        (SearchOptions.roomsFrom.isNull() or (SearchOptions.roomsFrom lessEq it))
             }
         }
 
         flatAd.price?.amount?.let {
             query.andWhere {
-                (UserSearchOptions.priceTo.isNull() or (UserSearchOptions.priceTo greaterEq it)) and
-                        (UserSearchOptions.priceFrom.isNull() or (UserSearchOptions.priceFrom lessEq it))
+                (SearchOptions.priceTo.isNull() or (SearchOptions.priceTo greaterEq it)) and
+                        (SearchOptions.priceFrom.isNull() or (SearchOptions.priceFrom lessEq it))
             }
         }
 
         flatAd.address.subDistrict?.let {
             query.andWhere {
-                UserSearchOptions.subDistricts.isNull() or
-                        (UserSearchOptions.subDistricts like "%${it.lowercase()}%")
+                SearchOptions.subDistricts.isNull() or
+                        (SearchOptions.subDistricts like "%${it.lowercase()}%")
             }
         }
 
-        query.map { it[UserSearchOptions.externalId] }
+        query.map { it[SearchOptions.externalId] }
     }
 }

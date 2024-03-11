@@ -1,10 +1,8 @@
 package exe.tigrulya.relohome.handler.service
 
-import exe.tigrulya.relohome.error.ReloHomeClientException
 import exe.tigrulya.relohome.error.ReloHomeServerException
-import exe.tigrulya.relohome.handler.repository.Cities
-import exe.tigrulya.relohome.handler.repository.UserSearchOptions
-import exe.tigrulya.relohome.handler.repository.Users
+import exe.tigrulya.relohome.error.ReloHomeUserException
+import exe.tigrulya.relohome.handler.repository.*
 import exe.tigrulya.relohome.model.*
 import org.jetbrains.exposed.sql.insertIgnore
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -25,6 +23,16 @@ class UserService {
         userEntity.state = UserState.CITY_PROVIDED
     }
 
+    fun setLocale(externalId: String, locale: String) = transaction {
+        val userEntity = Users.getByExternalId(externalId)
+
+        if (!Locales.exists(locale)) {
+            throw ReloHomeUserException("Wrong locale: $id")
+        }
+
+        userEntity.locale = locale
+    }
+
     // todo tmp, refactor when proper subscription will be added
     fun enableSubscription(externalId: String) = transaction {
         val userEntity = Users.getByExternalId(externalId)
@@ -34,12 +42,14 @@ class UserService {
     fun toggleSearch(externalId: String): Boolean = transaction {
         val userEntity = Users.getByExternalId(externalId)
         if (!userEntity.state.searchOptionsProvided()) {
-            throw ReloHomeClientException("Please, provide search parameters first")
+            throw ReloHomeUserException("Please, provide search parameters first")
         }
 
-        val searchOptions = UserSearchOptions.getByExternalId(externalId)
-            ?: throw ReloHomeServerException("Illegal state: user is created, but search options not found. " +
-                    "This should never happen.")
+        val searchOptions = SearchOptions.getByExternalId(externalId)
+            ?: throw ReloHomeServerException(
+                "Illegal state: user is created, but search options not found. " +
+                        "This should never happen."
+            )
 
         with(searchOptions) {
             enabled = !enabled
@@ -51,10 +61,10 @@ class UserService {
         val userEntity = Users.getByExternalId(externalUserId)
 
         if (!userEntity.state.canSetSearchOptions()) {
-            throw ReloHomeClientException("Please, provide city first")
+            throw ReloHomeUserException("Please, provide city first")
         }
 
-        UserSearchOptions.upsert(
+        SearchOptions.upsert(
             userExternalId = userEntity.externalId,
             searchOptions = searchOptions,
             userCityName = userEntity.location!!.name
@@ -66,10 +76,10 @@ class UserService {
         val user = getUserByExternalId(externalId)
 
         if (!user.state.canSetSearchOptions()) {
-            throw ReloHomeClientException("Please, provide city")
+            throw ReloHomeUserException("Please, provide city")
         }
 
-        UserSearchOptions.getByExternalId(externalId)?.toDomain()
+        SearchOptions.getByExternalId(externalId)?.toDomain()
             ?: UserSearchOptionsInfo(
                 // we know that user have already provided city
                 cityName = getUserByExternalId(externalId).city!!.name

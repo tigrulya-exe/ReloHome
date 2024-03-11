@@ -9,28 +9,28 @@ import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.LongIdTable
 import org.jetbrains.exposed.sql.upsert
 
-object UserSearchOptions : LongIdTable() {
+object SearchOptions : LongIdTable() {
     // for fast search
     var externalId = varchar("external_id", 128).uniqueIndex()
 
     var enabled = bool("enabled")
 
     // for fast search
-    var cityName = varchar("city_name", 50)
+    var cityName = varchar("city_name", 255)
     var priceFrom = integer("price_from").nullable()
     var priceTo = integer("price_to").nullable()
     var roomsFrom = integer("rooms_from").nullable()
     var roomsTo = integer("rooms_to").nullable()
 
     // for fast search
-    var subDistricts = varchar("sub_districts", 1024).nullable()
+    var subDistricts = varchar("sub_districts", 4096).nullable()
 
     fun getByExternalId(externalId: String) = UserSearchOptionsEntity.find {
-        UserSearchOptions.externalId eq externalId
+        SearchOptions.externalId eq externalId
     }.firstOrNull()
 
     fun upsert(userExternalId: String, searchOptions: UserSearchOptionsDto, userCityName: String) {
-        UserSearchOptions.upsert(keys = arrayOf(externalId)) { entity ->
+        SearchOptions.upsert(keys = arrayOf(externalId)) { entity ->
             entity[externalId] = userExternalId
             entity[enabled] = searchOptions.enabled
             searchOptions.priceRange.apply {
@@ -51,23 +51,23 @@ object UserSearchOptions : LongIdTable() {
 }
 
 class UserSearchOptionsEntity(id: EntityID<Long>) : LongEntity(id) {
-    companion object : LongEntityClass<UserSearchOptionsEntity>(UserSearchOptions)
+    companion object : LongEntityClass<UserSearchOptionsEntity>(SearchOptions)
 
-    var externalId by UserSearchOptions.externalId
+    var externalId by SearchOptions.externalId
 
-    var enabled by UserSearchOptions.enabled
+    var enabled by SearchOptions.enabled
 
-    var priceFrom by UserSearchOptions.priceFrom
+    var priceFrom by SearchOptions.priceFrom
 
-    var priceTo by UserSearchOptions.priceTo
+    var priceTo by SearchOptions.priceTo
 
-    var roomsFrom by UserSearchOptions.roomsFrom
+    var roomsFrom by SearchOptions.roomsFrom
 
-    var roomsTo by UserSearchOptions.roomsTo
+    var roomsTo by SearchOptions.roomsTo
 
-    var cityName by UserSearchOptions.cityName
+    var cityName by SearchOptions.cityName
 
-    var subDistricts by UserSearchOptions.subDistricts
+    var subDistricts by SearchOptions.subDistricts
 
     fun toDomain() = UserSearchOptionsInfo(
         priceRange = NumRange(priceFrom, priceTo),
