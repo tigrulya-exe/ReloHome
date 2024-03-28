@@ -22,7 +22,7 @@ interface WithErrorHandling {
         throw otherException
     }
 
-    fun <R> withErrorHandling(actionName: String = "unnamed action", action: () -> R): R {
+    suspend fun <R> withErrorHandling(actionName: String = "unnamed action", action: suspend () -> R): R {
         return try {
             action.invoke()
         } catch (clientException: ReloHomeUserException) {

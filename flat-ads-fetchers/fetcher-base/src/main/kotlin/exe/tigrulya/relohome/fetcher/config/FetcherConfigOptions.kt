@@ -2,7 +2,7 @@ package exe.tigrulya.relohome.fetcher.config
 
 import exe.tigrulya.relohome.config.ConfigOption
 
-object ConfigOptions {
+object FetcherConfigOptions {
 
     val FLAT_AD_FETCHER_LAST_HANDLED_TIMESTAMP_PATH = ConfigOption(
         name = "flat-ads.fetcher.timestamp.last-handled.path",

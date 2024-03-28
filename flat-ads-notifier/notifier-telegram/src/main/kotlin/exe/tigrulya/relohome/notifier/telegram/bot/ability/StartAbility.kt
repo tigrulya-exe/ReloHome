@@ -1,6 +1,6 @@
 package exe.tigrulya.relohome.notifier.telegram.bot.ability
 
-import exe.tigrulya.relohome.api.BlockingUserHandlerGateway
+import exe.tigrulya.relohome.api.user_handler.BlockingUserHandlerGateway
 import exe.tigrulya.relohome.model.UserCreateDto
 import exe.tigrulya.relohome.notifier.telegram.bot.ReloHomeBot
 import exe.tigrulya.relohome.notifier.telegram.util.asCode

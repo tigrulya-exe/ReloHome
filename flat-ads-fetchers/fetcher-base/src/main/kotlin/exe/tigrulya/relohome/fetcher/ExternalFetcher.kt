@@ -20,7 +20,7 @@ interface ExternalFetcher<T> {
 }
 
 abstract class AbstractExternalFetcher<T>(
-    protected val lastHandledAdTimestampProvider: LastHandledAdTimestampProvider,
+    private val lastHandledAdTimestampProvider: LastHandledAdTimestampProvider,
     // todo replace with rate limiter
     private val batchFetchDelay: Duration = 5.seconds,
     private val pageFetchDelay: Duration = 5.seconds

@@ -1,6 +1,6 @@
 package exe.tigrulya.relohome.api.grpc
 
-import exe.tigrulya.relohome.api.UserHandlerGateway
+import exe.tigrulya.relohome.api.user_handler.UserHandlerGateway
 import exe.tigrulya.relohome.api.UserHandlerGatewayGrpcKt
 import exe.tigrulya.relohome.api.UserHandlerGatewayOuterClass
 import exe.tigrulya.relohome.error.WithGrpcClientErrorHandling

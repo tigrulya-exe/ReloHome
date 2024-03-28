@@ -1,6 +1,6 @@
 package exe.tigrulya.relohome.notifier.telegram.bot.ability
 
-import exe.tigrulya.relohome.api.BlockingUserHandlerGateway
+import exe.tigrulya.relohome.api.user_handler.BlockingUserHandlerGateway
 import exe.tigrulya.relohome.notifier.telegram.serde.JsonSearchOptionsDeserializer
 import exe.tigrulya.relohome.notifier.telegram.serde.SearchOptionsDeserializer
 import org.telegram.abilitybots.api.objects.MessageContext

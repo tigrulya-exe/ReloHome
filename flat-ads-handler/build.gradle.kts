@@ -21,11 +21,11 @@ dependencies {
     implementation("io.ktor:ktor-network-tls-certificates")
     implementation("io.ktor:ktor-server-config-yaml")
     implementation("io.ktor:ktor-server-call-logging")
+    implementation("io.ktor:ktor-server-call-logging-jvm:2.3.6")
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
 
     implementation("com.zaxxer:HikariCP:5.0.1")
     implementation("org.liquibase:liquibase-core:4.23.2")
-    implementation("io.ktor:ktor-server-call-logging-jvm:2.3.6")
     runtimeOnly("com.mattbertolini:liquibase-slf4j:5.0.0")
 
     implementation("org.postgresql:postgresql:42.7.0")

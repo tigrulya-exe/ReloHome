@@ -40,6 +40,7 @@ class SsGeFetcher(
             .filter { it.orderDate > lastHandledAdTime }
             .onEach { lastHandledPageAdTime = maxOf(lastHandledPageAdTime, it.orderDate) }
             .map { client.fetchAd(it.detailUrl) }
+            // todo move it to base fetcher
             .buffer(asyncBufferCapacity)
             .map { collector.emit(it) }
             .count()

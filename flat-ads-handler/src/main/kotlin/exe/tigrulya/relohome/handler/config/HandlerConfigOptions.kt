@@ -3,7 +3,7 @@ package exe.tigrulya.relohome.handler.config
 import exe.tigrulya.relohome.config.ConfigOption
 import kotlin.time.Duration.Companion.seconds
 
-object ConfigOptions {
+object HandlerConfigOptions {
     val KAFKA_FLAT_AD_CONSUMER_BOOTSTRAP_SERVERS = ConfigOption(
         name = "kafka.flat-ads.consumer.bootstrap-servers",
         defaultValue = "localhost:9094"

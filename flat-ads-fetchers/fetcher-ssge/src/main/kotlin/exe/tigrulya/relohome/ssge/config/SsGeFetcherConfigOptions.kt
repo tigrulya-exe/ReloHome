@@ -2,7 +2,7 @@ package exe.tigrulya.relohome.ssge.config
 
 import exe.tigrulya.relohome.config.ConfigOption
 
-object ConfigOptions {
+object SsGeFetcherConfigOptions {
 
     val KAFKA_FLAT_AD_PRODUCER_TOPIC = ConfigOption(
         name = "kafka.flat-ads.producer.topic",
@@ -21,6 +21,6 @@ object ConfigOptions {
 
     val FLAT_AD_FETCHER_SS_GE_ASYNC_BUFFER_CAPACITY = ConfigOption(
         name = "flat-ads.fetcher.ss-ge.buffer.capacity",
-        defaultValue = 20
+        defaultValue = 50
     )
 }

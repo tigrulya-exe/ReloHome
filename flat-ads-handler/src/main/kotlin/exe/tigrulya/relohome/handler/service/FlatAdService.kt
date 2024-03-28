@@ -2,13 +2,14 @@ package exe.tigrulya.relohome.handler.service
 
 import exe.tigrulya.relohome.api.FlatAdHandlerGateway
 import exe.tigrulya.relohome.api.FlatAdNotifierGateway
-import exe.tigrulya.relohome.handler.repository.SubDistricts
 import exe.tigrulya.relohome.handler.repository.SearchOptions
+import exe.tigrulya.relohome.handler.repository.SubDistricts
 import exe.tigrulya.relohome.model.FlatAd
 import exe.tigrulya.relohome.util.LoggerProperty
+import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 class FlatAdService(
     private val notifierGateway: FlatAdNotifierGateway
@@ -24,11 +25,13 @@ class FlatAdService(
         }
     }
 
-    fun getDistricts(cityName: String): List<String> = transaction {
+    suspend fun getDistricts(cityName: String): List<String> = newSuspendedTransaction(Dispatchers.IO) {
         SubDistricts.getByCityName(cityName)
     }
 
-    private fun getUserExternalIdsForFlatAd(flatAd: FlatAd): List<String> = transaction {
+    private suspend fun getUserExternalIdsForFlatAd(
+        flatAd: FlatAd
+    ): List<String> = newSuspendedTransaction(Dispatchers.IO) {
 
         addLogger(StdOutSqlLogger)
 
