@@ -40,12 +40,12 @@ open class GrpcUserHandlerClient(serverUrl: String) : UserHandlerGateway, WithGr
     }
 
     override suspend fun setSearchOptions(
-        externalId: String,
+        externalUserId: String,
         searchOptions: UserSearchOptionsDto
     ) = withErrorHandling {
         val request = UserHandlerGatewayOuterClass.SetSearchOptionsRequest
             .newBuilder().apply {
-                this.externalId = externalId
+                this.externalId = externalUserId
                 this.priceRange = toGrpcNumRange(searchOptions.priceRange)
                 this.roomRange = toGrpcNumRange(searchOptions.roomRange)
                 addAllSubDistricts(searchOptions.subDistricts)
