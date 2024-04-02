@@ -17,6 +17,9 @@ services:
   logs:
     image: parseable/parseable
     restart: always
+    environment:
+      P_USERNAME: tigrulya
+      P_PASSWORD: adminyopta
     command: ["parseable", "local-store"]
     ports:
       - "8000:8000"
