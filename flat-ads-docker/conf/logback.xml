@@ -10,4 +10,5 @@
     <logger name="org.eclipse.jetty" level="INFO"/>
     <logger name="io.netty" level="INFO"/>
     <logger name="exe.tigrulya" level="INFO"/>
+    <logger name="org.jetbrains.exposed" level="INFO"/>
 </configuration>

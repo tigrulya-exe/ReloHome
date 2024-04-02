@@ -30,6 +30,13 @@ services:
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
 
+  logs:
+    image: parseable/parseable
+    restart: always
+    command: ["parseable", "local-store"]
+    ports:
+      - "8000:8000"
+
   handler:
     image: relohome/flat-ads-handler:0.3
     command:
@@ -41,6 +48,7 @@ services:
     depends_on:
       - postgres
       - kafka
+      - logs
 
   fetcher-ssge:
     image: relohome/fetcher-ssge:0.3

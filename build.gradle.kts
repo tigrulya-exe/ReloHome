@@ -68,6 +68,8 @@ subprojects {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         mergeServiceFiles()
 
+        // tasks.processResources.get().enabled = false
+
         enabled = false
     }
 
