@@ -76,7 +76,8 @@ class SsGeClient(
     private suspend fun getSessionToken(): String {
         val serverCookies = httpClient.get("https://home.ss.ge/en/real-estate")
             .setCookie()
-        // TODO lol
-        return serverCookies[SS_SESSION_TOKEN_KEY]!!.value
+
+        return serverCookies[SS_SESSION_TOKEN_KEY]?.value
+            ?: throw IllegalStateException("Can't find session token '$SS_SESSION_TOKEN_KEY' in cookies: $serverCookies")
     }
 }

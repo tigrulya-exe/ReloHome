@@ -1,10 +1,8 @@
 package exe.tigrulya.relohome.fetcher
 
-import exe.tigrulya.relohome.api.FlatAdHandlerGateway
 import exe.tigrulya.relohome.model.FlatAd
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.runBlocking
 import java.time.Instant
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -63,18 +61,5 @@ abstract class AbstractExternalFetcher<T>(
 
         class Completed(lastAdTimestamp: Instant) : FetchResult(lastAdTimestamp)
         class NextPageRequired(lastAdTimestamp: Instant) : FetchResult(lastAdTimestamp)
-    }
-}
-
-class ExternalFetcherRunner<T>(
-    private val fetcher: ExternalFetcher<T>,
-    private val outCollector: FlatAdHandlerGateway
-) {
-    fun run() = runBlocking {
-        val flatAdMapper = fetcher.flatAdMapper()
-        fetcher.fetchAds()
-            .map { flatAdMapper.toFlatAd(it) }
-            .buffer()
-            .collect { outCollector.handle(it) }
     }
 }
