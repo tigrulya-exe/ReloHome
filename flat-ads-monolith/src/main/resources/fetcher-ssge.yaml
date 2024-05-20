@@ -2,6 +2,9 @@ flat-ads:
   fetcher:
     ss-ge:
       buffer:
-        capacity: 20
+        capacity: 100
       url:
         base: 'https://api-gateway.ss.ge/v1/'
+  timestamp:
+    last-handled:
+      window: '24h'

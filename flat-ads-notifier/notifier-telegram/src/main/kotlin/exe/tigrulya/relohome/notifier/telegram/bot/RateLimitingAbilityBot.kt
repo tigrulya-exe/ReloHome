@@ -23,7 +23,7 @@ abstract class RateLimitingAbilityBot(
     botUsername: String,
     toggle: AbilityToggle,
     options: DefaultBotOptions,
-    permitsPerSecond: Int = 25
+    permitsPerSecond: Int = 15
 ) : AbilityBot(botToken, botUsername, toggle, options) {
 
     private val rateLimiter = RateLimiter.create(permitsPerSecond.toDouble())

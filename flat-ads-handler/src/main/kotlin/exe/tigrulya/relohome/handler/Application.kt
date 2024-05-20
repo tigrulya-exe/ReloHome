@@ -42,7 +42,6 @@ object ServiceRegistry {
     val config: Configuration = Configuration.fromResource("handler.yaml")
 
     fun initKafka() {
-        // todo parse from application properties
         val kafkaConsumerConfig = KafkaConsumerConfig(
             bootstrapServers = config.get(KAFKA_FLAT_AD_CONSUMER_BOOTSTRAP_SERVERS),
             topics = splitTopics(config.get(KAFKA_FLAT_AD_CONSUMER_TOPICS)),

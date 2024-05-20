@@ -13,12 +13,13 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.runBlocking
+import org.slf4j.LoggerFactory
 import kotlin.concurrent.thread
 import kotlin.coroutines.EmptyCoroutineContext
 
 
 fun main(args: Array<String>) {
-    val flatAdChannel = Channel<Pair<List<String>, FlatAd>>(50)
+    val flatAdChannel = Channel<Pair<List<String>, FlatAd>>(200)
     val bufferedNotifier = BufferedFlatAdNotifierGateway(flatAdChannel)
 
     ServiceRegistry.flatAdService = FlatAdService(bufferedNotifier)
@@ -30,12 +31,14 @@ fun main(args: Array<String>) {
     }
 
     runBlocking {
+        val logger = LoggerFactory.getLogger(BufferedFlatAdNotifierGateway::class.java)
+
         val flatAdNotifier = TgNotifierEntryPoint.startInPlace(ServiceRegistry.userService.inPlaceBlocking())
         flatAdChannel.consumeEach {
             try {
                 flatAdNotifier.onNewAd(it.first, it.second)
-            } catch (_: Exception) {
-
+            } catch (exception: Exception) {
+                logger.error("Error reporting flat ad ${it.second} to users ${it.first} through notifier", exception)
             }
         }
     }

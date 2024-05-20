@@ -47,5 +47,9 @@ application {
 }
 
 tasks.withType<ShadowJar> {
+    exclude("fetcher-ssge.yaml")
+    exclude("application.yaml")
+    exclude("keystore.jks")
+
     enabled = true
 }

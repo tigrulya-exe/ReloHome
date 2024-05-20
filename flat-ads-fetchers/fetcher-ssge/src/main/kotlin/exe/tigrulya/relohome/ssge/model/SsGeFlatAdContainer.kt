@@ -19,13 +19,18 @@ enum class Currency(@get:JsonValue @set:JsonCreator var id: Int) {
     USD(2)
 }
 
+enum class Order(@get:JsonValue @set:JsonCreator var id: Int) {
+    DATE_DESCENDING(1),
+}
+
 data class GetSsGeFlatAdsRequest(
     val realEstateType: EstateType = EstateType.APARTMENT,
     val realEstateDealType: DealType = DealType.RENT,
     val cityIdList: List<City> = listOf(City.TBILISI),
     val pageSize: Int = 30,
     val page: Int = 1,
-    val currencyId: Currency = Currency.GEL
+    val currencyId: Currency = Currency.GEL,
+    val order: Order = Order.DATE_DESCENDING
 )
 
 data class FlatAdImageContainer(

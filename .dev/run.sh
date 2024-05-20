@@ -1,0 +1,1 @@
+nohup java -cp "/root/relo-home/*:/root/relo-home/conf/" exe.tigrulya.relohome.monolith.MainKt &

@@ -152,7 +152,7 @@ class ReloHomeBot(
                 }
             }
         // little hack to attach text to group of images
-        imagesGroup[0].caption = text
+        imagesGroup[0].caption = maybeShrink(text)
         imagesGroup[0].parseMode = "Markdown"
 
         val message = SendMediaGroup()
@@ -173,4 +173,8 @@ class ReloHomeBot(
         val imageUrl = URL(link)
         val readableByteChannel: ReadableByteChannel = Channels.newChannel(imageUrl.openStream())
     }
+
+    private fun maybeShrink(text: String) = if (text.length >= 1024) {
+        text.substring(0, 1020) + "..."
+     } else text
 }

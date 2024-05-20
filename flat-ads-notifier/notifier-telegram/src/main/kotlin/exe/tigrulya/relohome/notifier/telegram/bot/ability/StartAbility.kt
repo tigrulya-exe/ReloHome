@@ -1,6 +1,7 @@
 package exe.tigrulya.relohome.notifier.telegram.bot.ability
 
 import exe.tigrulya.relohome.api.user_handler.BlockingUserHandlerGateway
+import exe.tigrulya.relohome.model.City
 import exe.tigrulya.relohome.model.UserCreateDto
 import exe.tigrulya.relohome.notifier.telegram.bot.ReloHomeBot
 import exe.tigrulya.relohome.notifier.telegram.util.asCode
@@ -20,6 +21,15 @@ class StartAbility(
             UserCreateDto(
                 name = message.from.userName,
                 externalId = message.from.id.toString()
+            )
+        )
+
+        // todo tmp lol
+        userHandlerGateway.setLocation(
+            message.from.id.toString(),
+            City(
+                name = "Tbilisi",
+                country = "Georgia"
             )
         )
 

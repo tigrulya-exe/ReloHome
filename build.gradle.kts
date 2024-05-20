@@ -12,7 +12,7 @@ plugins {
 
 allprojects {
     group = "exe.tigrulya"
-    version = "0.3"
+    version = "0.3.1"
 
     repositories {
         mavenCentral()

@@ -3,14 +3,12 @@ package exe.tigrulya.relohome.ssge
 import exe.tigrulya.relohome.fetcher.AbstractExternalFetcher
 import exe.tigrulya.relohome.fetcher.FlatAdMapper
 import exe.tigrulya.relohome.fetcher.LastHandledAdTimestampProvider
-import exe.tigrulya.relohome.fetcher.WindowTillNowTimestampProvider
 import exe.tigrulya.relohome.util.LoggerProperty
 import exe.tigrulya.relohome.ssge.client.SsGeClient
 import exe.tigrulya.relohome.ssge.model.GetSsGeFlatAdsRequest
 import exe.tigrulya.relohome.ssge.model.SsGeFlatAdContainer
 import kotlinx.coroutines.flow.*
 import java.time.Instant
-import java.time.temporal.ChronoUnit
 
 class SsGeFetcher(
     baseUrl: String = "https://api-gateway.ss.ge/v1/",
