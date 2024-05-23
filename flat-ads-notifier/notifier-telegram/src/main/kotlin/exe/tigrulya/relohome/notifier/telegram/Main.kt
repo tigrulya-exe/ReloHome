@@ -2,8 +2,8 @@ package exe.tigrulya.relohome.notifier.telegram
 
 import exe.tigrulya.relohome.api.FlatAdNotifierGateway
 import exe.tigrulya.relohome.api.grpc.GrpcUserHandlerClient
-import exe.tigrulya.relohome.api.user_handler.BlockingUserHandlerGateway
-import exe.tigrulya.relohome.api.user_handler.blocking
+import exe.tigrulya.relohome.api.user_handler.AsyncUserHandlerGateway
+import exe.tigrulya.relohome.api.user_handler.async
 import exe.tigrulya.relohome.config.Configuration
 import exe.tigrulya.relohome.kafka.KafkaConsumerConfig
 import exe.tigrulya.relohome.kafka.splitTopics
@@ -28,18 +28,18 @@ fun main() = TgNotifierEntryPoint.startRemote()
 object TgNotifierEntryPoint {
     fun startRemote() {
         val config: Configuration = Configuration.fromResource("notifier-tg.yaml")
-        val userHandlerGateway = GrpcUserHandlerClient(config.get(FLAT_AD_HANDLER_GRPC_GATEWAY_HOSTNAME)).blocking()
+        val userHandlerGateway = GrpcUserHandlerClient(config.get(FLAT_AD_HANDLER_GRPC_GATEWAY_HOSTNAME)).async()
         startInternal(config, userHandlerGateway, startFlatAdKafkaConsumer = true)
     }
 
-    fun startInPlace(userHandlerGateway: BlockingUserHandlerGateway): FlatAdNotifierGateway {
+    fun startInPlace(userHandlerGateway: AsyncUserHandlerGateway): FlatAdNotifierGateway {
         val config: Configuration = Configuration.fromResource("notifier-tg.yaml")
         return startInternal(config, userHandlerGateway, startFlatAdKafkaConsumer = false)
     }
 
     private fun startInternal(
         config: Configuration,
-        userHandlerGateway: BlockingUserHandlerGateway,
+        userHandlerGateway: AsyncUserHandlerGateway,
         startFlatAdKafkaConsumer: Boolean = true
     ): FlatAdNotifierGateway {
         val botsApi = TelegramBotsApi(DefaultBotSession::class.java)

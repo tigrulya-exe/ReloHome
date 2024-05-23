@@ -1,7 +1,7 @@
 package exe.tigrulya.relohome.notifier.telegram.bot
 
-import exe.tigrulya.relohome.api.user_handler.BlockingUserHandlerGateway
 import exe.tigrulya.relohome.api.FlatAdNotifierGateway
+import exe.tigrulya.relohome.api.user_handler.AsyncUserHandlerGateway
 import exe.tigrulya.relohome.model.FlatAd
 import exe.tigrulya.relohome.model.Image
 import exe.tigrulya.relohome.notifier.telegram.bot.ability.*
@@ -27,13 +27,14 @@ import org.telegram.telegrambots.meta.api.objects.webapp.WebAppInfo
 import java.net.URL
 import java.nio.channels.Channels
 import java.nio.channels.ReadableByteChannel
+import java.util.concurrent.CompletableFuture
 
 // todo &amp
 class ReloHomeBot(
     botToken: String,
     botUsername: String,
     private val creatorId: Long,
-    private val userHandlerGateway: BlockingUserHandlerGateway,
+    private val userHandlerGateway: AsyncUserHandlerGateway,
     private val handlerWebUrl: String,
     private val searchOptionsDeserializer: SearchOptionsDeserializer = JsonSearchOptionsDeserializer(),
     private val templateEngine: TemplateEngine = ObjectReuseMustacheTemplateEngine(),
@@ -103,7 +104,6 @@ class ReloHomeBot(
         val flatAdMessage = templateEngine.compile("templates/new-flat-ad.mustache", flatAd)
 
         if (flatAd.images.isEmpty()) {
-            // todo maybe send in thread-pool
             userIds.forEach { sendAdWithoutImages(it, flatAdMessage) }
             return
         }
@@ -152,20 +152,26 @@ class ReloHomeBot(
                 }
             }
         // little hack to attach text to group of images
-        imagesGroup[0].caption = maybeShrink(text)
-        imagesGroup[0].parseMode = "Markdown"
+        imagesGroup[0].apply {
+            caption = maybeShrink(text)
+            parseMode = "Markdown"
+        }
 
-        val message = SendMediaGroup()
-        message.chatId = userId
-        message.medias = imagesGroup
-        execute(message)
+        val message = SendMediaGroup().apply {
+            chatId = userId
+            medias = imagesGroup
+        }
+        executeAsync(message)
+            .onError { logger.error(it.message) }
     }
 
-    private fun sendAdWithoutImages(userId: String, text: String) {
-        val message = SendMessage()
-        message.chatId = userId
-        message.text = text
-        execute(message)
+    private fun sendAdWithoutImages(userId: String, messageText: String) {
+        val message = SendMessage().apply {
+            chatId = userId
+            text = messageText
+        }
+        executeAsync(message)
+            .onError { logger.error(it.message) }
     }
 
     // todo check zero-copy methods
@@ -177,4 +183,10 @@ class ReloHomeBot(
     private fun maybeShrink(text: String) = if (text.length >= 1024) {
         text.substring(0, 1020) + "..."
      } else text
+}
+
+fun CompletableFuture<*>.onError(handler: (Throwable) -> Unit) {
+    handle { _, error ->
+        error?.let { handler.invoke(it) }
+    }
 }

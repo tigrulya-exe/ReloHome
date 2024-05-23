@@ -62,8 +62,12 @@ class FileBackedLastHandledAdTimestampProvider(
         }
 
         fun deserializeTimestamp(path: Path): Instant {
-            val epochMilli = ByteBuffer.wrap(path.readBytes()).getLong()
-            return Instant.ofEpochMilli(epochMilli)
+            return try {
+                val epochMilli = ByteBuffer.wrap(path.readBytes()).getLong()
+                Instant.ofEpochMilli(epochMilli)
+            } catch (exception: Exception) {
+                Instant.now()
+            }
         }
     }
 

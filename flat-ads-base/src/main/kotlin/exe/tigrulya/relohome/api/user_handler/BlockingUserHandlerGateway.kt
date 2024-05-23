@@ -14,8 +14,6 @@ class BlockingUserHandlerGateway(
     private val context: CoroutineContext
 ) {
     companion object {
-        private val ThrowingErrorCallback: ErrorCallback<Nothing> = { throw it }
-
         fun wrap(
             userHandlerGateway: UserHandlerGateway,
             context: CoroutineContext = Dispatchers.Default
@@ -24,21 +22,21 @@ class BlockingUserHandlerGateway(
 
     fun registerUser(
         user: UserCreateDto
-    ): Result<Unit> = runBlocking {
+    ): Result<Unit> = runBlocking(context) {
         runCatchingStatusError { delegate.registerUser(user) }
     }
 
     fun setLocation(
         externalId: String,
         city: City,
-    ): Result<Unit> = runBlocking {
+    ): Result<Unit> = runBlocking(context) {
         runCatchingStatusError { delegate.setLocation(externalId, city) }
     }
 
     fun setSearchOptions(
         externalId: String,
         searchOptions: UserSearchOptionsDto,
-    ): Result<Unit> = runBlocking {
+    ): Result<Unit> = runBlocking(context) {
         runCatchingStatusError { delegate.setSearchOptions(externalId, searchOptions) }
     }
 

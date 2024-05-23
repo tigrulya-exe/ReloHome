@@ -1,12 +1,13 @@
 package exe.tigrulya.relohome.notifier.telegram.bot.reply
 
-import exe.tigrulya.relohome.api.user_handler.BlockingUserHandlerGateway
+import exe.tigrulya.relohome.api.user_handler.AsyncUserHandlerGateway
+import exe.tigrulya.relohome.notifier.telegram.bot.onError
 import org.telegram.abilitybots.api.bot.BaseAbilityBot
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
 
 class EnableBotReply(
-    private val userHandlerGateway: BlockingUserHandlerGateway
+    private val userHandlerGateway: AsyncUserHandlerGateway
 ) : ReloHomeReply {
     companion object {
         const val ENABLED_BOT_BUTTON_TEXT = "🟢 Disable bot"
@@ -22,19 +23,20 @@ class EnableBotReply(
 
     override fun action(bot: BaseAbilityBot, update: Update) {
         val userId = update.message.from.id.toString()
-        val searchEnabled = userHandlerGateway.toggleSearch(userId).getOrElse {
-            bot.replyText(update, "Error toggling bot: ${it.message}")
-            return
-        }
 
-        val sendMessage = SendMessage().apply {
-            chatId = userId
+        userHandlerGateway.toggleSearch(userId)
+            .thenCompose { searchEnabled ->
+                val sendMessage = SendMessage().apply {
+                    chatId = userId
+                    parseMode = "HTML"
+                    replyMarkup = unwrapBot(bot).replyKeyboard(userId, searchEnabled)
+                    text = "The flat ad search is ${if (searchEnabled) "enabled" else "disabled"}"
+                }
 
-            parseMode = "HTML"
-            replyMarkup = unwrapBot(bot).replyKeyboard(userId, searchEnabled)
-            text = "The flat ad search is ${if (searchEnabled) "enabled" else "disabled"}"
-        }
-
-        bot.execute(sendMessage)
+                bot.executeAsync(sendMessage)
+            }
+            .exceptionallyCompose {
+                bot.replyText(update, "Error toggling bot: ${it.message}")
+            }
     }
 }

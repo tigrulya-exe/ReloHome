@@ -19,7 +19,6 @@ open class GrpcUserHandlerClient(serverUrl: String) : UserHandlerGateway, WithGr
         grpcClient = UserHandlerGatewayGrpcKt.UserHandlerGatewayCoroutineStub(channel)
     }
 
-    // todo mb turn UserHandlerGateway to suspend api
     override suspend fun registerUser(user: UserCreateDto) = withErrorHandling {
         val request = UserHandlerGatewayOuterClass.UserCreateRequest.newBuilder()
             .apply {

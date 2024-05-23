@@ -1,8 +1,7 @@
 package exe.tigrulya.relohome.monolith
 
 import exe.tigrulya.relohome.api.FlatAdNotifierGateway
-import exe.tigrulya.relohome.api.user_handler.BlockingUserHandlerGateway
-import exe.tigrulya.relohome.api.user_handler.UserHandlerGateway
+import exe.tigrulya.relohome.api.user_handler.async
 import exe.tigrulya.relohome.handler.HandlerEntryPoint
 import exe.tigrulya.relohome.handler.ServiceRegistry
 import exe.tigrulya.relohome.handler.service.FlatAdService
@@ -15,7 +14,6 @@ import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import kotlin.concurrent.thread
-import kotlin.coroutines.EmptyCoroutineContext
 
 
 fun main(args: Array<String>) {
@@ -33,7 +31,7 @@ fun main(args: Array<String>) {
     runBlocking {
         val logger = LoggerFactory.getLogger(BufferedFlatAdNotifierGateway::class.java)
 
-        val flatAdNotifier = TgNotifierEntryPoint.startInPlace(ServiceRegistry.userService.inPlaceBlocking())
+        val flatAdNotifier = TgNotifierEntryPoint.startInPlace(ServiceRegistry.userService.async())
         flatAdChannel.consumeEach {
             try {
                 flatAdNotifier.onNewAd(it.first, it.second)
@@ -43,9 +41,6 @@ fun main(args: Array<String>) {
         }
     }
 }
-
-fun UserHandlerGateway.inPlaceBlocking(): BlockingUserHandlerGateway =
-    BlockingUserHandlerGateway(this, EmptyCoroutineContext)
 
 class BufferedFlatAdNotifierGateway(
     private val buffer: SendChannel<Pair<List<String>, FlatAd>>

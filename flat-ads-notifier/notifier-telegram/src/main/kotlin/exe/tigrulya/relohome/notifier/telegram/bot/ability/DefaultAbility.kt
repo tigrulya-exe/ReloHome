@@ -1,12 +1,14 @@
 package exe.tigrulya.relohome.notifier.telegram.bot.ability
 
-import exe.tigrulya.relohome.api.user_handler.BlockingUserHandlerGateway
+import exe.tigrulya.relohome.api.user_handler.AsyncUserHandlerGateway
 import exe.tigrulya.relohome.notifier.telegram.serde.JsonSearchOptionsDeserializer
 import exe.tigrulya.relohome.notifier.telegram.serde.SearchOptionsDeserializer
 import org.telegram.abilitybots.api.objects.MessageContext
+import java.util.concurrent.CompletableFuture
 
+// todo pass global bot executor service
 class DefaultAbility(
-    private val userHandlerGateway: BlockingUserHandlerGateway,
+    private val userHandlerGateway: AsyncUserHandlerGateway,
     private val searchOptionsDeserializer: SearchOptionsDeserializer = JsonSearchOptionsDeserializer(),
 ) : ReloHomeAbility {
     override val name: String = "default"
@@ -26,10 +28,15 @@ class DefaultAbility(
         val message = context.update().message
         val searchOptions = searchOptionsDeserializer.deserialize(rawSearchOptions)
 
-        val setOptionsResult = userHandlerGateway.setSearchOptions(message.from.id.toString(), searchOptions)
-        val replyText = setOptionsResult.map { "Successfully sent data from web app to server: $rawSearchOptions" }
-            .getOrElse { "Error setting search options: ${it.message}" }
-
-        context.replyText(replyText)
+        CompletableFuture.runAsync { searchOptionsDeserializer.deserialize(rawSearchOptions) }
+            .thenApply {
+                userHandlerGateway.setSearchOptions(message.from.id.toString(), searchOptions)
+            }
+            .handle { _, error ->
+                val replyText = error?.let {
+                    "Error setting search options: ${it.message}"
+                } ?: "Successfully sent data from web app to server: $rawSearchOptions"
+                context.replyText(replyText)
+            }
     }
 }

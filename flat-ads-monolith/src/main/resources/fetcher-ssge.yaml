@@ -5,6 +5,6 @@ flat-ads:
         capacity: 100
       url:
         base: 'https://api-gateway.ss.ge/v1/'
-  timestamp:
-    last-handled:
-      window: '24h'
+    timestamp:
+      last-handled:
+        window: '24h'

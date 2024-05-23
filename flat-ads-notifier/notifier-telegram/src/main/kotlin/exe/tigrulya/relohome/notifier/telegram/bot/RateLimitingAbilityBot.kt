@@ -18,6 +18,7 @@ import org.telegram.telegrambots.meta.updateshandlers.SentCallback
 import java.io.Serializable
 import java.util.concurrent.CompletableFuture
 
+// todo replace inheritance with withRateLimiter{Async} wrappers
 abstract class RateLimitingAbilityBot(
     botToken: String,
     botUsername: String,
@@ -28,136 +29,120 @@ abstract class RateLimitingAbilityBot(
 
     private val rateLimiter = RateLimiter.create(permitsPerSecond.toDouble())
 
-    override fun executeAsync(sendDocument: SendDocument?): CompletableFuture<Message> {
-        rateLimiter.acquire()
-        return super.executeAsync(sendDocument)
+    private fun <T> withRateLimiterAsync(block: () -> CompletableFuture<T>): CompletableFuture<T> {
+        return CompletableFuture.runAsync({ rateLimiter.acquire() }, exe)
+            .thenCompose { block.invoke() }
     }
 
-    override fun executeAsync(sendPhoto: SendPhoto?): CompletableFuture<Message> {
+    private fun <T> withRateLimiter(block: () -> T): T {
         rateLimiter.acquire()
-        return super.executeAsync(sendPhoto)
+        return block.invoke()
     }
 
-    override fun executeAsync(sendVideo: SendVideo?): CompletableFuture<Message> {
-        rateLimiter.acquire()
-        return super.executeAsync(sendVideo)
+    override fun executeAsync(sendDocument: SendDocument?) = withRateLimiterAsync {
+        super.executeAsync(sendDocument)
     }
 
-    override fun executeAsync(sendVideoNote: SendVideoNote?): CompletableFuture<Message> {
-        rateLimiter.acquire()
-        return super.executeAsync(sendVideoNote)
+    override fun executeAsync(sendPhoto: SendPhoto?) = withRateLimiterAsync {
+        super.executeAsync(sendPhoto)
     }
 
-    override fun executeAsync(sendSticker: SendSticker?): CompletableFuture<Message> {
-        rateLimiter.acquire()
-        return super.executeAsync(sendSticker)
+    override fun executeAsync(sendVideo: SendVideo?) = withRateLimiterAsync {
+        super.executeAsync(sendVideo)
     }
 
-    override fun executeAsync(sendAudio: SendAudio?): CompletableFuture<Message> {
-        rateLimiter.acquire()
-        return super.executeAsync(sendAudio)
+    override fun executeAsync(sendVideoNote: SendVideoNote?) = withRateLimiterAsync {
+        super.executeAsync(sendVideoNote)
     }
 
-    override fun executeAsync(sendVoice: SendVoice?): CompletableFuture<Message> {
-        rateLimiter.acquire()
-        return super.executeAsync(sendVoice)
+    override fun executeAsync(sendSticker: SendSticker?) = withRateLimiterAsync {
+        super.executeAsync(sendSticker)
     }
 
-    override fun executeAsync(sendMediaGroup: SendMediaGroup?): CompletableFuture<MutableList<Message>> {
-        rateLimiter.acquire()
-        return super.executeAsync(sendMediaGroup)
+    override fun executeAsync(sendAudio: SendAudio?) = withRateLimiterAsync {
+        super.executeAsync(sendAudio)
     }
 
-    override fun executeAsync(setChatPhoto: SetChatPhoto?): CompletableFuture<Boolean> {
-        rateLimiter.acquire()
-        return super.executeAsync(setChatPhoto)
+    override fun executeAsync(sendVoice: SendVoice?) = withRateLimiterAsync {
+        super.executeAsync(sendVoice)
     }
 
-    override fun executeAsync(addStickerToSet: AddStickerToSet?): CompletableFuture<Boolean> {
-        rateLimiter.acquire()
-        return super.executeAsync(addStickerToSet)
+    override fun executeAsync(sendMediaGroup: SendMediaGroup?) = withRateLimiterAsync {
+        super.executeAsync(sendMediaGroup)
     }
 
-    override fun executeAsync(setStickerSetThumb: SetStickerSetThumb?): CompletableFuture<Boolean> {
-        rateLimiter.acquire()
-        return super.executeAsync(setStickerSetThumb)
+    override fun executeAsync(setChatPhoto: SetChatPhoto?) = withRateLimiterAsync {
+        super.executeAsync(setChatPhoto)
     }
 
-    override fun executeAsync(createNewStickerSet: CreateNewStickerSet?): CompletableFuture<Boolean> {
-        rateLimiter.acquire()
-        return super.executeAsync(createNewStickerSet)
+    override fun executeAsync(addStickerToSet: AddStickerToSet?) = withRateLimiterAsync {
+        super.executeAsync(addStickerToSet)
     }
 
-    override fun executeAsync(uploadStickerFile: UploadStickerFile?): CompletableFuture<File> {
-        rateLimiter.acquire()
-        return super.executeAsync(uploadStickerFile)
+    override fun executeAsync(setStickerSetThumb: SetStickerSetThumb?) = withRateLimiterAsync {
+        super.executeAsync(setStickerSetThumb)
     }
 
-    override fun executeAsync(editMessageMedia: EditMessageMedia?): CompletableFuture<Serializable> {
-        rateLimiter.acquire()
-        return super.executeAsync(editMessageMedia)
+    override fun executeAsync(createNewStickerSet: CreateNewStickerSet?) = withRateLimiterAsync {
+        super.executeAsync(createNewStickerSet)
     }
 
-    override fun executeAsync(sendAnimation: SendAnimation?): CompletableFuture<Message> {
-        rateLimiter.acquire()
-        return super.executeAsync(sendAnimation)
+    override fun executeAsync(uploadStickerFile: UploadStickerFile?) = withRateLimiterAsync {
+        super.executeAsync(uploadStickerFile)
+    }
+
+    override fun executeAsync(editMessageMedia: EditMessageMedia?) = withRateLimiterAsync {
+        super.executeAsync(editMessageMedia)
+    }
+
+    override fun executeAsync(sendAnimation: SendAnimation?) = withRateLimiterAsync {
+        super.executeAsync(sendAnimation)
     }
 
     override fun <T : Serializable?, Method : BotApiMethod<T>?, Callback : SentCallback<T>?> executeAsync(
         method: Method,
         callback: Callback
-    ) {
-        rateLimiter.acquire()
+    ) = withRateLimiter {
         super.executeAsync(method, callback)
     }
 
-    override fun <T : Serializable?, Method : BotApiMethod<T>?> executeAsync(method: Method): CompletableFuture<T> {
-        rateLimiter.acquire()
-        return super.executeAsync(method)
+    override fun <T : Serializable?, Method : BotApiMethod<T>?> executeAsync(method: Method) = withRateLimiterAsync {
+        super.executeAsync(method)
     }
 
-    override fun execute(setChatPhoto: SetChatPhoto?): Boolean {
-        rateLimiter.acquire()
-        return super.execute(setChatPhoto)
+    override fun execute(setChatPhoto: SetChatPhoto?): Boolean = withRateLimiter {
+        super.execute(setChatPhoto)
     }
 
-    override fun execute(sendMediaGroup: SendMediaGroup?): MutableList<Message> {
-        rateLimiter.acquire()
-        return super.execute(sendMediaGroup)
+    override fun execute(sendMediaGroup: SendMediaGroup?): MutableList<Message> = withRateLimiter {
+        super.execute(sendMediaGroup)
     }
 
-    override fun execute(addStickerToSet: AddStickerToSet?): Boolean {
-        rateLimiter.acquire()
-        return super.execute(addStickerToSet)
+    override fun execute(addStickerToSet: AddStickerToSet?): Boolean = withRateLimiter {
+        super.execute(addStickerToSet)
     }
 
-    override fun execute(setStickerSetThumb: SetStickerSetThumb?): Boolean {
-        rateLimiter.acquire()
-        return super.execute(setStickerSetThumb)
+    override fun execute(setStickerSetThumb: SetStickerSetThumb?): Boolean = withRateLimiter {
+        super.execute(setStickerSetThumb)
     }
 
-    override fun execute(createNewStickerSet: CreateNewStickerSet?): Boolean {
-        rateLimiter.acquire()
-        return super.execute(createNewStickerSet)
+    override fun execute(createNewStickerSet: CreateNewStickerSet?): Boolean = withRateLimiter {
+        super.execute(createNewStickerSet)
     }
 
-    override fun execute(uploadStickerFile: UploadStickerFile?): File {
-        rateLimiter.acquire()
-        return super.execute(uploadStickerFile)
+    override fun execute(uploadStickerFile: UploadStickerFile?): File = withRateLimiter {
+        super.execute(uploadStickerFile)
     }
 
-    override fun execute(editMessageMedia: EditMessageMedia?): Serializable {
-        rateLimiter.acquire()
-        return super.execute(editMessageMedia)
+    override fun execute(editMessageMedia: EditMessageMedia?): Serializable = withRateLimiter {
+        super.execute(editMessageMedia)
     }
 
-    override fun execute(sendAnimation: SendAnimation?): Message {
-        rateLimiter.acquire()
-        return super.execute(sendAnimation)
+    override fun execute(sendAnimation: SendAnimation?): Message = withRateLimiter {
+        super.execute(sendAnimation)
     }
 
-    override fun <T : Serializable?, Method : BotApiMethod<T>?> execute(method: Method): T {
-        rateLimiter.acquire()
-        return super.execute(method)
+    override fun <T : Serializable?, Method : BotApiMethod<T>?> execute(method: Method): T = withRateLimiter {
+        super.execute(method)
     }
 }
