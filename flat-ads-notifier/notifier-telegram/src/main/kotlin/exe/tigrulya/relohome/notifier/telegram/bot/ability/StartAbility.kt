@@ -1,6 +1,8 @@
 package exe.tigrulya.relohome.notifier.telegram.bot.ability
 
 import exe.tigrulya.relohome.api.user_handler.AsyncUserHandlerGateway
+import exe.tigrulya.relohome.api.user_handler.realMessage
+import exe.tigrulya.relohome.api.user_handler.unwrap
 import exe.tigrulya.relohome.model.City
 import exe.tigrulya.relohome.model.UserCreateDto
 import exe.tigrulya.relohome.notifier.telegram.bot.ReloHomeBot
@@ -56,7 +58,7 @@ class StartAbility(
             parseMode = "HTML"
             replyMarkup = unwrapBot(context).replyKeyboard(message.from.id.toString())
             text = exception?.let {
-                "Error during registering user: ${it.message}"
+                "Error during registering user: ${it.realMessage}"
             } ?: successText
         }
 

@@ -1,7 +1,7 @@
 package exe.tigrulya.relohome.notifier.telegram.bot.reply
 
 import exe.tigrulya.relohome.api.user_handler.AsyncUserHandlerGateway
-import exe.tigrulya.relohome.notifier.telegram.bot.onError
+import exe.tigrulya.relohome.api.user_handler.realMessage
 import org.telegram.abilitybots.api.bot.BaseAbilityBot
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.Update
@@ -19,7 +19,7 @@ class EnableBotReply(
     override val name: String = ENABLED_BOT_BUTTON_TEXT
 
     override fun matches(update: Update): Boolean = POSSIBLE_PREFIXES
-        .any { update.message.text.startsWith(it) }
+        .any { update.message?.text?.startsWith(it) ?: false }
 
     override fun action(bot: BaseAbilityBot, update: Update) {
         val userId = update.message.from.id.toString()
@@ -36,7 +36,7 @@ class EnableBotReply(
                 bot.executeAsync(sendMessage)
             }
             .exceptionallyCompose {
-                bot.replyText(update, "Error toggling bot: ${it.message}")
+                bot.replyText(update, "Error toggling bot: ${it.realMessage}")
             }
     }
 }

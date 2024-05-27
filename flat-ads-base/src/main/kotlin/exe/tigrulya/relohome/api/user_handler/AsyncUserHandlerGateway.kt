@@ -8,39 +8,40 @@ import exe.tigrulya.relohome.model.UserCreateDto
 import exe.tigrulya.relohome.model.UserSearchOptionsDto
 import io.grpc.Status
 import io.grpc.StatusException
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.future.future
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CompletionException
 import kotlin.coroutines.CoroutineContext
 
 class AsyncUserHandlerGateway(
     private val delegate: UserHandlerGateway,
-    private val context: CoroutineContext
+    context: CoroutineContext = Dispatchers.IO,
 ) {
+    private val supervisor = SupervisorJob()
+    private val coroutineScope: CoroutineScope = CoroutineScope(context + supervisor)
+
     fun registerUser(
         user: UserCreateDto
-    ): CompletableFuture<Unit> = runBlocking(context) {
-        errorHandlingFuture {
-            delegate.registerUser(user)
-        }
+    ): CompletableFuture<Unit> = errorHandlingFuture {
+        delegate.registerUser(user)
     }
 
     fun setLocation(
         externalId: String,
         city: City,
-    ): CompletableFuture<Unit> = runBlocking(context) {
-        errorHandlingFuture {
-            delegate.setLocation(externalId, city)
-        }
+    ): CompletableFuture<Unit> = errorHandlingFuture {
+        delegate.setLocation(externalId, city)
     }
 
     fun setSearchOptions(
         externalId: String,
         searchOptions: UserSearchOptionsDto,
-    ): CompletableFuture<Unit> = runBlocking(context) {
-        errorHandlingFuture {
-            delegate.setSearchOptions(externalId, searchOptions)
-        }
+    ): CompletableFuture<Unit> = errorHandlingFuture {
+        delegate.setSearchOptions(externalId, searchOptions)
     }
 
     fun toggleSearch(
@@ -54,22 +55,21 @@ class AsyncUserHandlerGateway(
     private fun <T> errorHandlingFuture(
         block: suspend CoroutineScope.() -> T
     ): CompletableFuture<T> {
-        // TODO instead of GlobalScope provide smth like BotScope
-        return GlobalScope.future {
+        return coroutineScope.future {
             block.invoke(this)
         }.handle { result, error ->
             error ?: return@handle result
 
-            val message = when (error) {
-                is ReloHomeUserException -> "Request error: ${error.message}"
-                is ReloHomeServerException -> "Server error: ${error.message}. " +
+            val message = when (error.unwrap()) {
+                is ReloHomeUserException -> "Request error: ${error.realMessage}"
+                is ReloHomeServerException -> "Server error: ${error.realMessage}. " +
                         "Please, contact /support and describe your problem."
                 is StatusException -> {
-                    if (error.status == Status.FAILED_PRECONDITION) {
-                        "Request error: ${error.message?.replace("FAILED_PRECONDITION:", "")}"
+                    if ((error as StatusException).status == Status.FAILED_PRECONDITION) {
+                        "Request error: ${error.realMessage?.replace("FAILED_PRECONDITION:", "")}"
                     } else {
                         "Server error: ${
-                            error.message?.replace(
+                            error.realMessage?.replace(
                                 "INTERNAL:",
                                 ""
                             )
@@ -85,3 +85,15 @@ class AsyncUserHandlerGateway(
 
 fun UserHandlerGateway.async(coroutineContext: CoroutineContext = Dispatchers.IO): AsyncUserHandlerGateway =
     AsyncUserHandlerGateway(this, coroutineContext)
+
+fun Throwable.unwrap(): Throwable = when(this) {
+    is CancellationException -> cause!!
+    else -> this
+}
+
+val Throwable.realMessage: String?
+    get() = when(this) {
+        is CancellationException -> cause?.message
+        is CompletionException -> cause?.message
+        else -> message
+    }

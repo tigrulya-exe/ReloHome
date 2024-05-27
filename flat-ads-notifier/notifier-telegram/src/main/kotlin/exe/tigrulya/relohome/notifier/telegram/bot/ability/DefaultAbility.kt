@@ -1,12 +1,12 @@
 package exe.tigrulya.relohome.notifier.telegram.bot.ability
 
 import exe.tigrulya.relohome.api.user_handler.AsyncUserHandlerGateway
+import exe.tigrulya.relohome.api.user_handler.realMessage
 import exe.tigrulya.relohome.notifier.telegram.serde.JsonSearchOptionsDeserializer
 import exe.tigrulya.relohome.notifier.telegram.serde.SearchOptionsDeserializer
 import org.telegram.abilitybots.api.objects.MessageContext
 import java.util.concurrent.CompletableFuture
 
-// todo pass global bot executor service
 class DefaultAbility(
     private val userHandlerGateway: AsyncUserHandlerGateway,
     private val searchOptionsDeserializer: SearchOptionsDeserializer = JsonSearchOptionsDeserializer(),
@@ -21,7 +21,7 @@ class DefaultAbility(
             return
         }
 
-        context.replyText("Default handler, thread: ${Thread.currentThread().name}")
+        context.replyText("Sorry, I don't understand what are you trying to say. I`m just a bot :)")
     }
 
     private fun handleSearchOptions(context: MessageContext, rawSearchOptions: String) {
@@ -34,7 +34,7 @@ class DefaultAbility(
             }
             .handle { _, error ->
                 val replyText = error?.let {
-                    "Error setting search options: ${it.message}"
+                    "Error setting search options: ${it.realMessage}"
                 } ?: "Successfully sent data from web app to server: $rawSearchOptions"
                 context.replyText(replyText)
             }

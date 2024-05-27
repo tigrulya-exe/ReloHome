@@ -11,7 +11,7 @@ import java.util.concurrent.CompletableFuture
 interface ReloHomeReply: WithReloHomeBotSupport {
     val name: String
 
-    fun matches(update: Update): Boolean = update.message.text.startsWith(name)
+    fun matches(update: Update): Boolean = update.message?.text?.startsWith(name) ?: false
 
     fun action(bot: BaseAbilityBot, update: Update)
 
