@@ -2,8 +2,11 @@ package exe.tigrulya.relohome.handler
 
 import com.github.mustachejava.DefaultMustacheFactory
 import exe.tigrulya.relohome.config.Configuration
+import exe.tigrulya.relohome.handler.cache.RedisHandledAdsCache
 import exe.tigrulya.relohome.handler.config.HandlerConfigOptions.FLAT_AD_HANDLER_DB_URL
 import exe.tigrulya.relohome.handler.config.HandlerConfigOptions.FLAT_AD_HANDLER_GATEWAY_PORT
+import exe.tigrulya.relohome.handler.config.HandlerConfigOptions.FLAT_AD_HANDLER_ADS_CACHE_TTL
+import exe.tigrulya.relohome.handler.config.HandlerConfigOptions.FLAT_AD_HANDLER_ADS_CACHE_REDIS_URL
 import exe.tigrulya.relohome.handler.config.HandlerConfigOptions.KAFKA_FLAT_AD_CONSUMER_BOOTSTRAP_SERVERS
 import exe.tigrulya.relohome.handler.config.HandlerConfigOptions.KAFKA_FLAT_AD_CONSUMER_GROUP
 import exe.tigrulya.relohome.handler.config.HandlerConfigOptions.KAFKA_FLAT_AD_CONSUMER_TOPICS
@@ -56,7 +59,12 @@ object ServiceRegistry {
         )
         val kafkaProducer = KafkaFlatAdProducer(kafkaProducerConfig)
 
-        flatAdService = FlatAdService(kafkaProducer)
+        val redisAdsCache = RedisHandledAdsCache(
+            redisUrl = config.get(FLAT_AD_HANDLER_ADS_CACHE_REDIS_URL),
+            keyTimeout = config.get(FLAT_AD_HANDLER_ADS_CACHE_TTL)
+        )
+
+        flatAdService = FlatAdService(kafkaProducer, redisAdsCache)
     }
 }
 

@@ -50,6 +50,7 @@ subprojects {
         implementation("org.apache.logging.log4j:log4j-core:2.21.1")
 
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
+        runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.7.3")
 
         implementation("org.apache.kafka:kafka-clients:$kafkaVersion")
 

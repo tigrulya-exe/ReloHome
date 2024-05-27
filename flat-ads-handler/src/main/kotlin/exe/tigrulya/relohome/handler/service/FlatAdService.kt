@@ -2,6 +2,7 @@ package exe.tigrulya.relohome.handler.service
 
 import exe.tigrulya.relohome.api.FlatAdHandlerGateway
 import exe.tigrulya.relohome.api.FlatAdNotifierGateway
+import exe.tigrulya.relohome.handler.cache.HandledAdsCache
 import exe.tigrulya.relohome.handler.repository.SearchOptions
 import exe.tigrulya.relohome.handler.repository.SubDistricts
 import exe.tigrulya.relohome.model.FlatAd
@@ -12,17 +13,27 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 class FlatAdService(
-    private val notifierGateway: FlatAdNotifierGateway
+    private val notifierGateway: FlatAdNotifierGateway,
+    // todo replace direct dependency injection with streams (aka coroutine flows)
+    private val handledAdsCache: HandledAdsCache
 ) : FlatAdHandlerGateway {
 
     private val logger by LoggerProperty()
 
     override suspend fun handle(flatAd: FlatAd) {
         val flatAdReceivers = getUserExternalIdsForFlatAd(flatAd)
-        if (flatAdReceivers.isNotEmpty()) {
-            logger.info("Send ${flatAd.id} to $flatAdReceivers")
-            notifierGateway.onNewAd(flatAdReceivers, flatAd)
+        if (flatAdReceivers.isEmpty()) {
+            return
         }
+
+        if (handledAdsCache.contains(flatAd.serviceId, flatAd.id)) {
+            logger.info("Skipping already handled ad: ${flatAd.id} from ${flatAd.serviceId}")
+            return
+        }
+
+        logger.debug("Send {} to {}", flatAd.id, flatAdReceivers)
+        notifierGateway.onNewAd(flatAdReceivers, flatAd)
+        handledAdsCache.insert(flatAd.serviceId, flatAd.id)
     }
 
     suspend fun getDistricts(cityName: String): List<String> = newSuspendedTransaction(Dispatchers.IO) {
@@ -33,7 +44,7 @@ class FlatAdService(
         flatAd: FlatAd
     ): List<String> = newSuspendedTransaction(Dispatchers.IO) {
 
-        addLogger(StdOutSqlLogger)
+        // addLogger(StdOutSqlLogger)
 
         val query = SearchOptions
             .slice(SearchOptions.externalId)

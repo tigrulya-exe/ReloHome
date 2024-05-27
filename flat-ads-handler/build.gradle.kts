@@ -12,6 +12,8 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
 
+    implementation("io.lettuce:lettuce-core:6.3.2.RELEASE")
+
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-mustache-jvm")
     implementation("io.ktor:ktor-server-content-negotiation-jvm")

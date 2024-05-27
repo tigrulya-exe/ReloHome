@@ -23,3 +23,12 @@ services:
     command: ["parseable", "local-store"]
     ports:
       - "8000:8000"
+
+  redis:
+    image: redis:7.2.5-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 120 1
+    volumes:
+      - ./cache-data:/data

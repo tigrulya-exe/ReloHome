@@ -48,6 +48,7 @@ application {
 
 tasks.withType<ShadowJar> {
     exclude("fetcher-ssge.yaml")
+    exclude("notifier-tg.yaml")
     exclude("application.yaml")
     exclude("keystore.jks")
 

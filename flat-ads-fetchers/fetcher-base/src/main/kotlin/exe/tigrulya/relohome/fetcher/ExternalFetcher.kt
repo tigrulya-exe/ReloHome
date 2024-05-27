@@ -42,13 +42,13 @@ abstract class AbstractExternalFetcher<T>(
         do {
             val fetchResult = fetchPage(collector, pageNum, lastHandledAdTime)
             lastHandledAdInBatchTime = maxOf(lastHandledAdInBatchTime, fetchResult.lastAdTimestamp)
+            lastHandledAdTimestampProvider.update(lastHandledAdInBatchTime)
             when (fetchResult) {
                 is FetchResult.NextPageRequired -> ++pageNum
                 is FetchResult.Completed -> break
             }
             delay(pageFetchDelay)
         } while (true)
-        lastHandledAdTimestampProvider.update(lastHandledAdInBatchTime)
     }
 
     protected abstract suspend fun fetchPage(

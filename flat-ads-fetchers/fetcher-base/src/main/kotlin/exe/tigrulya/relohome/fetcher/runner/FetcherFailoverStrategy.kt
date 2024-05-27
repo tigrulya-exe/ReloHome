@@ -2,6 +2,7 @@ package exe.tigrulya.relohome.fetcher.runner
 
 import exe.tigrulya.relohome.fetcher.ExternalFetcher
 
+// todo add strategy to start search from last offset
 enum class FetcherFailoverStrategy {
     FAIL,
     CONTINUE,

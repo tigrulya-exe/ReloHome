@@ -1,6 +1,7 @@
 package exe.tigrulya.relohome.handler.config
 
 import exe.tigrulya.relohome.config.ConfigOption
+import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.seconds
 
 object HandlerConfigOptions {
@@ -42,5 +43,15 @@ object HandlerConfigOptions {
     val FLAT_AD_HANDLER_DB_URL = ConfigOption(
         name = "flat-ads.handler.db.url",
         defaultValue = "jdbc:postgresql://localhost:65432/ReloHome?user=root&password=toor"
+    )
+
+    val FLAT_AD_HANDLER_ADS_CACHE_REDIS_URL = ConfigOption(
+        name = "flat-ads.handler.ads.cache.redis.url",
+        defaultValue = "redis://localhost:6379/0"
+    )
+
+    val FLAT_AD_HANDLER_ADS_CACHE_TTL = ConfigOption(
+        name = "flat-ads.handler.ads.cache.ttl",
+        defaultValue = 14.days
     )
 }
