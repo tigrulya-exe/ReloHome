@@ -1,7 +1,7 @@
 package exe.tigrulya.relohome.template
 
 interface TemplateEngine {
-    fun <T> compile(templatePath: String, dataObject: T): String
+    fun compile(templatePath: String, vararg scopeObjects: Any): String
 
-    fun <T> compile(templateId: String, template: String, dataObject: T): String
+    fun compile(templateId: String, template: String, vararg scopeObjects: Any): String
 }

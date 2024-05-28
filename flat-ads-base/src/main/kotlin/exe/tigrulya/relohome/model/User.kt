@@ -31,6 +31,7 @@ data class NumRange(val from: Int? = null, val to: Int? = null)
 data class UserSearchOptionsDto(
     val priceRange: NumRange,
     val roomRange: NumRange,
+    val areaRange: NumRange,
     val subDistricts: List<String>,
     val enabled: Boolean = true
 )
@@ -39,6 +40,7 @@ data class UserSearchOptionsDto(
 data class UserSearchOptionsInfo(
     val priceRange: NumRange = NumRange(),
     val roomRange: NumRange = NumRange(),
+    val areaRange: NumRange = NumRange(),
     val cityName: String,
     val subDistricts: Set<String> = setOf()
 )

@@ -54,7 +54,7 @@ data class LocaleConstantImpl(
     private val templateEngine: TemplateEngine): LocaleConstant {
 
     override fun <T> eval(context: T): String {
-        return templateEngine.compile(id, rawValue, context)
+        return templateEngine.compile(id, rawValue, context as Any)
     }
 }
 

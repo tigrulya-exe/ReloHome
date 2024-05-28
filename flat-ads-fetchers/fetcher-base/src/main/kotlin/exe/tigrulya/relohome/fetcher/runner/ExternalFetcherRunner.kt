@@ -11,10 +11,11 @@ typealias FetcherFactory<T> = () -> ExternalFetcher<T>
 class ExternalFetcherRunner<T>(
     private val fetcherFactory: FetcherFactory<T>,
     private val outCollector: FlatAdHandlerGateway,
-    failoverStrategy: FetcherFailoverStrategy = FetcherFailoverStrategy.RECREATE_FETCHER
+    failoverStrategy: FetcherRunnerFailoverStrategy = FetcherRunnerFailoverStrategy.RECREATE_FETCHER,
+    private val asyncBufferCapacity: Int = 50
 ) {
 
-    private val fetcherFailover = FetcherFailover.of(failoverStrategy)
+    private val fetcherRunnerFailover = FetcherRunnerFailover.of(failoverStrategy)
     private val logger by LoggerProperty()
     fun run() = runBlocking {
         var fetcher = fetcherFactory.invoke()
@@ -24,7 +25,7 @@ class ExternalFetcherRunner<T>(
             try {
                 fetcher.fetchAds()
                     .map { flatAdMapper.toFlatAd(it) }
-                    .buffer()
+                    .buffer(asyncBufferCapacity)
                     .collect { outCollector.handle(it) }
             } catch (exception: Exception) {
                 fetcher = failover(exception, fetcher)
@@ -36,6 +37,6 @@ class ExternalFetcherRunner<T>(
     private fun failover(exception: Exception, fetcher: ExternalFetcher<T>): ExternalFetcher<T> {
         logger.error("Error fetching ads: ${exception.message}")
         exception.printStackTrace()
-        return fetcherFailover.failover(exception, fetcher, fetcherFactory)
+        return fetcherRunnerFailover.onFetcherFail(exception, fetcher, fetcherFactory)
     }
 }

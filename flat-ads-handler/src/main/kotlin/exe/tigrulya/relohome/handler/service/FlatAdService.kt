@@ -59,6 +59,13 @@ class FlatAdService(
             }
         }
 
+        flatAd.info.spaceSquareMeters?.let {
+            query.andWhere {
+                (SearchOptions.areaTo.isNull() or (SearchOptions.areaTo greaterEq it)) and
+                        (SearchOptions.areaFrom.isNull() or (SearchOptions.areaFrom lessEq it))
+            }
+        }
+
         flatAd.price?.amount?.let {
             query.andWhere {
                 (SearchOptions.priceTo.isNull() or (SearchOptions.priceTo greaterEq it)) and

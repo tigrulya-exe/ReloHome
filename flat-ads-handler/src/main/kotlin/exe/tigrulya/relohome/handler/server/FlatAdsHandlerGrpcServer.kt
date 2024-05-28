@@ -49,6 +49,7 @@ class FlatAdsHandlerGrpcService(
             searchOptions = UserSearchOptionsDto(
                 priceRange = request.priceRange.toDomainNumRange(),
                 roomRange = request.roomRange.toDomainNumRange(),
+                areaRange = request.areaRange.toDomainNumRange(),
                 subDistricts = request.subDistrictsList
             )
         )

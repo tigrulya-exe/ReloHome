@@ -36,6 +36,7 @@ message SetSearchOptionsRequest {
   NumRange roomRange = 3;
   repeated string subDistricts = 4;
   bool enabled = 5;
+  NumRange areaRange = 6;
 }
 
 message NumRange {

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+  <changeSet author="tigrulya" id="add_area-1">
+    <preConditions onFail="MARK_RAN">
+      <and>
+        <tableExists tableName="searchoptions"/>
+        <not>
+          <columnExists tableName="searchoptions" columnName="area_from"/>
+        </not>
+      </and>
+    </preConditions>
+
+    <addColumn tableName="searchoptions">
+      <column name="area_from" type="INTEGER" defaultValue="null">
+        <constraints nullable="true"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="tigrulya" id="add_area-2">
+    <preConditions onFail="MARK_RAN">
+      <and>
+        <tableExists tableName="searchoptions"/>
+        <not>
+          <columnExists tableName="searchoptions" columnName="area_to"/>
+        </not>
+      </and>
+    </preConditions>
+
+    <addColumn tableName="searchoptions">
+      <column name="area_to" type="INTEGER" defaultValue="null">
+        <constraints nullable="true"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+</databaseChangeLog>

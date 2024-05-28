@@ -3,17 +3,17 @@ package exe.tigrulya.relohome.ssge
 import exe.tigrulya.relohome.fetcher.AbstractExternalFetcher
 import exe.tigrulya.relohome.fetcher.FlatAdMapper
 import exe.tigrulya.relohome.fetcher.LastHandledAdTimestampProvider
-import exe.tigrulya.relohome.util.LoggerProperty
 import exe.tigrulya.relohome.ssge.client.SsGeClient
 import exe.tigrulya.relohome.ssge.model.GetSsGeFlatAdsRequest
 import exe.tigrulya.relohome.ssge.model.SsGeFlatAdContainer
+import exe.tigrulya.relohome.util.LoggerProperty
 import kotlinx.coroutines.flow.*
 import java.time.Instant
 
 class SsGeFetcher(
     baseUrl: String = "https://api-gateway.ss.ge/v1/",
     lastHandledAdTimestampProvider: LastHandledAdTimestampProvider,
-    private val asyncBufferCapacity: Int = 10
+    private val maxImagesPerAd: Int = 8
 ) : AbstractExternalFetcher<SsGeFlatAdContainer>(lastHandledAdTimestampProvider) {
     companion object {
         const val FETCHER_ID = "ss.ge"
@@ -34,12 +34,10 @@ class SsGeFetcher(
         )
 
         val unseenAdsCount = ads
-            .asFlow()
             .filter { it.orderDate > lastHandledAdTime }
             .onEach { lastHandledPageAdTime = maxOf(lastHandledPageAdTime, it.orderDate) }
-            .map { client.fetchAd(it.detailUrl) }
-            // todo move it to base fetcher
-            .buffer(asyncBufferCapacity)
+            .asFlow()
+            .mapWithFailover { client.fetchAd(it.detailUrl) }
             .map { collector.emit(it) }
             .count()
 
@@ -52,5 +50,5 @@ class SsGeFetcher(
         }
     }
 
-    override fun flatAdMapper(): FlatAdMapper<SsGeFlatAdContainer> = SsGeFlatAdMapper()
+    override fun flatAdMapper(): FlatAdMapper<SsGeFlatAdContainer> = SsGeFlatAdMapper(maxImagesPerAd)
 }

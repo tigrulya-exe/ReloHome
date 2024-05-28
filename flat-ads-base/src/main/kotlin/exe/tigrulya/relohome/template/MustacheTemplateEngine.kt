@@ -10,24 +10,24 @@ open class MustacheTemplateEngine: TemplateEngine {
     private val factory: MustacheFactory = DefaultMustacheFactory()
     private val compiledTemplates = mutableMapOf<String, Mustache>()
 
-    override fun <T> compile(templatePath: String, dataObject: T): String {
+    override fun compile(templatePath: String, vararg scopeObjects: Any): String {
         val compiledTemplate = compiledTemplates.computeIfAbsent(templatePath) {
             factory.compile(templatePath)
         }
-        return compileInternal(compiledTemplate, dataObject)
+        return compileInternal(compiledTemplate, *scopeObjects)
     }
 
-    override fun <T> compile(templateId: String, template: String, dataObject: T): String {
+    override fun compile(templateId: String, template: String, vararg scopeObjects: Any): String {
         val compiledTemplate = compiledTemplates.computeIfAbsent(templateId) {
             factory.compile(StringReader(template), templateId)
         }
 
-        return compileInternal(compiledTemplate, dataObject)
+        return compileInternal(compiledTemplate, *scopeObjects)
     }
 
-    protected open fun <T> compileInternal(compiledTemplate: Mustache, dataObject: T): String {
+    protected open fun compileInternal(compiledTemplate: Mustache, vararg scopeObjects: Any): String {
         val writer = StringWriter()
-        compiledTemplate.execute(writer, dataObject)
+        compiledTemplate.execute(writer, scopeObjects)
         return writer.toString()
     }
 }
@@ -36,9 +36,9 @@ open class MustacheTemplateEngine: TemplateEngine {
 class ObjectReuseMustacheTemplateEngine: MustacheTemplateEngine() {
     private val writer = StringWriter()
 
-    override fun <T> compileInternal(compiledTemplate: Mustache, dataObject: T): String {
+    override fun compileInternal(compiledTemplate: Mustache, vararg scopeObjects: Any): String {
         writer.buffer.setLength(0)
-        compiledTemplate.execute(writer, dataObject)
+        compiledTemplate.execute(writer, scopeObjects)
         return writer.toString()
     }
 }

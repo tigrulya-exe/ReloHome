@@ -1,8 +1,9 @@
 flat-ads:
   fetcher:
-    ss-ge:
+    async:
       buffer:
         capacity: 100
+    ss-ge:
       url:
         base: 'https://api-gateway.ss.ge/v1/'
     timestamp:

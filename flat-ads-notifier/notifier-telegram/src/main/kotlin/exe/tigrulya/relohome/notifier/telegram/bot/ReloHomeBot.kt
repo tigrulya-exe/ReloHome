@@ -2,10 +2,14 @@ package exe.tigrulya.relohome.notifier.telegram.bot
 
 import exe.tigrulya.relohome.api.FlatAdNotifierGateway
 import exe.tigrulya.relohome.api.user_handler.AsyncUserHandlerGateway
+import exe.tigrulya.relohome.model.Contacts
 import exe.tigrulya.relohome.model.FlatAd
 import exe.tigrulya.relohome.model.Image
-import exe.tigrulya.relohome.notifier.telegram.bot.ability.*
-import exe.tigrulya.relohome.notifier.telegram.bot.reply.*
+import exe.tigrulya.relohome.notifier.telegram.bot.ability.DefaultAbility
+import exe.tigrulya.relohome.notifier.telegram.bot.ability.StartAbility
+import exe.tigrulya.relohome.notifier.telegram.bot.reply.EnableBotReply
+import exe.tigrulya.relohome.notifier.telegram.bot.reply.StatisticsReply
+import exe.tigrulya.relohome.notifier.telegram.bot.reply.SubscriptionInfoReply
 import exe.tigrulya.relohome.notifier.telegram.serde.JsonSearchOptionsDeserializer
 import exe.tigrulya.relohome.notifier.telegram.serde.SearchOptionsDeserializer
 import exe.tigrulya.relohome.template.ObjectReuseMustacheTemplateEngine
@@ -98,10 +102,11 @@ class ReloHomeBot(
         return StatisticsReply().reply()
     }
 
+    // todo move to separate class
     override suspend fun onNewAd(userIds: List<String>, flatAd: FlatAd) {
         logger.info("Send ad ${flatAd.id} to $userIds")
 
-        val flatAdMessage = templateEngine.compile("templates/new-flat-ad.mustache", flatAd)
+        val flatAdMessage = compileFlatAdMessage(flatAd)
 
         if (flatAd.images.isEmpty()) {
             userIds.forEach { sendAdWithoutImages(it, flatAdMessage) }
@@ -109,6 +114,22 @@ class ReloHomeBot(
         }
 
         userIds.forEach { sendAdWithImages(it, flatAdMessage, flatAd.images) }
+    }
+
+
+    private fun compileFlatAdMessage(flatAd: FlatAd): String {
+        val links = with(flatAd.contacts) {
+             MessengerLinks(
+                whatsAppLink = messengerIds[Contacts.Messenger.WHATSAPP]?.let {
+                    "https://api.whatsapp.com/send/?phone=${it}"
+                },
+                viberLink = messengerIds[Contacts.Messenger.VIBER]?.let {
+                    "viber://chat/?number=${it}"
+                }
+            )
+        }
+        val scopes = arrayOf(flatAd, links)
+        return templateEngine.compile("templates/new-flat-ad.mustache", *scopes)
     }
 
     fun replyKeyboard(userId: String, isEnabled: Boolean = true): ReplyKeyboardMarkup {
@@ -165,6 +186,7 @@ class ReloHomeBot(
             .onError { logger.error(it.message) }
     }
 
+    // todo handle retries for Too Many Requests: retry after 10
     private fun sendAdWithoutImages(userId: String, messageText: String) {
         val message = SendMessage().apply {
             chatId = userId
@@ -182,7 +204,7 @@ class ReloHomeBot(
 
     private fun maybeShrink(text: String) = if (text.length >= 1024) {
         text.substring(0, 1020) + "..."
-     } else text
+    } else text
 }
 
 fun CompletableFuture<*>.onError(handler: (Throwable) -> Unit) {
@@ -190,3 +212,5 @@ fun CompletableFuture<*>.onError(handler: (Throwable) -> Unit) {
         error?.let { handler.invoke(it) }
     }
 }
+
+data class MessengerLinks(val whatsAppLink: String? = null, val viberLink: String? = null)

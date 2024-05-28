@@ -21,6 +21,8 @@ object SearchOptions : LongIdTable() {
     var priceTo = integer("price_to").nullable()
     var roomsFrom = integer("rooms_from").nullable()
     var roomsTo = integer("rooms_to").nullable()
+    var areaFrom = integer("area_from").nullable()
+    var areaTo = integer("area_to").nullable()
 
     // for fast search
     var subDistricts = varchar("sub_districts", 4096).nullable()
@@ -40,6 +42,10 @@ object SearchOptions : LongIdTable() {
             searchOptions.roomRange.apply {
                 entity[roomsFrom] = from
                 entity[roomsTo] = to
+            }
+            searchOptions.areaRange.apply {
+                entity[areaFrom] = from
+                entity[areaTo] = to
             }
             // we know that we already set the location of user because of his state
             entity[cityName] = userCityName
@@ -65,6 +71,10 @@ class UserSearchOptionsEntity(id: EntityID<Long>) : LongEntity(id) {
 
     var roomsTo by SearchOptions.roomsTo
 
+    var areaFrom by SearchOptions.areaFrom
+
+    var areaTo by SearchOptions.areaTo
+
     var cityName by SearchOptions.cityName
 
     var subDistricts by SearchOptions.subDistricts
@@ -72,6 +82,7 @@ class UserSearchOptionsEntity(id: EntityID<Long>) : LongEntity(id) {
     fun toDomain() = UserSearchOptionsInfo(
         priceRange = NumRange(priceFrom, priceTo),
         roomRange = NumRange(roomsFrom, roomsTo),
+        areaRange = NumRange(areaFrom, areaTo),
         cityName = cityName,
         subDistricts = subDistricts?.split(",")?.toSet() ?: emptySet()
     )

@@ -19,8 +19,8 @@ object SsGeFetcherConfigOptions {
         defaultValue = "https://api-gateway.ss.ge/v1/"
     )
 
-    val FLAT_AD_FETCHER_SS_GE_ASYNC_BUFFER_CAPACITY = ConfigOption(
-        name = "flat-ads.fetcher.ss-ge.buffer.capacity",
-        defaultValue = 50
+    val FLAT_AD_FETCHER_SS_GE_MAX_AD_IMAGES = ConfigOption(
+        name = "flat-ads.fetcher.ss-ge.ad.images.max",
+        defaultValue = 8
     )
 }

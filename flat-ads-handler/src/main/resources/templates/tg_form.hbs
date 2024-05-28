@@ -45,6 +45,16 @@
             <input class="form-control number-input" id="roomsTo" name="roomsTo" type="number"
                    placeholder="Rooms to" value="{{searchData.roomRange.to}}"/>
         </div>
+        <div class="mb-3">
+            <label class="form-label" for="areaFrom">Area from</label>
+            <input class="form-control number-input" id="areaFrom" name="areaFrom" type="number"
+                   placeholder="Area from" value="{{searchData.areaRange.from}}"/>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="areaTo">Area to</label>
+            <input class="form-control number-input" id="areaTo" name="areaTo" type="number"
+                   placeholder="Area to" value="{{searchData.areaRange.to}}"/>
+        </div>
     </form>
 </div>
 
@@ -58,6 +68,10 @@
             roomRange: {
                 from: formEntries["roomsFrom"],
                 to: formEntries["roomsTo"]
+            },
+            areaRange: {
+                from: formEntries["areaFrom"],
+                to: formEntries["areaTo"]
             },
             subDistricts: formEntries["districts"]
         }

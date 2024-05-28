@@ -47,6 +47,7 @@ class SsGeClient(
     suspend fun fetchAdInfos(request: GetSsGeFlatAdsRequest): List<SsGeFlatAdInfo> {
         // TODO encapsulate auth token reacquire logic in client
         val authToken = sessionToken ?: getSessionToken()
+        refreshAccessToken()
         val flatsContainer: SsGeFlatAdsContainer = httpClient
             .post {
                 url("RealEstate/LegendSearch")
@@ -71,6 +72,18 @@ class SsGeClient(
                 bearerAuth(authToken)
             }
             .body()
+    }
+
+    suspend fun refreshAccessToken() {
+        val authToken = sessionToken ?: getSessionToken()
+        httpClient
+            .get {
+                url("https://home.ss.ge/api/refresh_access_token")
+                contentType(ContentType.Text.Html)
+                header("Accept-Language", "en")
+                header("Host", "home.ss.ge")
+                bearerAuth(authToken)
+            }
     }
 
     private suspend fun getSessionToken(): String {

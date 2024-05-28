@@ -7,7 +7,7 @@ import exe.tigrulya.relohome.ssge.model.FlatAdImageContainer
 import exe.tigrulya.relohome.ssge.model.SsGeFlatAd
 import exe.tigrulya.relohome.ssge.model.SsGeFlatAdContainer
 
-class SsGeFlatAdMapper(private val maxAdImages: Int = 6) : FlatAdMapper<SsGeFlatAdContainer> {
+class SsGeFlatAdMapper(private val maxImagesPerAd: Int) : FlatAdMapper<SsGeFlatAdContainer> {
     override fun toFlatAd(externalFlatAd: SsGeFlatAdContainer): FlatAd = with(externalFlatAd) {
         val address = with(applicationData.address) {
             Address(
@@ -31,7 +31,7 @@ class SsGeFlatAdMapper(private val maxAdImages: Int = 6) : FlatAdMapper<SsGeFlat
         }
 
         val flatInfo = FlatInfo(
-            floor = applicationData.floor.toInt(),
+            floor = applicationData.floor?.toInt() ?: -1,
             totalFloors = applicationData.floors.toInt(),
             spaceSquareMeters = applicationData.totalArea.toInt(),
             rooms = applicationData.rooms,
@@ -40,12 +40,12 @@ class SsGeFlatAdMapper(private val maxAdImages: Int = 6) : FlatAdMapper<SsGeFlat
 
         val contacts = Contacts(
             flatServiceLink = externalFlatAd.fullUrl,
-            phoneNumber = getPhoneNumber(applicationData.applicationPhones)
-            // todo add messenger ids
+            phoneNumber = getPhoneNumber(applicationData.applicationPhones),
+            messengerIds = getMessengerIds(applicationData.applicationPhones)
         )
 
         val pictures = applicationData.appImages
-            ?.take(maxAdImages)
+            ?.take(maxImagesPerAd)
             ?.sortedBy { it.orderNo }
             ?.map { it.toPicture() }
             ?: listOf()
@@ -61,6 +61,25 @@ class SsGeFlatAdMapper(private val maxAdImages: Int = 6) : FlatAdMapper<SsGeFlat
             serviceId = SsGeFetcher.FETCHER_ID,
             images = pictures
         )
+    }
+
+    private fun getMessengerIds(applicationPhones: List<ApplicationPhone>): Map<Contacts.Messenger, String> {
+        if (applicationPhones.isEmpty()) {
+            return emptyMap()
+        }
+
+        val messengerIds = mutableMapOf<Contacts.Messenger, String>()
+        applicationPhones.first().apply {
+            phoneNumber?.let {
+                if (hasViber == true) {
+                    messengerIds[Contacts.Messenger.VIBER] = it
+                }
+                if (hasWhatsapp == true) {
+                    messengerIds[Contacts.Messenger.WHATSAPP] = it
+                }
+            }
+        }
+        return messengerIds
     }
 
     private fun FlatAdImageContainer.toPicture(): Image {

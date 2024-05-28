@@ -13,4 +13,9 @@ object FetcherConfigOptions {
         name = "flat-ads.fetcher.timestamp.last-handled.window",
         defaultValue = "12h"
     )
+
+    val FLAT_AD_FETCHER_ASYNC_BUFFER_CAPACITY = ConfigOption(
+        name = "flat-ads.fetcher.async.buffer.capacity",
+        defaultValue = 50
+    )
 }

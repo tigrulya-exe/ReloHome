@@ -47,8 +47,8 @@ data class FlatPrice(
 
 data class ApplicationPhone(
     val phoneNumber: String?,
-    val hasViber: Boolean,
-    val hasWhatsapp: Boolean
+    val hasViber: Boolean?,
+    val hasWhatsapp: Boolean?
 )
 
 data class SsGeFlatAdInfo(
@@ -80,7 +80,7 @@ data class SsGeFlatAd(
     val address: SsGeLocation,
     val appImages: List<FlatAdImageContainer>?,
     val description: Description,
-    val floor: String,
+    val floor: String?,
     val floors: String,
     val bedrooms: Int,
     val rooms: Int,
@@ -95,7 +95,7 @@ data class SsGeFlatAd(
     val price: FlatPrice,
     val applicationPhones: List<ApplicationPhone>,
     val locationLatitude: String?,
-    val locationLongitude: String?,
+    val locationLongitude: String?
 )
 
 data class SsGeFlatAdsContainer(
