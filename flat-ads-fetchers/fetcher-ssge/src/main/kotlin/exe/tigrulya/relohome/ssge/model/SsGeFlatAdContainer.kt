@@ -62,10 +62,10 @@ data class SsGeFlatAdInfo(
 
 data class Description(
     // original string
-    val text: String?,
-    val en: String?,
-    val ka: String?,
-    val ru: String?
+    var text: String?,
+    var en: String?,
+    var ka: String?,
+    var ru: String?
 )
 
 // TODO check non-nullable fields

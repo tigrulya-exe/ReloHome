@@ -4,6 +4,7 @@ import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.statement.*
 import io.ktor.client.utils.*
 import io.ktor.http.*
 import io.ktor.http.content.*
@@ -56,17 +57,27 @@ abstract class ExternalSiteClient<T>(
 //        install(Logging) {
 //            level = LogLevel.NONE
 //        }
+        HttpResponseValidator {
+            validateResponse { response ->
+                val statusCode = response.status.value
+                when (statusCode) {
+                    in 400..499 ->
+                        throw RuntimeException("Http client error. Code: ${response.status}, message: ${response.bodyAsText()}")
+                    in 500..599 ->
+                        throw RuntimeException("Http server error. Code: ${response.status}, message: ${response.bodyAsText()}")
+                }
+            }
+        }
         configureHttpClient(this)
     }
 
-    protected open fun configureHttpClient(config:  HttpClientConfig<CIOEngineConfig>) {
+    protected open fun configureHttpClient(config: HttpClientConfig<CIOEngineConfig>) {
         // no-op
     }
 }
 
-abstract class ExternalParseableSiteClient<T>(baseUrl: String)
-    : ExternalSiteClient<T>(baseUrl) {
-    override fun configureHttpClient(config:  HttpClientConfig<CIOEngineConfig>) {
+abstract class ExternalParseableSiteClient<T>(baseUrl: String) : ExternalSiteClient<T>(baseUrl) {
+    override fun configureHttpClient(config: HttpClientConfig<CIOEngineConfig>) {
         config.install(ContentNegotiation) {
             domConverter(htmlDomParser(), baseUrl)
         }

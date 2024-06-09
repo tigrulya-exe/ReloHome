@@ -6,8 +6,12 @@ import exe.tigrulya.relohome.fetcher.LastHandledAdTimestampProvider
 import exe.tigrulya.relohome.ssge.client.SsGeClient
 import exe.tigrulya.relohome.ssge.model.GetSsGeFlatAdsRequest
 import exe.tigrulya.relohome.ssge.model.SsGeFlatAdContainer
+import exe.tigrulya.relohome.ssge.model.TranslateLanguage
 import exe.tigrulya.relohome.util.LoggerProperty
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.count
+import kotlinx.coroutines.flow.map
 import java.time.Instant
 
 class SsGeFetcher(
@@ -38,6 +42,7 @@ class SsGeFetcher(
             .onEach { lastHandledPageAdTime = maxOf(lastHandledPageAdTime, it.orderDate) }
             .asFlow()
             .mapWithFailover { client.fetchAd(it.detailUrl) }
+            .mapWithFailover { maybeTranslateDescription(it) }
             .map { collector.emit(it) }
             .count()
 
@@ -47,6 +52,15 @@ class SsGeFetcher(
             FetchResult.NextPageRequired(lastHandledPageAdTime)
         } else {
             FetchResult.Completed(lastHandledPageAdTime)
+        }
+    }
+
+    private suspend fun maybeTranslateDescription(flatAd: SsGeFlatAdContainer): SsGeFlatAdContainer {
+        return flatAd.apply {
+            applicationData.description.apply {
+                text = text
+                    ?: ka?.let { client.translate(it, TranslateLanguage.ENG) }
+            }
         }
     }
 

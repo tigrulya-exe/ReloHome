@@ -5,10 +5,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import exe.tigrulya.relohome.fetcher.ExternalParseableSiteClient
 import exe.tigrulya.relohome.fetcher.HtmlDomParser
 import exe.tigrulya.relohome.fetcher.domConverter
-import exe.tigrulya.relohome.ssge.model.GetSsGeFlatAdsRequest
-import exe.tigrulya.relohome.ssge.model.SsGeFlatAdContainer
-import exe.tigrulya.relohome.ssge.model.SsGeFlatAdInfo
-import exe.tigrulya.relohome.ssge.model.SsGeFlatAdsContainer
+import exe.tigrulya.relohome.ssge.model.*
 import exe.tigrulya.relohome.ssge.parser.SsGeDomParser
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -29,6 +26,7 @@ class SsGeClient(
     }
 
     private var sessionToken: String? = null
+
     override fun configureHttpClient(config: HttpClientConfig<CIOEngineConfig>) {
         config.install(ContentNegotiation) {
             domConverter(htmlDomParser(), baseUrl)
@@ -46,7 +44,7 @@ class SsGeClient(
 
     suspend fun fetchAdInfos(request: GetSsGeFlatAdsRequest): List<SsGeFlatAdInfo> {
         // TODO encapsulate auth token reacquire logic in client
-        val authToken = sessionToken ?: getSessionToken()
+        val authToken = sessionToken ?: updateSessionToken()
         refreshAccessToken()
         val flatsContainer: SsGeFlatAdsContainer = httpClient
             .post {
@@ -62,7 +60,7 @@ class SsGeClient(
     }
 
     suspend fun fetchAd(detailUrl: String): SsGeFlatAdContainer {
-        val authToken = sessionToken ?: getSessionToken()
+        val authToken = sessionToken ?: updateSessionToken()
         return httpClient
             .get {
                 url("https://home.ss.ge/en/real-estate/$detailUrl")
@@ -71,11 +69,12 @@ class SsGeClient(
                 header("Host", "home.ss.ge")
                 bearerAuth(authToken)
             }
+
             .body()
     }
 
     suspend fun refreshAccessToken() {
-        val authToken = sessionToken ?: getSessionToken()
+        val authToken = sessionToken ?: updateSessionToken()
         httpClient
             .get {
                 url("https://home.ss.ge/api/refresh_access_token")
@@ -86,11 +85,28 @@ class SsGeClient(
             }
     }
 
-    private suspend fun getSessionToken(): String {
+    suspend fun translate(text: String, targetLanguage: TranslateLanguage): String {
+        val authToken = sessionToken ?: updateSessionToken()
+        return httpClient
+            .post {
+                url("https://home.ss.ge/api/translateApp")
+                contentType(ContentType.Application.Json)
+                header("Accept-Language", "en")
+                header("Host", "home.ss.ge")
+                header("Origin", "https://home.ss.ge")
+                bearerAuth(authToken)
+                setBody(TranslateRequest(text, targetLanguage))
+            }
+            .body<TranslateResponse>()
+            .translation.also { println("translated: $it") }
+    }
+
+    private suspend fun updateSessionToken(): String {
         val serverCookies = httpClient.get("https://home.ss.ge/en/real-estate")
             .setCookie()
 
-        return serverCookies[SS_SESSION_TOKEN_KEY]?.value
-            ?: throw IllegalStateException("Can't find session token '$SS_SESSION_TOKEN_KEY' in cookies: $serverCookies")
+        return serverCookies[SS_SESSION_TOKEN_KEY]?.value?.apply {
+            sessionToken = this
+        } ?: throw IllegalStateException("Can't find session token '$SS_SESSION_TOKEN_KEY' in cookies: $serverCookies")
     }
 }
