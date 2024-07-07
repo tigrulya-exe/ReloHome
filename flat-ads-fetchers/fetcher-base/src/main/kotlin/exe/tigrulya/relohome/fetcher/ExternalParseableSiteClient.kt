@@ -59,8 +59,9 @@ abstract class ExternalSiteClient<T>(
 //        }
         HttpResponseValidator {
             validateResponse { response ->
-                val statusCode = response.status.value
-                when (statusCode) {
+                when (response.status.value) {
+                    401 ->
+                        onAuthError(response.bodyAsText())
                     in 400..499 ->
                         throw RuntimeException("Http client error. Code: ${response.status}, message: ${response.bodyAsText()}")
                     in 500..599 ->
@@ -69,6 +70,10 @@ abstract class ExternalSiteClient<T>(
             }
         }
         configureHttpClient(this)
+    }
+
+    protected open fun onAuthError(errorMessage: String) {
+        throw RuntimeException("Auth error: $errorMessage")
     }
 
     protected open fun configureHttpClient(config: HttpClientConfig<CIOEngineConfig>) {

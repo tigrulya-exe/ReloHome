@@ -101,6 +101,11 @@ class SsGeClient(
             .translation.also { println("translated: $it") }
     }
 
+    override fun onAuthError(errorMessage: String) {
+        sessionToken = null
+        super.onAuthError(errorMessage)
+    }
+
     private suspend fun updateSessionToken(): String {
         val serverCookies = httpClient.get("https://home.ss.ge/en/real-estate")
             .setCookie()
