@@ -21,6 +21,7 @@ import org.telegram.abilitybots.api.objects.Reply
 import org.telegram.abilitybots.api.toggle.AbilityToggle
 import org.telegram.abilitybots.api.toggle.CustomToggle
 import org.telegram.telegrambots.bots.DefaultBotOptions
+import org.telegram.telegrambots.meta.api.methods.ParseMode
 import org.telegram.telegrambots.meta.api.methods.send.SendMediaGroup
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage
 import org.telegram.telegrambots.meta.api.objects.media.InputMediaPhoto
@@ -175,7 +176,7 @@ class ReloHomeBot(
         // little hack to attach text to group of images
         imagesGroup[0].apply {
             caption = maybeShrink(text)
-            parseMode = "Markdown"
+            parseMode = ParseMode.MARKDOWN
         }
 
         val message = SendMediaGroup().apply {
@@ -191,6 +192,7 @@ class ReloHomeBot(
         val message = SendMessage().apply {
             chatId = userId
             text = messageText
+            parseMode = ParseMode.MARKDOWN
         }
         executeAsync(message)
             .onError { logger.error(it.message) }
@@ -202,6 +204,7 @@ class ReloHomeBot(
         val readableByteChannel: ReadableByteChannel = Channels.newChannel(imageUrl.openStream())
     }
 
+    // todo shrink description instead of full message
     private fun maybeShrink(text: String) = if (text.length >= 1024) {
         text.substring(0, 1020) + "..."
     } else text

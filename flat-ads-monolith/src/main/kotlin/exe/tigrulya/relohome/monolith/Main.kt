@@ -5,7 +5,6 @@ import exe.tigrulya.relohome.api.user_handler.async
 import exe.tigrulya.relohome.handler.HandlerEntryPoint
 import exe.tigrulya.relohome.handler.ServiceRegistry
 import exe.tigrulya.relohome.handler.cache.RedisHandledAdsCache
-import exe.tigrulya.relohome.handler.config.HandlerConfigOptions
 import exe.tigrulya.relohome.handler.config.HandlerConfigOptions.FLAT_AD_HANDLER_ADS_CACHE_REDIS_URL
 import exe.tigrulya.relohome.handler.config.HandlerConfigOptions.FLAT_AD_HANDLER_ADS_CACHE_TTL
 import exe.tigrulya.relohome.handler.service.FlatAdService
@@ -37,9 +36,8 @@ fun main(args: Array<String>) {
         SsGeFetcherEntryPoint.startInPlace(ServiceRegistry.flatAdService)
     }
 
+    val logger = LoggerFactory.getLogger(BufferedFlatAdNotifierGateway::class.java)
     runBlocking {
-        val logger = LoggerFactory.getLogger(BufferedFlatAdNotifierGateway::class.java)
-
         val flatAdNotifier = TgNotifierEntryPoint.startInPlace(ServiceRegistry.userService.async())
         flatAdChannel.consumeEach {
             try {
