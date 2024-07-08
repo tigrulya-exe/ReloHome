@@ -16,6 +16,9 @@ allprojects {
 
     repositories {
         mavenCentral()
+        maven {
+            url = uri("https://jitpack.io")
+        }
     }
 
     // just for dev purposes: gen tables by JB Exposed and extract migration xmls using gradle liquibase plugin
