@@ -14,7 +14,8 @@ dependencies {
     implementation("org.telegram:telegrambots:$telegramBotsVersion")
     implementation("org.telegram:telegrambots-abilities:$telegramBotsVersion")
 
-    implementation("io.github.kotlin-telegram-bot.kotlin-telegram-bot:telegram:6.1.0")
+//    implementation("io.github.kotlin-telegram-bot.kotlin-telegram-bot:telegram:6.1.0")
+    implementation("com.github.tigrulya-exe:kotlin-telegram-bot:18013912c6")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.+")
     // just for rate limiter :(
