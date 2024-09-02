@@ -7,6 +7,8 @@ import exe.tigrulya.relohome.api.user_handler.UserHandlerGateway
 import exe.tigrulya.relohome.notifier.telegram.kt.handlers.*
 import exe.tigrulya.relohome.notifier.telegram.serde.JsonSearchOptionsDeserializer
 import exe.tigrulya.relohome.notifier.telegram.serde.SearchOptionsDeserializer
+import kotlinx.coroutines.asCoroutineDispatcher
+import java.util.concurrent.Executors
 
 // todo add relohome execution environment
 class ReloHomeBotV2(
@@ -23,6 +25,8 @@ class ReloHomeBotV2(
 
         token = botToken
         logLevel = botLogLevel
+        // TODO
+        coroutineDispatcher = Executors.newFixedThreadPool(8).asCoroutineDispatcher()
 
         dispatch {
             startCommand(userHandlerGateway, mainKeyboardProvider)
@@ -36,7 +40,8 @@ class ReloHomeBotV2(
             searchOptionsSetReply(
                 userHandlerGateway,
                 searchOptionsDeserializer,
-                mainKeyboardProvider)
+                mainKeyboardProvider
+            )
         }
     }
 
