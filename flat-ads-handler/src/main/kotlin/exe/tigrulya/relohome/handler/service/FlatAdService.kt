@@ -8,8 +8,11 @@ import exe.tigrulya.relohome.handler.repository.SubDistricts
 import exe.tigrulya.relohome.model.FlatAd
 import exe.tigrulya.relohome.util.LoggerProperty
 import kotlinx.coroutines.Dispatchers
-import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.and
+import org.jetbrains.exposed.sql.andWhere
+import org.jetbrains.exposed.sql.or
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 class FlatAdService(
@@ -50,12 +53,24 @@ class FlatAdService(
             .slice(SearchOptions.externalId)
             .select(SearchOptions.cityName eq flatAd.address.city.name)
             .andWhere { SearchOptions.enabled eq true }
+            .andWhere {
+                (SearchOptions.floorTo.isNull() or (SearchOptions.floorTo greaterEq flatAd.info.floor)) and
+                        (SearchOptions.floorFrom.isNull() or (SearchOptions.floorFrom lessEq flatAd.info.floor))
+            }
+
 
         // todo mb it would be better to use prepared statement here
         flatAd.info.rooms?.let {
             query.andWhere {
                 (SearchOptions.roomsTo.isNull() or (SearchOptions.roomsTo greaterEq it)) and
                         (SearchOptions.roomsFrom.isNull() or (SearchOptions.roomsFrom lessEq it))
+            }
+        }
+
+        flatAd.info.bedrooms?.let {
+            query.andWhere {
+                (SearchOptions.bedroomsTo.isNull() or (SearchOptions.bedroomsTo greaterEq it)) and
+                        (SearchOptions.bedroomsFrom.isNull() or (SearchOptions.bedroomsFrom lessEq it))
             }
         }
 

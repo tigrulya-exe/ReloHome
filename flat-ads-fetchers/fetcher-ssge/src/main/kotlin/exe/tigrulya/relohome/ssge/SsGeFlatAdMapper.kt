@@ -72,10 +72,10 @@ class SsGeFlatAdMapper(private val maxImagesPerAd: Int) : FlatAdMapper<SsGeFlatA
         applicationPhones.first().apply {
             phoneNumber?.let {
                 if (hasViber == true) {
-                    messengerIds[Contacts.Messenger.VIBER] = it
+                    messengerIds[Contacts.Messenger.VIBER] = it.toGeoFullNumber()
                 }
                 if (hasWhatsapp == true) {
-                    messengerIds[Contacts.Messenger.WHATSAPP] = it
+                    messengerIds[Contacts.Messenger.WHATSAPP] = it.toGeoFullNumber()
                 }
             }
         }
@@ -100,8 +100,9 @@ class SsGeFlatAdMapper(private val maxImagesPerAd: Int) : FlatAdMapper<SsGeFlatA
     private fun getPhoneNumber(applicationPhones: List<ApplicationPhone>): String? {
         return if (applicationPhones.isEmpty()) {
             null
-        } else {
-            applicationPhones.first().phoneNumber
-        }
+        } else applicationPhones.first().phoneNumber?.toGeoFullNumber()
     }
+
+    private fun String.toGeoFullNumber(): String =
+        if (startsWith("+995")) this else "+995${this}"
 }

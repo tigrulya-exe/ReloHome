@@ -44,9 +44,12 @@ open class GrpcUserHandlerClient(serverUrl: String) : UserHandlerGateway, WithGr
     ) = withErrorHandling {
         val request = UserHandlerGatewayOuterClass.SetSearchOptionsRequest
             .newBuilder().apply {
-                this.externalId = externalUserId
-                this.priceRange = toGrpcNumRange(searchOptions.priceRange)
-                this.roomRange = toGrpcNumRange(searchOptions.roomRange)
+                externalId = externalUserId
+                priceRange = toGrpcNumRange(searchOptions.priceRange)
+                roomRange = toGrpcNumRange(searchOptions.roomRange)
+                areaRange = toGrpcNumRange(searchOptions.areaRange)
+                bedroomRange = toGrpcNumRange(searchOptions.bedroomRange)
+                floorRange = toGrpcNumRange(searchOptions.floorRange)
                 addAllSubDistricts(searchOptions.subDistricts)
             }.build()
 

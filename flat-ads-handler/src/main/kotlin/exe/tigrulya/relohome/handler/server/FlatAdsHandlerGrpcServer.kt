@@ -50,6 +50,8 @@ class FlatAdsHandlerGrpcService(
                 priceRange = request.priceRange.toDomainNumRange(),
                 roomRange = request.roomRange.toDomainNumRange(),
                 areaRange = request.areaRange.toDomainNumRange(),
+                bedroomRange = request.bedroomRange.toDomainNumRange(),
+                floorRange = request.floorRange.toDomainNumRange(),
                 subDistricts = request.subDistrictsList
             )
         )

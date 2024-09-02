@@ -10,8 +10,8 @@ class EnableBotReply(
     private val userHandlerGateway: AsyncUserHandlerGateway
 ) : ReloHomeReply {
     companion object {
-        const val ENABLED_BOT_BUTTON_TEXT = "🟢 Disable bot"
-        const val DISABLED_BOT_BUTTON_TEXT = "🔴 Enable bot"
+        const val DISABLED_BOT_BUTTON_TEXT = "🟢 Enable bot"
+        const val ENABLED_BOT_BUTTON_TEXT = "🔴 Disable bot"
 
         private val POSSIBLE_PREFIXES = listOf(ENABLED_BOT_BUTTON_TEXT, DISABLED_BOT_BUTTON_TEXT)
     }

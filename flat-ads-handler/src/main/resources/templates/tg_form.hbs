@@ -14,16 +14,28 @@
 
 <body>
 <div class="container px-5 my-5">
-    <form>
-        <div class="mb-3">
-            <label class="form-label" for="priceFrom">Price from</label>
-            <input class="form-control number-input" id="priceFrom" name="priceFrom" type="number"
-                   placeholder="Price from" value="{{searchData.priceRange.from}}"/>
+    <form id="mainForm">
+        <div class="mb-4">
+            <label class="form-label h4">Search options for {{searchData.cityName}}</label>
         </div>
-        <div class="mb-3">
-            <label class="form-label" for="priceTo">Price to</label>
-            <input class="form-control number-input" id="priceTo" name="priceTo" type="number"
-                   placeholder="Price to" value="{{searchData.priceRange.to}}"/>
+        <div class="row mb-1">
+            <div class="col">
+                <label class="form-label" for="priceFrom">Price in USD</label>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                <input class="form-control number-input" id="priceFrom" name="priceFrom" type="number"
+                       placeholder="From" value="{{searchData.priceRange.from}}"/>
+            </div>
+            <div class="col-auto d-flex align-items-center">
+                <span>-</span>
+            </div>
+            <div class="col">
+                <label class="form-label" for="priceTo" hidden="hidden">Price to</label>
+                <input class="form-control number-input" id="priceTo" name="priceTo" type="number"
+                       placeholder="To" value="{{searchData.priceRange.to}}"/>
+            </div>
         </div>
         <div class="mb-3">
             <label class="form-label d-block">Subdistrict</label>
@@ -35,25 +47,81 @@
                 </div>
             {{/searchData.subDistricts}}
         </div>
-        <div class="mb-3">
-            <label class="form-label" for="roomsFrom">Rooms from</label>
-            <input class="form-control number-input" id="roomsFrom" name="roomsFrom" type="number"
-                   placeholder="Rooms from" value="{{searchData.roomRange.from}}"/>
+        <div class="row mb-1">
+            <div class="col">
+                <label class="form-label" for="roomsFrom">Rooms</label>
+            </div>
         </div>
-        <div class="mb-3">
-            <label class="form-label" for="roomsTo">Rooms to</label>
-            <input class="form-control number-input" id="roomsTo" name="roomsTo" type="number"
-                   placeholder="Rooms to" value="{{searchData.roomRange.to}}"/>
+        <div class="row mb-3">
+            <div class="col">
+                <input class="form-control number-input" id="roomsFrom" name="roomsFrom" type="number"
+                       placeholder="From" value="{{searchData.roomRange.from}}"/>
+            </div>
+            <div class="col-auto d-flex align-items-center">
+                <span>-</span>
+            </div>
+            <div class="col">
+                <label class="form-label" for="roomsTo" hidden="hidden">Rooms to</label>
+                <input class="form-control number-input" id="roomsTo" name="roomsTo" type="number"
+                       placeholder="To" value="{{searchData.roomRange.to}}"/>
+            </div>
         </div>
-        <div class="mb-3">
-            <label class="form-label" for="areaFrom">Area from</label>
-            <input class="form-control number-input" id="areaFrom" name="areaFrom" type="number"
-                   placeholder="Area from" value="{{searchData.areaRange.from}}"/>
+        <div class="row mb-1">
+            <div class="col">
+                <label class="form-label" for="bedroomsFrom">Bedrooms</label>
+            </div>
         </div>
-        <div class="mb-3">
-            <label class="form-label" for="areaTo">Area to</label>
-            <input class="form-control number-input" id="areaTo" name="areaTo" type="number"
-                   placeholder="Area to" value="{{searchData.areaRange.to}}"/>
+        <div class="row mb-3">
+            <div class="col">
+                <input class="form-control number-input" id="bedroomsFrom" name="bedroomsFrom" type="number"
+                       placeholder="From" value="{{searchData.bedroomRange.from}}"/>
+            </div>
+            <div class="col-auto d-flex align-items-center">
+                <span>-</span>
+            </div>
+            <div class="col">
+                <label class="form-label" for="bedroomsTo" hidden="hidden">Rooms to</label>
+                <input class="form-control number-input" id="bedroomsTo" name="bedroomsTo" type="number"
+                       placeholder="To" value="{{searchData.bedroomRange.to}}"/>
+            </div>
+        </div>
+        <div class="row mb-1">
+            <div class="col">
+                <label class="form-label" for="areaFrom">Area in m²</label>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                <input class="form-control number-input" id="areaFrom" name="areaFrom" type="number"
+                       placeholder="From" value="{{searchData.areaRange.from}}"/>
+            </div>
+            <div class="col-auto d-flex align-items-center">
+                <span>-</span>
+            </div>
+            <div class="col">
+                <label class="form-label" for="areaTo" hidden="hidden">Area to</label>
+                <input class="form-control number-input" id="areaTo" name="areaTo" type="number"
+                       placeholder="To" value="{{searchData.areaRange.to}}"/>
+            </div>
+        </div>
+        <div class="row mb-1">
+            <div class="col">
+                <label class="form-label" for="floorFrom">Floor</label>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                <input class="form-control number-input" id="floorFrom" name="floorFrom" type="number"
+                       placeholder="From" value="{{searchData.floorRange.from}}"/>
+            </div>
+            <div class="col-auto d-flex align-items-center">
+                <span>-</span>
+            </div>
+            <div class="col">
+                <label class="form-label" for="floorTo" hidden="hidden">Floor to</label>
+                <input class="form-control number-input" id="floorTo" name="floorTo" type="number"
+                       placeholder="To" value="{{searchData.floorRange.to}}"/>
+            </div>
         </div>
     </form>
 </div>
@@ -69,9 +137,17 @@
                 from: formEntries["roomsFrom"],
                 to: formEntries["roomsTo"]
             },
+            bedroomRange: {
+                from: formEntries["bedroomsFrom"],
+                to: formEntries["bedroomsTo"]
+            },
             areaRange: {
                 from: formEntries["areaFrom"],
                 to: formEntries["areaTo"]
+            },
+            floorRange: {
+                from: formEntries["floorFrom"],
+                to: formEntries["floorTo"]
             },
             subDistricts: formEntries["districts"]
         }

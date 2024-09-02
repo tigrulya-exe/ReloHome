@@ -37,6 +37,8 @@ message SetSearchOptionsRequest {
   repeated string subDistricts = 4;
   bool enabled = 5;
   NumRange areaRange = 6;
+  NumRange bedroomRange = 7;
+  NumRange floorRange = 8;
 }
 
 message NumRange {

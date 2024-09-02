@@ -21,6 +21,10 @@ object SearchOptions : LongIdTable() {
     var priceTo = integer("price_to").nullable()
     var roomsFrom = integer("rooms_from").nullable()
     var roomsTo = integer("rooms_to").nullable()
+    var bedroomsFrom = integer("bedrooms_from").nullable()
+    var bedroomsTo = integer("bedrooms_to").nullable()
+    var floorFrom = integer("floor_from").nullable()
+    var floorTo = integer("floor_to").nullable()
     var areaFrom = integer("area_from").nullable()
     var areaTo = integer("area_to").nullable()
 
@@ -42,6 +46,14 @@ object SearchOptions : LongIdTable() {
             searchOptions.roomRange.apply {
                 entity[roomsFrom] = from
                 entity[roomsTo] = to
+            }
+            searchOptions.bedroomRange.apply {
+                entity[bedroomsFrom] = from
+                entity[bedroomsTo] = to
+            }
+            searchOptions.floorRange.apply {
+                entity[floorFrom] = from
+                entity[floorTo] = to
             }
             searchOptions.areaRange.apply {
                 entity[areaFrom] = from
@@ -71,6 +83,14 @@ class UserSearchOptionsEntity(id: EntityID<Long>) : LongEntity(id) {
 
     var roomsTo by SearchOptions.roomsTo
 
+    var bedroomsFrom by SearchOptions.bedroomsFrom
+
+    var bedroomsTo by SearchOptions.bedroomsTo
+
+    var floorFrom by SearchOptions.floorFrom
+
+    var floorTo by SearchOptions.floorTo
+
     var areaFrom by SearchOptions.areaFrom
 
     var areaTo by SearchOptions.areaTo
@@ -82,6 +102,8 @@ class UserSearchOptionsEntity(id: EntityID<Long>) : LongEntity(id) {
     fun toDomain() = UserSearchOptionsInfo(
         priceRange = NumRange(priceFrom, priceTo),
         roomRange = NumRange(roomsFrom, roomsTo),
+        bedroomRange = NumRange(bedroomsFrom, bedroomsTo),
+        floorRange = NumRange(floorFrom, floorTo),
         areaRange = NumRange(areaFrom, areaTo),
         cityName = cityName,
         subDistricts = subDistricts?.split(",")?.toSet() ?: emptySet()

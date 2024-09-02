@@ -30,6 +30,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow
 import org.telegram.telegrambots.meta.api.objects.webapp.WebAppInfo
 import java.net.URL
+import java.net.URLEncoder
 import java.nio.channels.Channels
 import java.nio.channels.ReadableByteChannel
 import java.util.concurrent.CompletableFuture
@@ -50,7 +51,7 @@ class ReloHomeBot(
     private val logger by LoggerProperty()
 
     companion object {
-        const val OPTIONS_BUTTON_TEXT = "⚙️ Change settings"
+        const val OPTIONS_BUTTON_TEXT = "⚙️ Change search options"
 
         private fun createToggle(): AbilityToggle {
             return CustomToggle().apply {
@@ -122,7 +123,9 @@ class ReloHomeBot(
         val links = with(flatAd.contacts) {
              MessengerLinks(
                 whatsAppLink = messengerIds[Contacts.Messenger.WHATSAPP]?.let {
-                    "https://api.whatsapp.com/send/?phone=${it}"
+                    "https://api.whatsapp.com/send/?phone=${it}&text=${
+                        URLEncoder.encode("Hi! I saw your ad on ${flatAd.serviceId}. " +
+                            "Is it still available? ${flatAd.contacts.flatServiceLink}", Charsets.UTF_8)}"
                 },
                 viberLink = messengerIds[Contacts.Messenger.VIBER]?.let {
                     "viber://chat/?number=${it}"
@@ -158,6 +161,7 @@ class ReloHomeBot(
         return ReplyKeyboardMarkup.builder()
             .keyboardRow(KeyboardRow(listOf(enableButton, webappButton)))
             .keyboardRow(KeyboardRow(listOf(subscriptionInfoButton, statisticsButton)))
+            .resizeKeyboard(true)
             .build()
     }
 

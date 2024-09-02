@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+  <changeSet author="tigrulya" id="add_bedrooms_from">
+    <preConditions onFail="MARK_RAN">
+      <and>
+        <tableExists tableName="searchoptions"/>
+        <not>
+          <columnExists tableName="searchoptions" columnName="bedrooms_from"/>
+        </not>
+      </and>
+    </preConditions>
+
+    <addColumn tableName="searchoptions">
+      <column name="bedrooms_from" type="INTEGER" defaultValue="null">
+        <constraints nullable="true"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="tigrulya" id="add_bedrooms_to">
+    <preConditions onFail="MARK_RAN">
+      <and>
+        <tableExists tableName="searchoptions"/>
+        <not>
+          <columnExists tableName="searchoptions" columnName="bedrooms_to"/>
+        </not>
+      </and>
+    </preConditions>
+
+    <addColumn tableName="searchoptions">
+      <column name="bedrooms_to" type="INTEGER" defaultValue="null">
+        <constraints nullable="true"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="tigrulya" id="add_floor_from">
+    <preConditions onFail="MARK_RAN">
+      <and>
+        <tableExists tableName="searchoptions"/>
+        <not>
+          <columnExists tableName="searchoptions" columnName="floor_from"/>
+        </not>
+      </and>
+    </preConditions>
+
+    <addColumn tableName="searchoptions">
+      <column name="floor_from" type="INTEGER" defaultValue="null">
+        <constraints nullable="true"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="tigrulya" id="add_floor_to">
+    <preConditions onFail="MARK_RAN">
+      <and>
+        <tableExists tableName="searchoptions"/>
+        <not>
+          <columnExists tableName="searchoptions" columnName="floor_to"/>
+        </not>
+      </and>
+    </preConditions>
+
+    <addColumn tableName="searchoptions">
+      <column name="floor_to" type="INTEGER" defaultValue="null">
+        <constraints nullable="true"/>
+      </column>
+    </addColumn>
+  </changeSet>
+
+</databaseChangeLog>

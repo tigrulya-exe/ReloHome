@@ -19,6 +19,8 @@ data class TemplateDistrictOption(val name: String, val selected: Boolean)
 class MustacheFormData(formData: UserSearchOptionsInfo, allDistricts: List<String>) {
     val priceRange: NumRange = formData.priceRange
     val roomRange: NumRange = formData.roomRange
+    val bedroomRange: NumRange = formData.bedroomRange
+    val floorRange: NumRange = formData.floorRange
     val areaRange: NumRange = formData.areaRange
     val cityName: String = formData.cityName
     val subDistricts: List<TemplateDistrictOption> = allDistricts.map {
