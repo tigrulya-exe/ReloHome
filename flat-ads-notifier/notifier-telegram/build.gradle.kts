@@ -6,6 +6,7 @@ plugins {
 }
 
 val telegramBotsVersion = "6.8.0"
+val ktTelegramBotsVersion = "6.8.0"
 
 dependencies {
     implementation(project(":flat-ads-base"))
@@ -17,6 +18,8 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.+")
     // just for rate limiter :(
     implementation("com.google.guava:guava:32.1.3-jre")
+
+    implementation("dev.inmo:tgbotapi:18.0.0")
 }
 
 application {
