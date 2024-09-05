@@ -1,7 +1,6 @@
 package exe.tigrulya.relohome.monolith
 
 import exe.tigrulya.relohome.api.FlatAdNotifierGateway
-import exe.tigrulya.relohome.api.user_handler.async
 import exe.tigrulya.relohome.handler.HandlerEntryPoint
 import exe.tigrulya.relohome.handler.ServiceRegistry
 import exe.tigrulya.relohome.handler.cache.RedisHandledAdsCache
@@ -38,7 +37,7 @@ fun main(args: Array<String>) {
 
     val logger = LoggerFactory.getLogger(BufferedFlatAdNotifierGateway::class.java)
     runBlocking {
-        val flatAdNotifier = TgNotifierEntryPoint.startInPlace(ServiceRegistry.userService.async())
+        val flatAdNotifier = TgNotifierEntryPoint.startInPlace(ServiceRegistry.userService)
         flatAdChannel.consumeEach {
             try {
                 flatAdNotifier.onNewAd(it.first, it.second)

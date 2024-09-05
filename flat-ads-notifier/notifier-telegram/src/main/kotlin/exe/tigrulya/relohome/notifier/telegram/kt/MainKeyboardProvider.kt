@@ -4,8 +4,6 @@ import dev.inmo.tgbotapi.extensions.utils.types.buttons.simpleButton
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.webAppButton
 import dev.inmo.tgbotapi.types.buttons.KeyboardMarkup
 import dev.inmo.tgbotapi.types.buttons.ReplyKeyboardMarkup
-import dev.inmo.tgbotapi.types.buttons.SimpleKeyboardButton
-import dev.inmo.tgbotapi.types.buttons.WebAppKeyboardButton
 import dev.inmo.tgbotapi.types.webapps.WebAppInfo
 import dev.inmo.tgbotapi.utils.matrix
 import dev.inmo.tgbotapi.utils.row
@@ -20,12 +18,12 @@ class MainKeyboardProvider(private val handlerWebUrl: String) {
         const val STATISTICS_BUTTON_TEXT = "📈 Statistics"
     }
 
-    fun get(userId: String, isEnabled: Boolean = true): KeyboardMarkup {
+    fun get(userId: String, searchEnabled: Boolean = true): KeyboardMarkup {
         return ReplyKeyboardMarkup(
             matrix {
                 row {
                     simpleButton(
-                        if (isEnabled) ENABLED_BOT_BUTTON_TEXT else DISABLED_BOT_BUTTON_TEXT
+                        if (searchEnabled) ENABLED_BOT_BUTTON_TEXT else DISABLED_BOT_BUTTON_TEXT
                     )
                     webAppButton(
                         text = OPTIONS_BUTTON_TEXT,

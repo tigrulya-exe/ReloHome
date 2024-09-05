@@ -220,4 +220,3 @@ fun CompletableFuture<*>.onError(handler: (Throwable) -> Unit) {
     }
 }
 
-data class MessengerLinks(val whatsAppLink: String? = null, val viberLink: String? = null)
