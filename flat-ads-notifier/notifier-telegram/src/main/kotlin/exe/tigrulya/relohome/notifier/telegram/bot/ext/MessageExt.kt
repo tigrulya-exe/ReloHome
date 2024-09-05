@@ -1,4 +1,4 @@
-package exe.tigrulya.relohome.notifier.telegram.kt.ext
+package exe.tigrulya.relohome.notifier.telegram.bot.ext
 
 import dev.inmo.tgbotapi.types.IdChatIdentifier
 import dev.inmo.tgbotapi.types.message.abstracts.CommonMessage

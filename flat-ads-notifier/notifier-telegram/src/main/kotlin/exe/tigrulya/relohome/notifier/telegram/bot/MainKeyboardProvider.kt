@@ -1,4 +1,4 @@
-package exe.tigrulya.relohome.notifier.telegram.kt
+package exe.tigrulya.relohome.notifier.telegram.bot
 
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.simpleButton
 import dev.inmo.tgbotapi.extensions.utils.types.buttons.webAppButton

@@ -1,4 +1,4 @@
-package exe.tigrulya.relohome.notifier.telegram.kt
+package exe.tigrulya.relohome.notifier.telegram.bot
 
 import dev.inmo.tgbotapi.bot.TelegramBot
 import dev.inmo.tgbotapi.extensions.api.send.media.sendVisualMediaGroup
@@ -8,12 +8,10 @@ import dev.inmo.tgbotapi.types.ChatId
 import dev.inmo.tgbotapi.types.RawChatId
 import dev.inmo.tgbotapi.types.media.TelegramMediaPhoto
 import dev.inmo.tgbotapi.types.message.MarkdownParseMode
-import exe.tigrulya.relohome.api.FlatAdKt
 import exe.tigrulya.relohome.api.FlatAdNotifierGateway
 import exe.tigrulya.relohome.model.Contacts
 import exe.tigrulya.relohome.model.FlatAd
 import exe.tigrulya.relohome.model.Image
-import exe.tigrulya.relohome.notifier.telegram.bot.MessengerLinks
 import exe.tigrulya.relohome.template.ObjectReuseMustacheTemplateEngine
 import exe.tigrulya.relohome.template.TemplateEngine
 import exe.tigrulya.relohome.util.LoggerProperty
@@ -84,6 +82,8 @@ class TelegramFlatAdNotifier(
         return templateEngine.compile("templates/new-flat-ad.mustache", *scopes)
     }
 
+    // todo also escape markdown special symbols
+    // https://stackoverflow.com/questions/61224362/telegram-bot-cant-find-end-of-the-entity-starting-at-truncated
     private fun FlatAd.withShrinkedDescription(maxSize: Int = 700) = FlatAd(
         id,
         title,
