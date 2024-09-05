@@ -1,4 +1,4 @@
-package exe.tigrulya.relohome.notifier.telegram.kt.handlers
+package exe.tigrulya.relohome.notifier.telegram.bot.handlers
 
 import dev.inmo.tgbotapi.extensions.api.send.send
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
@@ -7,11 +7,11 @@ import dev.inmo.tgbotapi.types.message.HTMLParseMode
 import exe.tigrulya.relohome.api.user_handler.UserHandlerGateway
 import exe.tigrulya.relohome.model.City
 import exe.tigrulya.relohome.model.UserCreateDto
-import exe.tigrulya.relohome.notifier.telegram.kt.MainKeyboardProvider
-import exe.tigrulya.relohome.notifier.telegram.kt.ext.onCommandWithErrorHandling
-import exe.tigrulya.relohome.notifier.telegram.kt.ext.sender
-import exe.tigrulya.relohome.notifier.telegram.kt.ext.senderId
-import exe.tigrulya.relohome.notifier.telegram.kt.ext.withSimpleErrorHandling
+import exe.tigrulya.relohome.notifier.telegram.bot.MainKeyboardProvider
+import exe.tigrulya.relohome.notifier.telegram.bot.ext.onCommandWithErrorHandling
+import exe.tigrulya.relohome.notifier.telegram.bot.ext.sender
+import exe.tigrulya.relohome.notifier.telegram.bot.ext.senderId
+import exe.tigrulya.relohome.notifier.telegram.bot.ext.withSimpleErrorHandling
 import exe.tigrulya.relohome.notifier.telegram.util.asCode
 
 suspend fun BehaviourContext.handleStartCommand(

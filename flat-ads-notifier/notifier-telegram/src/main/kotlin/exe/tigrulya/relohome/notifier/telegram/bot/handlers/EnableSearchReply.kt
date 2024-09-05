@@ -1,13 +1,13 @@
-package exe.tigrulya.relohome.notifier.telegram.kt.handlers
+package exe.tigrulya.relohome.notifier.telegram.bot.handlers
 
 import dev.inmo.tgbotapi.extensions.api.send.send
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import exe.tigrulya.relohome.api.user_handler.UserHandlerGateway
-import exe.tigrulya.relohome.notifier.telegram.kt.MainKeyboardProvider
-import exe.tigrulya.relohome.notifier.telegram.kt.ext.onTextStartingWith
-import exe.tigrulya.relohome.notifier.telegram.kt.ext.sender
-import exe.tigrulya.relohome.notifier.telegram.kt.ext.senderId
-import exe.tigrulya.relohome.notifier.telegram.kt.ext.withSimpleErrorHandling
+import exe.tigrulya.relohome.notifier.telegram.bot.MainKeyboardProvider
+import exe.tigrulya.relohome.notifier.telegram.bot.ext.onTextStartingWith
+import exe.tigrulya.relohome.notifier.telegram.bot.ext.sender
+import exe.tigrulya.relohome.notifier.telegram.bot.ext.senderId
+import exe.tigrulya.relohome.notifier.telegram.bot.ext.withSimpleErrorHandling
 
 suspend fun BehaviourContext.handleEnableSearch(
     userHandlerGateway: UserHandlerGateway,

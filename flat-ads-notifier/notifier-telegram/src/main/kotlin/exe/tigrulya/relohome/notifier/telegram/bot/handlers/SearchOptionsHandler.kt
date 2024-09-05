@@ -1,12 +1,12 @@
-package exe.tigrulya.relohome.notifier.telegram.kt.handlers
+package exe.tigrulya.relohome.notifier.telegram.bot.handlers
 
 import dev.inmo.tgbotapi.extensions.api.send.send
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import exe.tigrulya.relohome.api.user_handler.UserHandlerGateway
 import exe.tigrulya.relohome.model.NumRange
 import exe.tigrulya.relohome.model.UserSearchOptionsDto
-import exe.tigrulya.relohome.notifier.telegram.kt.ext.onWebappWithErrorHandling
-import exe.tigrulya.relohome.notifier.telegram.kt.ext.withSimpleErrorHandling
+import exe.tigrulya.relohome.notifier.telegram.bot.ext.onWebappWithErrorHandling
+import exe.tigrulya.relohome.notifier.telegram.bot.ext.withSimpleErrorHandling
 import exe.tigrulya.relohome.notifier.telegram.serde.SearchOptionsDeserializer
 
 suspend fun BehaviourContext.handleSearchOptions(

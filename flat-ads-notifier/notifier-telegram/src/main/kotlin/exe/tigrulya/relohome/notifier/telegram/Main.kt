@@ -15,8 +15,8 @@ import exe.tigrulya.relohome.notifier.telegram.config.ConfigOptions.FLAT_AD_HAND
 import exe.tigrulya.relohome.notifier.telegram.config.ConfigOptions.FLAT_AD_HANDLER_HTTP_GATEWAY_HOSTNAME
 import exe.tigrulya.relohome.notifier.telegram.config.ConfigOptions.FLAT_AD_NOTIFIER_TG_REQUESTS_PER_SEC
 import exe.tigrulya.relohome.notifier.telegram.config.ConfigOptions.FLAT_AD_NOTIFIER_TG_TOKEN
-import exe.tigrulya.relohome.notifier.telegram.kt.ReloHomeTelegramBot
-import exe.tigrulya.relohome.notifier.telegram.kt.TelegramFlatAdNotifier
+import exe.tigrulya.relohome.notifier.telegram.bot.ReloHomeTelegramBot
+import exe.tigrulya.relohome.notifier.telegram.bot.TelegramFlatAdNotifier
 import kotlin.concurrent.thread
 
 suspend fun main() = TgNotifierEntryPoint.startRemote()
