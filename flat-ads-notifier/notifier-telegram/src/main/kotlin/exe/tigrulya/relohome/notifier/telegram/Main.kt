@@ -31,13 +31,12 @@ object TgNotifierEntryPoint {
             group = config.get(KAFKA_FLAT_AD_CONSUMER_GROUP),
             fetchTimeout = config.get(KAFKA_FLAT_AD_FETCH_TIMEOUT)
         )
+        val flatAdConsumer = KafkaFlatAdConsumer(kafkaConsumerConfig)
 
         // TODO add exception mapping to GrpcUserHandlerClient
         val userHandlerGateway = GrpcUserHandlerClient(config.get(FLAT_AD_HANDLER_GRPC_GATEWAY_HOSTNAME))
-
         val notifier = startInternal(config, userHandlerGateway)
 
-        val flatAdConsumer = KafkaFlatAdConsumer(kafkaConsumerConfig)
         thread {
             flatAdConsumer.handleAds { userIds, flatAd ->
                 notifier.onNewAd(userIds, flatAd)
@@ -63,6 +62,6 @@ object TgNotifierEntryPoint {
 
         reloHomeBot.start()
 
-        return TelegramFlatAdNotifier(reloHomeBot.tgBot)
+        return TelegramFlatAdNotifier(reloHomeBot.tgBot, reloHomeBot.mainKeyboardProvider)
     }
 }

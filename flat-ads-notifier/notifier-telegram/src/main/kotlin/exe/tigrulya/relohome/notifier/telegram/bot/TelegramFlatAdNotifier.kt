@@ -19,6 +19,7 @@ import java.net.URLEncoder
 
 class TelegramFlatAdNotifier(
     private val telegramBot: TelegramBot,
+    private val keyboardProvider: MainKeyboardProvider,
     private val templateEngine: TemplateEngine = ObjectReuseMustacheTemplateEngine(),
 ) : FlatAdNotifierGateway {
 
@@ -27,7 +28,7 @@ class TelegramFlatAdNotifier(
     override suspend fun onNewAd(userIds: List<String>, flatAd: FlatAd) {
         logger.info("Send ad ${flatAd.id} to $userIds")
 
-        val flatAdMessage = compileFlatAdMessage(flatAd.withShrinkedDescription())
+        val flatAdMessage = compileFlatAdMessage(flatAd.withShrunkDescription())
         if (flatAd.images.isEmpty()) {
             userIds.forEach { userId -> sendAdWithoutImages(userId, flatAdMessage) }
             return
@@ -40,7 +41,9 @@ class TelegramFlatAdNotifier(
         telegramBot.send(
             chatId = ChatId(RawChatId(userId.toLong())),
             text = message,
-            parseMode = MarkdownParseMode
+            parseMode = MarkdownParseMode,
+            // TODO do we need to recreate keyboards?
+            replyMarkup = keyboardProvider.get(userId, searchEnabled = true)
         )
     }
 
@@ -84,7 +87,7 @@ class TelegramFlatAdNotifier(
 
     // todo also escape markdown special symbols
     // https://stackoverflow.com/questions/61224362/telegram-bot-cant-find-end-of-the-entity-starting-at-truncated
-    private fun FlatAd.withShrinkedDescription(maxSize: Int = 700) = FlatAd(
+    private fun FlatAd.withShrunkDescription(maxSize: Int = 700) = FlatAd(
         id,
         title,
         address,

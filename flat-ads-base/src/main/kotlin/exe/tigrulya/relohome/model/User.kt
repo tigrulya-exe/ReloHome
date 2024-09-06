@@ -26,6 +26,14 @@ data class User(
     val locale: String?
 )
 
+data class UserInfo(
+    val id: String,
+    val name: String,
+    val state: UserState,
+    val city: City?,
+    val locale: String?
+)
+
 data class NumRange(val from: Int? = null, val to: Int? = null)
 
 data class UserSearchOptionsDto(

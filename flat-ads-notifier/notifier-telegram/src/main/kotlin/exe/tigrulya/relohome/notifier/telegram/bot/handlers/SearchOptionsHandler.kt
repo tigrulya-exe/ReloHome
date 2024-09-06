@@ -2,6 +2,7 @@ package exe.tigrulya.relohome.notifier.telegram.bot.handlers
 
 import dev.inmo.tgbotapi.extensions.api.send.send
 import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
+import dev.inmo.tgbotapi.types.message.MarkdownParseMode
 import exe.tigrulya.relohome.api.user_handler.UserHandlerGateway
 import exe.tigrulya.relohome.model.NumRange
 import exe.tigrulya.relohome.model.UserSearchOptionsDto
@@ -22,17 +23,18 @@ suspend fun BehaviourContext.handleSearchOptions(
 
     send(
         chatId = message.chat.id,
-        text = "Successfully sent data from web app to server: \n${searchOptions.orUnset()}"
+        text = "Successfully updated search parameters: \n\n${searchOptions.orUnset()}",
+        parseMode = MarkdownParseMode
     )
 }
 
 fun UserSearchOptionsDto.orUnset(): String = """
-    Prices: ${priceRange.orUnset()}
-    Rooms: ${roomRange.orUnset()}
-    Bedrooms: ${bedroomRange.orUnset()}
-    Floor: ${floorRange.orUnset()}
-    Area: ${areaRange.orUnset()}
-    SubDistricts: $subDistricts
+    *Prices:* ${priceRange.orUnset()}
+    *Rooms:* ${roomRange.orUnset()}
+    *Bedrooms:* ${bedroomRange.orUnset()}
+    *Floor:* ${floorRange.orUnset()}
+    *Area:* ${areaRange.orUnset()}
+    *SubDistricts:* ${subDistricts.orUnset()}
 """.trimIndent()
 
 fun NumRange.orUnset(): String = if (from == null && to == null) {
@@ -42,3 +44,4 @@ fun NumRange.orUnset(): String = if (from == null && to == null) {
 }
 
 fun Any?.orUnset() = this?.toString() ?: "unset"
+fun Collection<*>.orUnset() = if (isEmpty()) "unset" else toString()
