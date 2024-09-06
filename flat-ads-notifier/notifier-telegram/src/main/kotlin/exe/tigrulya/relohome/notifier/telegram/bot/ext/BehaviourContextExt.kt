@@ -119,7 +119,7 @@ suspend fun <BC : BehaviourContext, R> BC.withErrorHandling(
         action.invoke(this)
     } catch (exception: ReloHomeUserException) {
         val errorMessage = if (includeExceptionMessage) {
-            clientErrorPrefix + exceptionMessageGetter(exception)
+            "$clientErrorPrefix. ${exceptionMessageGetter(exception)}"
         } else {
             clientErrorPrefix
         }
@@ -127,7 +127,7 @@ suspend fun <BC : BehaviourContext, R> BC.withErrorHandling(
         throw StopHandlingException()
     } catch (exception: Exception) {
         val errorMessage = if (includeExceptionMessage) {
-            serverErrorPrefix + exceptionMessageGetter(exception)
+            "$serverErrorPrefix. ${exceptionMessageGetter(exception)}"
         } else {
             serverErrorPrefix
         }

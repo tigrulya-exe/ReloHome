@@ -20,7 +20,7 @@ class ReloHomeTelegramBot(
 ) : AutoCloseable {
     private var pollingJob: Job? = null
 
-    private val mainKeyboardProvider = MainKeyboardProvider(handlerWebUrl)
+    val mainKeyboardProvider = MainKeyboardProvider(handlerWebUrl)
 
     val tgBot: TelegramBot = telegramBot(botToken) {
         // todo mb add adapter to guava coroutine ratelimiter
