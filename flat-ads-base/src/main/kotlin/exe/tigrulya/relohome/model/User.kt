@@ -13,7 +13,8 @@ enum class UserState {
 
 data class UserCreateDto(
     val name: String,
-    val externalId: String
+    val externalId: String,
+    val locale: String
 )
 
 data class User(
@@ -29,9 +30,7 @@ data class User(
 data class UserInfo(
     val id: String,
     val name: String,
-    val state: UserState,
-    val city: City?,
-    val locale: String?
+    val locale: String
 )
 
 data class NumRange(val from: Int? = null, val to: Int? = null)

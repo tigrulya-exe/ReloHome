@@ -5,14 +5,13 @@ import exe.tigrulya.relohome.api.FlatAdNotifierGateway
 import exe.tigrulya.relohome.handler.cache.HandledAdsCache
 import exe.tigrulya.relohome.handler.repository.SearchOptions
 import exe.tigrulya.relohome.handler.repository.SubDistricts
+import exe.tigrulya.relohome.handler.repository.Users
 import exe.tigrulya.relohome.model.FlatAd
+import exe.tigrulya.relohome.model.UserInfo
 import exe.tigrulya.relohome.util.LoggerProperty
 import kotlinx.coroutines.Dispatchers
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.andWhere
-import org.jetbrains.exposed.sql.or
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 class FlatAdService(
@@ -45,12 +44,13 @@ class FlatAdService(
 
     private suspend fun getUserExternalIdsForFlatAd(
         flatAd: FlatAd
-    ): List<String> = newSuspendedTransaction(Dispatchers.IO) {
+    ): List<UserInfo> = newSuspendedTransaction(Dispatchers.IO) {
 
         // addLogger(StdOutSqlLogger)
 
         val query = SearchOptions
-            .slice(SearchOptions.externalId)
+            .join(Users, JoinType.INNER, onColumn = SearchOptions.externalId, otherColumn = Users.externalId)
+            .slice(SearchOptions.externalId, Users.name, Users.locale)
             .select(SearchOptions.cityName eq flatAd.address.city.name)
             .andWhere { SearchOptions.enabled eq true }
             .andWhere {
@@ -95,6 +95,12 @@ class FlatAdService(
             }
         }
 
-        query.map { it[SearchOptions.externalId] }
+        query.map {
+            UserInfo(
+                id = it[SearchOptions.externalId],
+                name = it[Users.name],
+                locale = it[Users.locale]
+            )
+        }
     }
 }

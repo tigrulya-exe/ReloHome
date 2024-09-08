@@ -14,4 +14,5 @@
     <include file="db/changelog/changelog-4.add-locale.xml"/>
     <include file="db/changelog/changelog-5.add-area-search-option.xml"/>
     <include file="db/changelog/changelog-6.add-bedrooms-floor-search-options.xml"/>
+    <include file="db/changelog/changelog-7.insert-locales.xml"/>
 </databaseChangeLog>

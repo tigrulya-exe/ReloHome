@@ -22,7 +22,8 @@ class FlatAdsHandlerGrpcService(
         userService.registerUser(
             UserCreateDto(
                 name = request.name,
-                externalId = request.externalId
+                externalId = request.externalId,
+                locale = request.locale
             )
         )
         UserHandlerGatewayOuterClass.Empty.getDefaultInstance()

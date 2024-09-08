@@ -10,6 +10,9 @@ interface UserHandlerGateway {
 
     suspend fun setLocation(externalId: String, city: City)
 
+    // todo locale as enum or class
+    suspend fun setLocale(externalId: String, locale: String)
+
     suspend fun setSearchOptions(externalUserId: String, searchOptions: UserSearchOptionsDto)
 
     suspend fun toggleSearch(externalId: String): Boolean

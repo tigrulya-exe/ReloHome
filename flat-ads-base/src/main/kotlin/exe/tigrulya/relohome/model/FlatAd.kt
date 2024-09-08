@@ -88,6 +88,6 @@ data class FlatAd(
 )
 
 data class FlatAdMessage(
-    val userIds: List<String>,
+    val users: List<UserInfo>,
     val flatAd: FlatAd
 )

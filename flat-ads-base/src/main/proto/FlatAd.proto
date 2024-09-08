@@ -3,7 +3,7 @@ syntax = "proto3";
 package exe.tigrulya.relohome.api;
 
 message FlatAdMessage {
-  repeated string userIds = 1;
+  repeated UserInfo users = 1;
   FlatAd flatAd = 2;
 }
 
@@ -46,4 +46,10 @@ message Contacts {
   string flatServiceLink = 1;
   optional string phoneNumber = 2;
   map<string, string> messengerIds = 3;
+}
+
+message UserInfo{
+  string id = 1;
+  string name = 2;
+  string locale = 3;
 }

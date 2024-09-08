@@ -12,6 +12,7 @@ import exe.tigrulya.relohome.api.FlatAdNotifierGateway
 import exe.tigrulya.relohome.model.Contacts
 import exe.tigrulya.relohome.model.FlatAd
 import exe.tigrulya.relohome.model.Image
+import exe.tigrulya.relohome.model.UserInfo
 import exe.tigrulya.relohome.template.ObjectReuseMustacheTemplateEngine
 import exe.tigrulya.relohome.template.TemplateEngine
 import exe.tigrulya.relohome.util.LoggerProperty
@@ -25,29 +26,34 @@ class TelegramFlatAdNotifier(
 
     private val logger by LoggerProperty()
 
-    override suspend fun onNewAd(userIds: List<String>, flatAd: FlatAd) {
-        logger.info("Send ad ${flatAd.id} to $userIds")
+    override suspend fun onNewAd(users: List<UserInfo>, flatAd: FlatAd) {
+        logger.info("Send ad ${flatAd.id} to ${users.map { it.id }}")
 
-        val flatAdMessage = compileFlatAdMessage(flatAd.withShrunkDescription())
+        val fixedFlatAd = flatAd.withShrunkDescription()
+
         if (flatAd.images.isEmpty()) {
-            userIds.forEach { userId -> sendAdWithoutImages(userId, flatAdMessage) }
+            users.forEach { user -> sendAdWithoutImages(user, fixedFlatAd) }
             return
         }
 
-        userIds.forEach { sendAdWithImages(it, flatAdMessage, flatAd.images) }
+        users.forEach { sendAdWithImages(it, fixedFlatAd, flatAd.images) }
     }
 
-    private suspend fun sendAdWithoutImages(userId: String, message: String) {
+    private suspend fun sendAdWithoutImages(user: UserInfo, flatAd: FlatAd) {
+        val message = compileFlatAdMessage(flatAd, user.locale)
+
         telegramBot.send(
-            chatId = ChatId(RawChatId(userId.toLong())),
+            chatId = ChatId(RawChatId(user.id.toLong())),
             text = message,
             parseMode = MarkdownParseMode,
             // TODO do we need to recreate keyboards?
-            replyMarkup = keyboardProvider.get(userId, searchEnabled = true)
+            replyMarkup = keyboardProvider.get(user.id, searchEnabled = true)
         )
     }
 
-    private suspend fun sendAdWithImages(userId: String, message: String, images: List<Image>) {
+    private suspend fun sendAdWithImages(user: UserInfo, flatAd: FlatAd, images: List<Image>) {
+        val message = compileFlatAdMessage(flatAd, user.locale)
+
         val imagesGroup = images
             .take(10)
             .withIndex()
@@ -60,12 +66,12 @@ class TelegramFlatAdNotifier(
             }
 
         telegramBot.sendVisualMediaGroup(
-            chatId = ChatId(RawChatId(userId.toLong())),
+            chatId = ChatId(RawChatId(user.id.toLong())),
             media = imagesGroup
         )
     }
 
-    private fun compileFlatAdMessage(flatAd: FlatAd): String {
+    private fun compileFlatAdMessage(flatAd: FlatAd, locale: String): String {
         val links = with(flatAd.contacts) {
             MessengerLinks(
                 whatsAppLink = messengerIds[Contacts.Messenger.WHATSAPP]?.let {
@@ -82,7 +88,8 @@ class TelegramFlatAdNotifier(
             )
         }
         val scopes = arrayOf(flatAd, links)
-        return templateEngine.compile("templates/new-flat-ad.mustache", *scopes)
+        // todo move templates/ as baseDir option to templateEngine
+        return templateEngine.compile("templates/$locale/new-flat-ad.mustache", *scopes)
     }
 
     // todo also escape markdown special symbols

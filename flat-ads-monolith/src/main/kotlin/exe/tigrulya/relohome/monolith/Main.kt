@@ -8,6 +8,7 @@ import exe.tigrulya.relohome.handler.config.HandlerConfigOptions.FLAT_AD_HANDLER
 import exe.tigrulya.relohome.handler.config.HandlerConfigOptions.FLAT_AD_HANDLER_ADS_CACHE_TTL
 import exe.tigrulya.relohome.handler.service.FlatAdService
 import exe.tigrulya.relohome.model.FlatAd
+import exe.tigrulya.relohome.model.UserInfo
 import exe.tigrulya.relohome.notifier.telegram.TgNotifierEntryPoint
 import exe.tigrulya.relohome.ssge.SsGeFetcherEntryPoint
 import kotlinx.coroutines.channels.Channel
@@ -19,7 +20,7 @@ import kotlin.concurrent.thread
 
 
 fun main(args: Array<String>) {
-    val flatAdChannel = Channel<Pair<List<String>, FlatAd>>(200)
+    val flatAdChannel = Channel<Pair<List<UserInfo>, FlatAd>>(200)
     val bufferedNotifier = BufferedFlatAdNotifierGateway(flatAdChannel)
 
     val redisAdsCache = RedisHandledAdsCache(
@@ -49,10 +50,10 @@ fun main(args: Array<String>) {
 }
 
 class BufferedFlatAdNotifierGateway(
-    private val buffer: SendChannel<Pair<List<String>, FlatAd>>
+    private val buffer: SendChannel<Pair<List<UserInfo>, FlatAd>>
 ) : FlatAdNotifierGateway {
 
-    override suspend fun onNewAd(userIds: List<String>, flatAd: FlatAd) {
-        buffer.send(userIds to flatAd)
+    override suspend fun onNewAd(users: List<UserInfo>, flatAd: FlatAd) {
+        buffer.send(users to flatAd)
     }
 }

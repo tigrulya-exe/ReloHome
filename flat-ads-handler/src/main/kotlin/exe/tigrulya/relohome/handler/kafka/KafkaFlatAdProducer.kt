@@ -7,6 +7,7 @@ import exe.tigrulya.relohome.kafka.KafkaProducerConfig
 import exe.tigrulya.relohome.kafka.serde.ProtobufSerializer
 import exe.tigrulya.relohome.model.FlatAd
 import exe.tigrulya.relohome.model.FlatAdMessage
+import exe.tigrulya.relohome.model.UserInfo
 import exe.tigrulya.relohome.proto.toProto
 import org.apache.kafka.common.serialization.StringSerializer
 
@@ -18,8 +19,8 @@ class KafkaFlatAdProducer(kafkaConfig: KafkaProducerConfig) : FlatAdNotifierGate
         valueSerializer = ProtobufSerializer::class.java
     )
 
-    override suspend fun onNewAd(userIds: List<String>, flatAd: FlatAd) {
+    override suspend fun onNewAd(users: List<UserInfo>, flatAd: FlatAd) {
         // todo think about key
-        producer.send(flatAd.address.city.name, FlatAdMessage(userIds, flatAd).toProto())
+        producer.send(flatAd.address.city.name, FlatAdMessage(users, flatAd).toProto())
     }
 }

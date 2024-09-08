@@ -30,9 +30,12 @@ class ReloHomeTelegramBot(
         )
     }
 
+    // todo support fsm
     suspend fun start() {
         pollingJob = tgBot.buildBehaviourWithLongPolling {
-            handleStartCommand(userHandlerGateway, mainKeyboardProvider)
+            handleStartCommand()
+
+            localeChosenHandler(userHandlerGateway, mainKeyboardProvider)
 
             handleSearchOptions(userHandlerGateway, searchOptionsDeserializer)
 

@@ -17,6 +17,7 @@ service UserHandlerGateway {
 message UserCreateRequest {
   string name = 1;
   string externalId = 2;
+  string locale = 3;
 }
 
 message SetLocationRequest {

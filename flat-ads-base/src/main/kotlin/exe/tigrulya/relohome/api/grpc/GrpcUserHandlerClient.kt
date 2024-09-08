@@ -1,8 +1,8 @@
 package exe.tigrulya.relohome.api.grpc
 
-import exe.tigrulya.relohome.api.user_handler.UserHandlerGateway
 import exe.tigrulya.relohome.api.UserHandlerGatewayGrpcKt
 import exe.tigrulya.relohome.api.UserHandlerGatewayOuterClass
+import exe.tigrulya.relohome.api.user_handler.UserHandlerGateway
 import exe.tigrulya.relohome.error.WithGrpcClientErrorHandling
 import exe.tigrulya.relohome.model.City
 import exe.tigrulya.relohome.model.NumRange
@@ -24,6 +24,7 @@ open class GrpcUserHandlerClient(serverUrl: String) : UserHandlerGateway, WithGr
             .apply {
                 this.externalId = user.externalId
                 this.name = user.name
+                this.locale = user.locale
             }.build()
         grpcClient.registerUser(request)
     }
@@ -36,6 +37,15 @@ open class GrpcUserHandlerClient(serverUrl: String) : UserHandlerGateway, WithGr
                 this.country = city.country
             }.build()
         grpcClient.setLocation(request)
+    }
+
+    override suspend fun setLocale(externalId: String, locale: String) {
+        val request = UserHandlerGatewayOuterClass.SetLocaleRequest.newBuilder()
+            .apply {
+                this.externalId = externalId
+                this.locale = locale
+            }.build()
+        grpcClient.setLocale(request)
     }
 
     override suspend fun setSearchOptions(

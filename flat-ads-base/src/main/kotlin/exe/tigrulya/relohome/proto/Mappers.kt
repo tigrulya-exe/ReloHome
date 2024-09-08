@@ -6,7 +6,7 @@ import java.util.function.Consumer
 
 fun FlatAdMessage.toProto(): FlatAdOuterClass.FlatAdMessage = FlatAdOuterClass.FlatAdMessage.newBuilder()
     .also { proto ->
-        proto.addAllUserIds(userIds)
+        proto.addAllUsers(users.map { it.toProto() })
         proto.flatAd = flatAd.toProto()
     }.build()
 
@@ -55,8 +55,15 @@ fun Contacts.toProto(): FlatAdOuterClass.Contacts = FlatAdOuterClass.Contacts.ne
         proto.putAllMessengerIds(messengerIds.mapKeys { it.key.name })
     }.build()
 
+fun UserInfo.toProto(): FlatAdOuterClass.UserInfo = FlatAdOuterClass.UserInfo.newBuilder()
+    .also { proto ->
+        proto.id = id
+        proto.name = name
+        nullSafeSet(locale, proto::setLocale)
+    }.build()
+
 fun FlatAdOuterClass.FlatAdMessage.toDomain(): FlatAdMessage = FlatAdMessage(
-    userIds = userIdsList,
+    users = usersList.map { it.toDomain() },
     flatAd = flatAd.toDomain()
 )
 
@@ -98,6 +105,11 @@ fun FlatAdOuterClass.Contacts.toDomain(): Contacts = Contacts(
     messengerIds = messengerIdsMap.mapKeys { Contacts.Messenger.valueOf(it.key) }
 )
 
+fun FlatAdOuterClass.UserInfo.toDomain(): UserInfo = UserInfo(
+    id = id,
+    name = name,
+    locale = locale
+)
 
 private fun <T> nullSafeSet(from: T?, to: Consumer<T>) {
     from?.let { to.accept(it) }

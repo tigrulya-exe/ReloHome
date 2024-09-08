@@ -13,9 +13,10 @@ class MainKeyboardProvider(private val handlerWebUrl: String) {
     companion object {
         const val DISABLED_BOT_BUTTON_TEXT = "🟢 Enable bot"
         const val ENABLED_BOT_BUTTON_TEXT = "🔴 Disable bot"
-        const val OPTIONS_BUTTON_TEXT = "⚙️ Change settings"
+        const val OPTIONS_BUTTON_TEXT = "⚙️ Change search options"
         const val SUBSCRIPTION_INFO_BUTTON_TEXT = "💳 Subscription info"
         const val STATISTICS_BUTTON_TEXT = "📈 Statistics"
+        const val CHANGE_LOCALE_BUTTON_TEXT = "\uD83C\uDDEC\uD83C\uDDE7 Change language"
     }
 
     // reuse buttons to reduce object creation
@@ -23,6 +24,7 @@ class MainKeyboardProvider(private val handlerWebUrl: String) {
     private val statisticsButton = SimpleKeyboardButton(STATISTICS_BUTTON_TEXT)
     private val enabledSearchButton = SimpleKeyboardButton(ENABLED_BOT_BUTTON_TEXT)
     private val disabledSearchButton = SimpleKeyboardButton(DISABLED_BOT_BUTTON_TEXT)
+    private val changeLocaleButton = SimpleKeyboardButton(CHANGE_LOCALE_BUTTON_TEXT)
 
     fun get(userId: String, searchEnabled: Boolean = true): KeyboardMarkup {
         return ReplyKeyboardMarkup(
@@ -37,6 +39,9 @@ class MainKeyboardProvider(private val handlerWebUrl: String) {
                 row {
                     add(subscriptionInfoButton)
                     add(statisticsButton)
+                }
+                row {
+                    add(changeLocaleButton)
                 }
             },
             resizeKeyboard = true

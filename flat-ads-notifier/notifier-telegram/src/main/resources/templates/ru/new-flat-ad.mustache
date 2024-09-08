@@ -1,0 +1,31 @@
+*{{title}}*
+
+{{#address.location}}
+*Адрес:* [{{address.city.name}}, {{address.subDistrict}}, {{address.street}}, {{address.building}}](https://maps.google.com/?q={{address.location.lat}},{{address.location.lon}})
+{{/address.location}}
+{{^address.location}}
+*Адрес:* {{address.city.name}}, {{address.subDistrict}}, {{address.street}}, {{address.building}}
+{{/address.location}}
+{{#info.floor}}
+*Этаж:* {{info.floor}}/{{info.totalFloors}}
+{{/info.floor}}
+{{#info.rooms}}
+*Комнаты:* {{info.rooms}}
+{{/info.rooms}}
+{{#info.bedrooms}}
+*Спальни:* {{info.bedrooms}}
+{{/info.bedrooms}}
+{{#info.spaceSquareMeters}}
+*Площадь:* {{info.spaceSquareMeters}} m²
+{{/info.spaceSquareMeters}}
+
+{{description}}
+
+*Цена:* {{price}}
+
+{{#contacts.phoneNumber}}
+*Телефон:* {{contacts.phoneNumber}}
+{{/contacts.phoneNumber}}
+{{#whatsAppLink}}[Whatsapp]({{{whatsAppLink}}}){{/whatsAppLink}}  {{#viberLink}}[Viber]({{{viberLink}}}){{/viberLink}}
+
+*Ссылка на источник:* [{{serviceId}}]({{{contacts.flatServiceLink}}})

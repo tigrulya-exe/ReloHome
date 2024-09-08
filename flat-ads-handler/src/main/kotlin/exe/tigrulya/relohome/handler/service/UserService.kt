@@ -18,6 +18,7 @@ class UserService : UserHandlerGateway {
         Users.insertIgnore {
             it[name] = user.name
             it[externalId] = user.externalId
+            it[locale] = user.locale
             it[state] = UserState.NEW
         }
     }
@@ -29,11 +30,11 @@ class UserService : UserHandlerGateway {
         userEntity.state = UserState.CITY_PROVIDED
     }
 
-    suspend fun setLocale(externalId: String, locale: String) = newSuspendedTransaction(Dispatchers.IO) {
+    override suspend fun setLocale(externalId: String, locale: String) = newSuspendedTransaction(Dispatchers.IO) {
         val userEntity = Users.getByExternalId(externalId)
 
         if (!Locales.exists(locale)) {
-            throw ReloHomeUserException("Wrong locale: $id")
+            throw ReloHomeUserException("Wrong locale: $locale")
         }
 
         userEntity.locale = locale
