@@ -1,5 +1,8 @@
 package exe.tigrulya.relohome.notifier.telegram.bot.state
 
+import exe.tigrulya.relohome.notifier.telegram.bot.state.repo.UserState
+import exe.tigrulya.relohome.notifier.telegram.bot.state.repo.UserStatesRepository
+
 
 class DefaultUserStatesManager(
     private val repository: UserStatesRepository

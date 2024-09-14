@@ -31,4 +31,9 @@ class LocalizationTest : FunSpec({
         val ctx = TestCtx("Джиго")
         localization[RU, EVAL_CONSTANT]?.eval(ctx) shouldBe "Привет, дорогой Джиго!"
     }
+
+    test("ru - check eval value from map") {
+        val ctx = mapOf("name" to "Джиго")
+        localization[RU, EVAL_CONSTANT]?.eval(ctx) shouldBe "Привет, дорогой Джиго!"
+    }
 })

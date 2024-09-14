@@ -1,18 +1,7 @@
 package exe.tigrulya.relohome.notifier.telegram.bot.state
 
-enum class UserState {
-    NEW,
-    LOCALE_PROVIDED,
-    SEARCH_OPTIONS_PROVIDED
-}
+import exe.tigrulya.relohome.notifier.telegram.bot.state.repo.UserState
 
-interface UserStatesRepository {
-
-    suspend fun get(userId: String): UserState?
-
-    suspend fun set(userId: String, state: UserState)
-
-}
 
 interface UserStatesManager {
     suspend fun <T> onlyIfNoState(userId: String, handler: suspend UserStatesManager.() -> T): T?

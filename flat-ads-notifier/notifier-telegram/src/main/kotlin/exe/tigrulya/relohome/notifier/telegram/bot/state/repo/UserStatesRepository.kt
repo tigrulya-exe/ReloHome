@@ -1,6 +1,20 @@
-package exe.tigrulya.relohome.notifier.telegram.bot.state
+package exe.tigrulya.relohome.notifier.telegram.bot.state.repo
 
 import org.eclipse.collections.impl.map.mutable.ConcurrentHashMap
+
+enum class UserState {
+    NEW,
+    LOCALE_PROVIDED,
+    SEARCH_OPTIONS_PROVIDED
+}
+
+interface UserStatesRepository {
+
+    suspend fun get(userId: String): UserState?
+
+    suspend fun set(userId: String, state: UserState)
+
+}
 
 class InMemoryUserStatesRepository : UserStatesRepository {
 

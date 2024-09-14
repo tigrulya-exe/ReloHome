@@ -34,4 +34,20 @@
       <column name="name">Russian</column>
     </insert>
   </changeSet>
+
+  <changeSet author="tigrulya" id="insert_ka_locale">
+    <preConditions onFail="MARK_RAN">
+      <sqlCheck expectedResult="0">
+        SELECT COUNT(*)
+        FROM locales
+        WHERE str_id = 'ka';
+      </sqlCheck>
+    </preConditions>
+
+    <insert tableName="locales">
+      <column name="str_id">ka</column>
+      <column name="name">Georgian</column>
+    </insert>
+  </changeSet>
+
 </databaseChangeLog>

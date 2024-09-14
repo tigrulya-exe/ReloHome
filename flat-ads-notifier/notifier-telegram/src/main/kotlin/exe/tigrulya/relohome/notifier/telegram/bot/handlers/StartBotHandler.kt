@@ -5,16 +5,18 @@ import exe.tigrulya.relohome.notifier.telegram.bot.ReloHomeContext
 import exe.tigrulya.relohome.notifier.telegram.bot.ext.onCommandWithErrorHandling
 import exe.tigrulya.relohome.notifier.telegram.bot.ext.sender
 import exe.tigrulya.relohome.notifier.telegram.bot.ext.senderId
-import exe.tigrulya.relohome.notifier.telegram.bot.state.UserState
+import exe.tigrulya.relohome.notifier.telegram.bot.state.repo.UserState
 
 suspend fun ReloHomeContext.handleStartCommand() = onCommandWithErrorHandling("start") { message ->
-    send(
-        chatId = message.senderId(),
-        text = "Choose language",
-        replyMarkup = setLocaleKeyboard()
-    )
+    withLocalization(message.sender()) {
+        send(
+            chatId = message.senderId(),
+            text = constant("handlers.set-locale.question-message"),
+            replyMarkup = setLocaleKeyboard()
+        )
 
-    userStatesManager.onlyIfNoState(message.sender()) {
-        transition(message.sender(), UserState.NEW)
+        onlyIfNoState(message.sender()) {
+            transition(message.sender(), UserState.NEW)
+        }
     }
 }

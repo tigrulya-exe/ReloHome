@@ -12,14 +12,19 @@ suspend fun ReloHomeContext.handleEnableSearch() = onTextStartingWith(
     MainKeyboardProvider.ENABLED_BOT_BUTTON_TEXT,
     MainKeyboardProvider.DISABLED_BOT_BUTTON_TEXT
 ) { message ->
+    withLocalization(message.sender()) {
 
-    val searchEnabled = withSimpleErrorHandling(message, "error enabling search") {
-        userHandlerGateway.toggleSearch(message.sender())
+        val searchEnabled = withSimpleErrorHandling(message, constant("handlers.enable-search.error")) {
+            userHandlerGateway.toggleSearch(message.sender())
+        }
+
+        send(
+            chatId = message.senderId(),
+            text = constant(
+                "handlers.enable-search.success",
+                mapOf("searchEnabled" to if (searchEnabled) "enabled" else "disabled")
+            ),
+            replyMarkup = keyboardProvider.get(message.sender(), searchEnabled)
+        )
     }
-
-    send(
-        chatId = message.senderId(),
-        text = "The flat ad search is ${if (searchEnabled) "enabled" else "disabled"}",
-        replyMarkup = keyboardProvider.get(message.sender(), searchEnabled)
-    )
 }

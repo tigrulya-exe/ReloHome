@@ -1,4 +1,4 @@
-package exe.tigrulya.relohome.notifier.telegram.bot.state
+package exe.tigrulya.relohome.notifier.telegram.bot.state.repo
 
 import io.lettuce.core.ExperimentalLettuceCoroutinesApi
 import io.lettuce.core.RedisClient

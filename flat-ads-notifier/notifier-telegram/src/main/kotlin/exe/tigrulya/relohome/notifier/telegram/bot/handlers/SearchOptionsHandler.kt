@@ -8,41 +8,40 @@ import exe.tigrulya.relohome.notifier.telegram.bot.ReloHomeContext
 import exe.tigrulya.relohome.notifier.telegram.bot.ext.onWebappWithErrorHandling
 import exe.tigrulya.relohome.notifier.telegram.bot.ext.sender
 import exe.tigrulya.relohome.notifier.telegram.bot.ext.withSimpleErrorHandling
-import exe.tigrulya.relohome.notifier.telegram.bot.state.UserState
+import exe.tigrulya.relohome.notifier.telegram.bot.state.repo.UserState
 
-// todo wrap all dependencies into child of BehaviourContext
-suspend fun ReloHomeContext.handleSearchOptions(
-) = onWebappWithErrorHandling { message ->
+suspend fun ReloHomeContext.handleSearchOptions() = onWebappWithErrorHandling { message ->
+    withLocalization(message.sender()) {
+        val searchOptions = searchOptionsDeserializer.deserialize(message.chatEvent.data)
 
-    val searchOptions = searchOptionsDeserializer.deserialize(message.chatEvent.data)
+        withSimpleErrorHandling(message.chat.id, constant("handlers.set-search-options.error")) {
+            userHandlerGateway.setSearchOptions(message.chat.id.chatId.toString(), searchOptions)
+        }
 
-    withSimpleErrorHandling(message.chat.id, "Error setting search options") {
-        userHandlerGateway.setSearchOptions(message.chat.id.chatId.toString(), searchOptions)
+        userStatesManager.transition(message.sender(), UserState.SEARCH_OPTIONS_PROVIDED)
+
+        send(
+            chatId = message.chat.id,
+            text = constant("handlers.set-search-options.success", searchOptions.toConstantCtx()),
+            parseMode = MarkdownParseMode
+        )
     }
-
-    userStatesManager.transition(message.sender(), UserState.SEARCH_OPTIONS_PROVIDED)
-
-    send(
-        chatId = message.chat.id,
-        text = "Successfully updated search parameters: \n\n${searchOptions.orUnset()}",
-        parseMode = MarkdownParseMode
-    )
 }
 
-fun UserSearchOptionsDto.orUnset(): String = """
-    *Prices:* ${priceRange.orUnset()}
-    *Rooms:* ${roomRange.orUnset()}
-    *Bedrooms:* ${bedroomRange.orUnset()}
-    *Floor:* ${floorRange.orUnset()}
-    *Area:* ${areaRange.orUnset()}
-    *SubDistricts:* ${subDistricts.orUnset()}
-""".trimIndent()
+fun UserSearchOptionsDto.toConstantCtx(): Map<String, String> = mapOf(
+    "prices" to priceRange.orUnset(),
+    "rooms" to roomRange.orUnset(),
+    "bedrooms" to bedroomRange.orUnset(),
+    "floor" to floorRange.orUnset(),
+    "area" to areaRange.orUnset(),
+    "subDistricts" to subDistricts.orUnset()
+)
 
 fun NumRange.orUnset(): String = if (from == null && to == null) {
-    "unset"
+    "x"
 } else {
     "${from.orUnset()} - ${to.orUnset()}"
 }
 
-fun Any?.orUnset() = this?.toString() ?: "unset"
-fun Collection<*>.orUnset() = if (isEmpty()) "unset" else toString()
+fun Any?.orUnset() = this?.toString() ?: "x"
+fun Collection<*>.orUnset() = if (isEmpty()) "x" else toString()

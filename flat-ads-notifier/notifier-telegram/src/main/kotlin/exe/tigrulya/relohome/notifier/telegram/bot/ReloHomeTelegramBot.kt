@@ -6,10 +6,12 @@ import dev.inmo.tgbotapi.bot.ktor.telegramBot
 import dev.inmo.tgbotapi.bot.settings.limiters.CommonLimiter
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPolling
 import exe.tigrulya.relohome.api.user_handler.UserHandlerGateway
+import exe.tigrulya.relohome.localization.Localization
 import exe.tigrulya.relohome.notifier.telegram.bot.handlers.*
+import exe.tigrulya.relohome.notifier.telegram.bot.state.DefaultLocalizationManager
 import exe.tigrulya.relohome.notifier.telegram.bot.state.DefaultUserStatesManager
-import exe.tigrulya.relohome.notifier.telegram.bot.state.InMemoryUserStatesRepository
-import exe.tigrulya.relohome.notifier.telegram.bot.state.UserStatesRepository
+import exe.tigrulya.relohome.notifier.telegram.bot.state.repo.InMemoryUserStatesRepository
+import exe.tigrulya.relohome.notifier.telegram.bot.state.repo.UserStatesRepository
 import exe.tigrulya.relohome.notifier.telegram.serde.JsonSearchOptionsDeserializer
 import exe.tigrulya.relohome.notifier.telegram.serde.SearchOptionsDeserializer
 import kotlinx.coroutines.Job
@@ -20,9 +22,12 @@ class ReloHomeTelegramBot(
     val handlerWebUrl: String,
     val searchOptionsDeserializer: SearchOptionsDeserializer = JsonSearchOptionsDeserializer(),
     val userStatesRepository: UserStatesRepository = InMemoryUserStatesRepository(),
+    val localesDirPath: String = "locales/tg-notifier",
     requestsPerSecond: Int = 10
 ) : AutoCloseable {
     private var pollingJob: Job? = null
+
+    val mainKeyboardProvider: MainKeyboardProvider = MainKeyboardProvider(handlerWebUrl)
 
     val tgBot: TelegramBot = telegramBot(botToken) {
         // todo mb add adapter to guava coroutine ratelimiter
@@ -32,15 +37,22 @@ class ReloHomeTelegramBot(
         )
     }
 
+    private lateinit var ctx: ReloHomeContext
+
     suspend fun start() {
         pollingJob = tgBot.buildBehaviourWithLongPolling {
-            ReloHomeContext(
+            ctx = ReloHomeContext(
                 userHandlerGateway,
                 DefaultUserStatesManager(userStatesRepository),
-                MainKeyboardProvider(handlerWebUrl),
+                mainKeyboardProvider,
                 searchOptionsDeserializer,
+                DefaultLocalizationManager(
+                    Localization(localesDirPath)
+                ),
                 this
-            ).apply {
+            )
+
+            with(ctx) {
                 handleStartCommand()
 
                 handleSetLocale()

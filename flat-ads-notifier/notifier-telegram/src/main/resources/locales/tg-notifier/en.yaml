@@ -1,0 +1,36 @@
+handlers:
+  enable-search:
+    error: error enabling search
+    success: The flat ad search is {{#searchEnabled}}enabled{{/searchEnabled}}{{^searchEnabled}}disabled{{/searchEnabled}}
+  sel-locale:
+    question-message: Choose language
+  locale-chosen:
+    error: error changing language
+    success: Language changed successfully!
+  registration:
+    create-user:
+      error: error registering user
+      no-id: Please at first set your id in Telegram settings
+    set-location:
+      error: error setting location
+    success: |
+      Hello there! Welcome to our apartment hunting bot! We've designed this bot to keep an eye on all the major real estate listing sites for you. Once we spot an apartment that matches your preferences, we'll shoot you a notification right away.
+      
+      To make sure you receive only relevant ads, just click on the 
+
+      <code>⚙️ Change search options</code> button below to set your preferences.
+  set-search-options:
+    error: error setting search options
+    success: |
+      Successfully updated search parameters:
+      
+      *Prices:* {{prices}}
+      *Rooms:* {{rooms}}
+      *Bedrooms:* {{bedrooms}}
+      *Floor:* {{floor}}
+      *Area:* {{area}}
+      *SubDistricts:* {{subDistricts}}
+  statistics:
+    info: Collecting enough data to build statistics, come back later
+  subscription:
+    info: Bot is free at the moment, but it will change soon :)
