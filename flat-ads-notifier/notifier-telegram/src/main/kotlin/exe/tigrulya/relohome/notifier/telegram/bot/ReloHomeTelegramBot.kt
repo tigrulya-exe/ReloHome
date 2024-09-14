@@ -7,6 +7,9 @@ import dev.inmo.tgbotapi.bot.settings.limiters.CommonLimiter
 import dev.inmo.tgbotapi.extensions.behaviour_builder.buildBehaviourWithLongPolling
 import exe.tigrulya.relohome.api.user_handler.UserHandlerGateway
 import exe.tigrulya.relohome.notifier.telegram.bot.handlers.*
+import exe.tigrulya.relohome.notifier.telegram.bot.state.DefaultUserStatesManager
+import exe.tigrulya.relohome.notifier.telegram.bot.state.InMemoryUserStatesRepository
+import exe.tigrulya.relohome.notifier.telegram.bot.state.UserStatesRepository
 import exe.tigrulya.relohome.notifier.telegram.serde.JsonSearchOptionsDeserializer
 import exe.tigrulya.relohome.notifier.telegram.serde.SearchOptionsDeserializer
 import kotlinx.coroutines.Job
@@ -14,13 +17,12 @@ import kotlinx.coroutines.Job
 class ReloHomeTelegramBot(
     botToken: String,
     val userHandlerGateway: UserHandlerGateway,
-    handlerWebUrl: String,
+    val handlerWebUrl: String,
     val searchOptionsDeserializer: SearchOptionsDeserializer = JsonSearchOptionsDeserializer(),
+    val userStatesRepository: UserStatesRepository = InMemoryUserStatesRepository(),
     requestsPerSecond: Int = 10
 ) : AutoCloseable {
     private var pollingJob: Job? = null
-
-    val mainKeyboardProvider = MainKeyboardProvider(handlerWebUrl)
 
     val tgBot: TelegramBot = telegramBot(botToken) {
         // todo mb add adapter to guava coroutine ratelimiter
@@ -30,20 +32,29 @@ class ReloHomeTelegramBot(
         )
     }
 
-    // todo support fsm
     suspend fun start() {
         pollingJob = tgBot.buildBehaviourWithLongPolling {
-            handleStartCommand()
+            ReloHomeContext(
+                userHandlerGateway,
+                DefaultUserStatesManager(userStatesRepository),
+                MainKeyboardProvider(handlerWebUrl),
+                searchOptionsDeserializer,
+                this
+            ).apply {
+                handleStartCommand()
 
-            localeChosenHandler(userHandlerGateway, mainKeyboardProvider)
+                handleSetLocale()
 
-            handleSearchOptions(userHandlerGateway, searchOptionsDeserializer)
+                localeChosenHandler()
 
-            handleEnableSearch(userHandlerGateway, mainKeyboardProvider)
+                handleSearchOptions()
 
-            handleShowStatistics(userHandlerGateway)
+                handleEnableSearch()
 
-            handleShowSubscriptionInfo(userHandlerGateway)
+                handleShowStatistics()
+
+                handleShowSubscriptionInfo()
+            }
 
             allUpdatesFlow.subscribeSafely(this) { println(it) }
         }

@@ -20,6 +20,7 @@ dependencies {
     implementation("com.google.guava:guava:32.1.3-jre")
 
     implementation("dev.inmo:tgbotapi:18.0.0")
+    implementation("io.lettuce:lettuce-core:6.3.2.RELEASE")
 }
 
 application {

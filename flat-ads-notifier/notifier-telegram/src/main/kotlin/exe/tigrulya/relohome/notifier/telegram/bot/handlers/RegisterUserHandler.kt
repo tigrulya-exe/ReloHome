@@ -1,23 +1,20 @@
 package exe.tigrulya.relohome.notifier.telegram.bot.handlers
 
 import dev.inmo.tgbotapi.extensions.api.send.send
-import dev.inmo.tgbotapi.extensions.behaviour_builder.BehaviourContext
 import dev.inmo.tgbotapi.types.chat.User
 import dev.inmo.tgbotapi.types.message.HTMLParseMode
-import exe.tigrulya.relohome.api.user_handler.UserHandlerGateway
 import exe.tigrulya.relohome.model.City
 import exe.tigrulya.relohome.model.UserCreateDto
 import exe.tigrulya.relohome.notifier.telegram.bot.MainKeyboardProvider
-import exe.tigrulya.relohome.notifier.telegram.bot.ext.*
+import exe.tigrulya.relohome.notifier.telegram.bot.ReloHomeContext
+import exe.tigrulya.relohome.notifier.telegram.bot.ext.externalId
+import exe.tigrulya.relohome.notifier.telegram.bot.ext.withSimpleErrorHandling
 import exe.tigrulya.relohome.notifier.telegram.util.asCode
 
 
-// todo use state machine
-suspend fun BehaviourContext.registerUser(
+suspend fun ReloHomeContext.registerUser(
     user: User,
-    locale: String,
-    userHandlerGateway: UserHandlerGateway,
-    keyboardProvider: MainKeyboardProvider
+    locale: String
 ) {
     withSimpleErrorHandling(user.id, "Error registering user") {
         userHandlerGateway.registerUser(
