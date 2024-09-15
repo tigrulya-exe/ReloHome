@@ -42,7 +42,7 @@ object HandlerConfigOptions {
 
     val FLAT_AD_HANDLER_DB_URL = ConfigOption(
         name = "flat-ads.handler.db.url",
-        defaultValue = "jdbc:postgresql://localhost:65432/ReloHome?user=root&password=toor"
+        defaultValue = "jdbc:postgresql://localhost:5432/ReloHome?user=root&password=toor"
     )
 
     val FLAT_AD_HANDLER_ADS_CACHE_REDIS_URL = ConfigOption(

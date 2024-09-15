@@ -18,11 +18,11 @@ import kotlinx.coroutines.Job
 
 class ReloHomeTelegramBot(
     botToken: String,
-    val userHandlerGateway: UserHandlerGateway,
-    val handlerWebUrl: String,
-    val searchOptionsDeserializer: SearchOptionsDeserializer = JsonSearchOptionsDeserializer(),
-    val userStatesRepository: UserStatesRepository = InMemoryUserStatesRepository(),
-    val localesDirPath: String = "locales/tg-notifier",
+    userHandlerGateway: UserHandlerGateway,
+    handlerWebUrl: String,
+    searchOptionsDeserializer: SearchOptionsDeserializer = JsonSearchOptionsDeserializer(),
+    userStatesRepository: UserStatesRepository = InMemoryUserStatesRepository(),
+    localesDirPath: String = "locales/tg-notifier",
     requestsPerSecond: Int = 10
 ) : AutoCloseable {
     private var pollingJob: Job? = null
@@ -37,36 +37,31 @@ class ReloHomeTelegramBot(
         )
     }
 
-    private lateinit var ctx: ReloHomeContext
+    private val ctx = ReloHomeContext(
+        userHandlerGateway,
+        DefaultUserStatesManager(userStatesRepository),
+        mainKeyboardProvider,
+        searchOptionsDeserializer,
+        DefaultLocalizationManager(
+            Localization(localesDirPath)
+        ),
+    )
 
     suspend fun start() {
         pollingJob = tgBot.buildBehaviourWithLongPolling {
-            ctx = ReloHomeContext(
-                userHandlerGateway,
-                DefaultUserStatesManager(userStatesRepository),
-                mainKeyboardProvider,
-                searchOptionsDeserializer,
-                DefaultLocalizationManager(
-                    Localization(localesDirPath)
-                ),
-                this
-            )
+            handleStartCommand(ctx)
 
-            with(ctx) {
-                handleStartCommand()
+            handleSetLocale(ctx)
 
-                handleSetLocale()
+            localeChosenHandler(ctx)
 
-                localeChosenHandler()
+            handleSearchOptions(ctx)
 
-                handleSearchOptions()
+            handleEnableSearch(ctx)
 
-                handleEnableSearch()
+            handleShowStatistics(ctx)
 
-                handleShowStatistics()
-
-                handleShowSubscriptionInfo()
-            }
+            handleShowSubscriptionInfo(ctx)
 
             allUpdatesFlow.subscribeSafely(this) { println(it) }
         }

@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: toor
       POSTGRES_DB: ReloHome
     ports:
-      - "65432:5432"
+      - "5432:5432"
     volumes:
       - ./data:/var/lib/postgresql/data
 

@@ -2,7 +2,7 @@ handlers:
   enable-search:
     error: error enabling search
     success: The flat ad search is {{#searchEnabled}}enabled{{/searchEnabled}}{{^searchEnabled}}disabled{{/searchEnabled}}
-  sel-locale:
+  set-locale:
     question-message: Choose language
   locale-chosen:
     error: error changing language

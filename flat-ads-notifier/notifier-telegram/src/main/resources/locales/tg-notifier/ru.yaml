@@ -2,7 +2,7 @@ handlers:
   enable-search:
     error: ошибка включения поиска
     success: Поиск апартаментов {{#searchEnabled}}включен{{/searchEnabled}}{{^searchEnabled}}выключен{{/searchEnabled}}
-  sel-locale:
+  set-locale:
     question-message: Выберите язык
   locale-chosen:
     error: ошибка изменения языка

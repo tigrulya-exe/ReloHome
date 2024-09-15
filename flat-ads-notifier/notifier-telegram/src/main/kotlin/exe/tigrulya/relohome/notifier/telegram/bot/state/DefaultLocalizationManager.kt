@@ -29,4 +29,18 @@ class DefaultLocalizationManager(
         val locale = userLocalesRepo.get(userId) ?: defaultLocale
         return action.invoke(DefaultLocalizationContext(locale, localization))
     }
+
+    override suspend fun setLocale(userId: String, locale: String) {
+        userLocalesRepo.set(userId, locale)
+    }
+
+    override suspend fun constant(userId: String, id: String): String {
+        val locale = userLocalesRepo.get(userId) ?: defaultLocale
+        return DefaultLocalizationContext(locale, localization).constant(id)
+    }
+
+    override suspend fun <T> constant(userId: String, id: String, ctx: T): String {
+        val locale = userLocalesRepo.get(userId) ?: defaultLocale
+        return DefaultLocalizationContext(locale, localization).constant(id, ctx)
+    }
 }
