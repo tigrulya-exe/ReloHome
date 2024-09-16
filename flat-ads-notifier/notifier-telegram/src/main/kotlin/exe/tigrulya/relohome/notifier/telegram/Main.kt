@@ -11,12 +11,16 @@ import exe.tigrulya.relohome.notifier.options.KafkaConfigOptions.KAFKA_FLAT_AD_C
 import exe.tigrulya.relohome.notifier.options.KafkaConfigOptions.KAFKA_FLAT_AD_CONSUMER_GROUP
 import exe.tigrulya.relohome.notifier.options.KafkaConfigOptions.KAFKA_FLAT_AD_CONSUMER_TOPICS
 import exe.tigrulya.relohome.notifier.options.KafkaConfigOptions.KAFKA_FLAT_AD_FETCH_TIMEOUT
-import exe.tigrulya.relohome.notifier.telegram.config.ConfigOptions.FLAT_AD_HANDLER_GRPC_GATEWAY_HOSTNAME
-import exe.tigrulya.relohome.notifier.telegram.config.ConfigOptions.FLAT_AD_HANDLER_HTTP_GATEWAY_HOSTNAME
-import exe.tigrulya.relohome.notifier.telegram.config.ConfigOptions.FLAT_AD_NOTIFIER_TG_REQUESTS_PER_SEC
-import exe.tigrulya.relohome.notifier.telegram.config.ConfigOptions.FLAT_AD_NOTIFIER_TG_TOKEN
 import exe.tigrulya.relohome.notifier.telegram.bot.ReloHomeTelegramBot
 import exe.tigrulya.relohome.notifier.telegram.bot.TelegramFlatAdNotifier
+import exe.tigrulya.relohome.notifier.telegram.bot.state.repo.InMemoryUserLocalesRepository
+import exe.tigrulya.relohome.notifier.telegram.bot.state.repo.InMemoryUserStatesRepository
+import exe.tigrulya.relohome.notifier.telegram.bot.state.repo.RedisTgStateRepository
+import exe.tigrulya.relohome.notifier.telegram.config.ConfigOptions.FLAT_AD_HANDLER_GRPC_GATEWAY_HOSTNAME
+import exe.tigrulya.relohome.notifier.telegram.config.ConfigOptions.FLAT_AD_HANDLER_HTTP_GATEWAY_HOSTNAME
+import exe.tigrulya.relohome.notifier.telegram.config.ConfigOptions.FLAT_AD_NOTIFIER_TG_REDIS_STATE_REPO_URL
+import exe.tigrulya.relohome.notifier.telegram.config.ConfigOptions.FLAT_AD_NOTIFIER_TG_REQUESTS_PER_SEC
+import exe.tigrulya.relohome.notifier.telegram.config.ConfigOptions.FLAT_AD_NOTIFIER_TG_TOKEN
 import kotlin.concurrent.thread
 
 suspend fun main() = TgNotifierEntryPoint.startRemote()
@@ -53,15 +57,21 @@ object TgNotifierEntryPoint {
         config: Configuration,
         userHandlerGateway: UserHandlerGateway,
     ): FlatAdNotifierGateway {
+        val redisStatesRepository = config.getOptional(FLAT_AD_NOTIFIER_TG_REDIS_STATE_REPO_URL)?.let {
+            RedisTgStateRepository(it)
+        }
+
         val reloHomeBot = ReloHomeTelegramBot(
             botToken = config.getOptional(FLAT_AD_NOTIFIER_TG_TOKEN) ?: System.getenv("BOT_TOKEN"),
             userHandlerGateway = userHandlerGateway,
             handlerWebUrl = config.get(FLAT_AD_HANDLER_HTTP_GATEWAY_HOSTNAME),
-            requestsPerSecond = config.get(FLAT_AD_NOTIFIER_TG_REQUESTS_PER_SEC)
+            requestsPerSecond = config.get(FLAT_AD_NOTIFIER_TG_REQUESTS_PER_SEC),
+            userStatesRepository = redisStatesRepository ?: InMemoryUserStatesRepository(),
+            userLocalesRepo = redisStatesRepository ?: InMemoryUserLocalesRepository(),
         )
 
         reloHomeBot.start()
 
-        return TelegramFlatAdNotifier(reloHomeBot.tgBot, reloHomeBot.mainKeyboardProvider)
+        return TelegramFlatAdNotifier(reloHomeBot.tgBot, reloHomeBot.keyboardFactory)
     }
 }

@@ -42,7 +42,7 @@ suspend fun BehaviourContext.registerUser(
             send(
                 chatId = user.id,
                 text = constant("handlers.registration.success"),
-                replyMarkup = keyboardProvider.get(user.externalId(), searchEnabled = true),
+                replyMarkup = keyboardFactory.searchOptionsReplyKeyboard(user.externalId(), locale),
                 parseMode = HTMLParseMode
             )
         }

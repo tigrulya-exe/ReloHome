@@ -1,7 +1,6 @@
 package exe.tigrulya.relohome.notifier.telegram.config
 
 import exe.tigrulya.relohome.config.ConfigOption
-import kotlin.time.Duration.Companion.seconds
 
 object ConfigOptions {
     val FLAT_AD_HANDLER_GRPC_GATEWAY_HOSTNAME = ConfigOption(
@@ -18,11 +17,6 @@ object ConfigOptions {
         name = "flat-ads.notifier.telegram.token",
     )
 
-    val FLAT_AD_NOTIFIER_TG_BOT_NAME = ConfigOption(
-        name = "flat-ads.notifier.telegram.bot.name",
-        defaultValue = "relo_home_bot"
-    )
-
     val FLAT_AD_NOTIFIER_TG_CREATOR_ID = ConfigOption(
         name = "flat-ads.notifier.telegram.creator.id",
         defaultValue = 479226955L
@@ -31,5 +25,10 @@ object ConfigOptions {
     val FLAT_AD_NOTIFIER_TG_REQUESTS_PER_SEC = ConfigOption(
         name = "flat-ads.notifier.telegram.requests.per-second",
         defaultValue = 10
+    )
+
+    val FLAT_AD_NOTIFIER_TG_REDIS_STATE_REPO_URL = ConfigOption(
+        name = "flat-ads.notifier.telegram.states.repo.redis.url",
+        defaultValue = "redis://localhost:6379/2"
     )
 }

@@ -5,7 +5,7 @@ import exe.tigrulya.relohome.notifier.telegram.bot.state.repo.InMemoryUserLocale
 import exe.tigrulya.relohome.notifier.telegram.bot.state.repo.UserLocalesRepository
 
 class DefaultLocalizationContext(
-    private val locale: String,
+    override val locale: String,
     private val localization: Localization
 ) : LocalizationContext {
     override suspend fun constant(id: String): String =
@@ -26,21 +26,21 @@ class DefaultLocalizationManager(
 ) : LocalizationManager {
 
     override suspend fun <T> withLocalization(userId: String, action: suspend (LocalizationContext) -> T): T {
-        val locale = userLocalesRepo.get(userId) ?: defaultLocale
+        val locale = userLocalesRepo.getLocale(userId) ?: defaultLocale
         return action.invoke(DefaultLocalizationContext(locale, localization))
     }
 
     override suspend fun setLocale(userId: String, locale: String) {
-        userLocalesRepo.set(userId, locale)
+        userLocalesRepo.setLocale(userId, locale)
     }
 
     override suspend fun constant(userId: String, id: String): String {
-        val locale = userLocalesRepo.get(userId) ?: defaultLocale
+        val locale = userLocalesRepo.getLocale(userId) ?: defaultLocale
         return DefaultLocalizationContext(locale, localization).constant(id)
     }
 
     override suspend fun <T> constant(userId: String, id: String, ctx: T): String {
-        val locale = userLocalesRepo.get(userId) ?: defaultLocale
+        val locale = userLocalesRepo.getLocale(userId) ?: defaultLocale
         return DefaultLocalizationContext(locale, localization).constant(id, ctx)
     }
 }

@@ -25,11 +25,12 @@ fun Application.configureRouting(
                 ?: throw IllegalArgumentException("Form id not provided")
             val userId = call.parameters["user_id"]
                 ?: throw IllegalArgumentException("User id not provided")
+            val locale = call.request.queryParameters["locale"] ?: "en"
 
             val searchOptions = userService.getSearchOptions(userId)
             val allDistricts = flatAdService.getDistricts(searchOptions.cityName)
 
-            call.respond(renderService.renderForm(formId, searchOptions, allDistricts))
+            call.respond(renderService.renderForm("$locale/$formId", searchOptions, allDistricts))
         }
     }
 }

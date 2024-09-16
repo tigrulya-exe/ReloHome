@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>HTML5 Boilerplate</title>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+</head>
+
+<body>
+<div class="container px-5 my-5">
+    <form id="mainForm">
+        <div class="mb-4">
+            <label class="form-label h4">Параметры поиска для {{searchData.cityName}}</label>
+        </div>
+        <div class="row mb-1">
+            <div class="col">
+                <label class="form-label" for="priceFrom">Цена в USD</label>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                <input class="form-control number-input" id="priceFrom" name="priceFrom" type="number"
+                       placeholder="От" value="{{searchData.priceRange.from}}"/>
+            </div>
+            <div class="col-auto d-flex align-items-center">
+                <span>-</span>
+            </div>
+            <div class="col">
+                <label class="form-label" for="priceTo" hidden="hidden">Price to</label>
+                <input class="form-control number-input" id="priceTo" name="priceTo" type="number"
+                       placeholder="До" value="{{searchData.priceRange.to}}"/>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label d-block">Район</label>
+            {{#searchData.subDistricts}}
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" id="{{name}}" type="checkbox"
+                           name="district_{{name}}" {{#selected}} checked {{/selected}}/>
+                    <label class="form-check-label" for="{{name}}" style="text-transform: capitalize">{{name}}</label>
+                </div>
+            {{/searchData.subDistricts}}
+        </div>
+        <div class="row mb-1">
+            <div class="col">
+                <label class="form-label" for="roomsFrom">Комнаты</label>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                <input class="form-control number-input" id="roomsFrom" name="roomsFrom" type="number"
+                       placeholder="От" value="{{searchData.roomRange.from}}"/>
+            </div>
+            <div class="col-auto d-flex align-items-center">
+                <span>-</span>
+            </div>
+            <div class="col">
+                <label class="form-label" for="roomsTo" hidden="hidden">Rooms to</label>
+                <input class="form-control number-input" id="roomsTo" name="roomsTo" type="number"
+                       placeholder="До" value="{{searchData.roomRange.to}}"/>
+            </div>
+        </div>
+        <div class="row mb-1">
+            <div class="col">
+                <label class="form-label" for="bedroomsFrom">Спальни</label>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                <input class="form-control number-input" id="bedroomsFrom" name="bedroomsFrom" type="number"
+                       placeholder="От" value="{{searchData.bedroomRange.from}}"/>
+            </div>
+            <div class="col-auto d-flex align-items-center">
+                <span>-</span>
+            </div>
+            <div class="col">
+                <label class="form-label" for="bedroomsTo" hidden="hidden">Rooms to</label>
+                <input class="form-control number-input" id="bedroomsTo" name="bedroomsTo" type="number"
+                       placeholder="До" value="{{searchData.bedroomRange.to}}"/>
+            </div>
+        </div>
+        <div class="row mb-1">
+            <div class="col">
+                <label class="form-label" for="areaFrom">Площадь в m²</label>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                <input class="form-control number-input" id="areaFrom" name="areaFrom" type="number"
+                       placeholder="От" value="{{searchData.areaRange.from}}"/>
+            </div>
+            <div class="col-auto d-flex align-items-center">
+                <span>-</span>
+            </div>
+            <div class="col">
+                <label class="form-label" for="areaTo" hidden="hidden">Area to</label>
+                <input class="form-control number-input" id="areaTo" name="areaTo" type="number"
+                       placeholder="До" value="{{searchData.areaRange.to}}"/>
+            </div>
+        </div>
+        <div class="row mb-1">
+            <div class="col">
+                <label class="form-label" for="floorFrom">Этаж</label>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col">
+                <input class="form-control number-input" id="floorFrom" name="floorFrom" type="number"
+                       placeholder="От" value="{{searchData.floorRange.from}}"/>
+            </div>
+            <div class="col-auto d-flex align-items-center">
+                <span>-</span>
+            </div>
+            <div class="col">
+                <label class="form-label" for="floorTo" hidden="hidden">Floor to</label>
+                <input class="form-control number-input" id="floorTo" name="floorTo" type="number"
+                       placeholder="До" value="{{searchData.floorRange.to}}"/>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    function buildFormJson(formEntries) {
+        let formObject = {
+            priceRange: {
+                from: formEntries["priceFrom"],
+                to: formEntries["priceTo"]
+            },
+            roomRange: {
+                from: formEntries["roomsFrom"],
+                to: formEntries["roomsTo"]
+            },
+            bedroomRange: {
+                from: formEntries["bedroomsFrom"],
+                to: formEntries["bedroomsTo"]
+            },
+            areaRange: {
+                from: formEntries["areaFrom"],
+                to: formEntries["areaTo"]
+            },
+            floorRange: {
+                from: formEntries["floorFrom"],
+                to: formEntries["floorTo"]
+            },
+            subDistricts: formEntries["districts"]
+        }
+        return JSON.stringify(formObject)
+    }
+
+    document.querySelectorAll(".number-input").forEach(input =>
+            input.addEventListener("keypress", function (evt) {
+                if (evt.which !== 8 && evt.which !== 0 && evt.which < 48 || evt.which > 57) {
+                    evt.preventDefault();
+                }
+            }))
+
+    let tg = window.Telegram.WebApp;
+
+    tg.expand();
+
+    tg.MainButton.show()
+    tg.MainButton.enable()
+    tg.MainButton.text = "Submit";
+
+    Telegram.WebApp.onEvent('mainButtonClicked', function () {
+        const form = document.querySelector('form');
+        const data = new FormData(form);
+
+        const districts = []
+        const formJson = {}
+
+        for (const [key, value] of data.entries()) {
+            if (key.startsWith("district_")) {
+                districts.push(key.replace("district_", ""))
+                continue
+            }
+            formJson[key] = value
+        }
+        formJson["districts"] = districts
+
+        tg.sendData(buildFormJson(formJson));
+    });
+</script>
+</body>
+
+</html>

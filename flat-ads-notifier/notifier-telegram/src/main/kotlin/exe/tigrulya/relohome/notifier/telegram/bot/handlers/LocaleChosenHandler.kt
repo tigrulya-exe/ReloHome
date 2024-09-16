@@ -30,9 +30,24 @@ suspend fun BehaviourContext.localeChosenDefaultHandler(ctx: ReloHomeContext) = 
 
             answerCallbackQuery(message.id)
 
-            localization.setLocale(message.sender(), message.locale)
+            setLocale(message.sender(), message.locale)
 
-            send(message.from, constant(message.sender(), "handlers.locale-chosen.error"))
+            val user = withSimpleErrorHandling(
+                message.senderId(),
+                constant(message.sender(), "handlers.locale-chosen.error")
+            ) {
+                userHandlerGateway.getUserInfo(message.sender())
+            }
+
+            send(
+                chat = message.from,
+                text = constant(message.sender(), "handlers.locale-chosen.success"),
+                replyMarkup = keyboardFactory.mainReplyKeyboard(
+                    message.sender(),
+                    message.locale,
+                    user.searchEnabled
+                )
+            )
         }
     }
 }
@@ -42,6 +57,7 @@ suspend fun BehaviourContext.localeChosenAtFirstTimeHandler(ctx: ReloHomeContext
 ) { message ->
     with(ctx) {
         onlyOnState(message.sender(), UserState.NEW) {
+            setLocale(message.sender(), message.locale)
 
             registerUser(
                 user = message.from,

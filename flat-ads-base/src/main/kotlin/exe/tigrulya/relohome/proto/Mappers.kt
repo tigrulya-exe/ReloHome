@@ -108,7 +108,8 @@ fun FlatAdOuterClass.Contacts.toDomain(): Contacts = Contacts(
 fun FlatAdOuterClass.UserInfo.toDomain(): UserInfo = UserInfo(
     id = id,
     name = name,
-    locale = locale
+    locale = locale,
+    searchEnabled = searchEnabled,
 )
 
 private fun <T> nullSafeSet(from: T?, to: Consumer<T>) {

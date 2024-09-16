@@ -52,4 +52,5 @@ message UserInfo{
   string id = 1;
   string name = 2;
   string locale = 3;
+  bool searchEnabled = 4;
 }

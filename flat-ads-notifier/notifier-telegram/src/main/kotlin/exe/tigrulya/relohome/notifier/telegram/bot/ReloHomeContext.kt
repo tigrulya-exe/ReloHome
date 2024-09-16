@@ -8,7 +8,7 @@ import exe.tigrulya.relohome.notifier.telegram.serde.SearchOptionsDeserializer
 class ReloHomeContext(
     val userHandlerGateway: UserHandlerGateway,
     val userStatesManager: UserStatesManager,
-    val keyboardProvider: MainKeyboardProvider,
+    val keyboardFactory: KeyboardFactory,
     val searchOptionsDeserializer: SearchOptionsDeserializer,
     val localization: LocalizationManager,
 ) : LocalizationManager by localization,

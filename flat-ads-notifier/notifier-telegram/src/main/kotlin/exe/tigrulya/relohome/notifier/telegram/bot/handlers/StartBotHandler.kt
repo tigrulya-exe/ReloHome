@@ -14,7 +14,7 @@ suspend fun BehaviourContext.handleStartCommand(ctx: ReloHomeContext) = onComman
             send(
                 chatId = message.senderId(),
                 text = constant("handlers.set-locale.question-message"),
-                replyMarkup = setLocaleKeyboard()
+                replyMarkup = keyboardFactory.setLocaleInlineKeyboard()
             )
 
             onlyIfNoState(message.sender()) {

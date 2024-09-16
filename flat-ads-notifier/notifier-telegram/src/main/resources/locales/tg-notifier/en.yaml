@@ -1,7 +1,16 @@
+keyboards:
+  main:
+    enable-search: 🟢 Enable search
+    disable-search: 🔴 Disable search
+    search-options: ⚙️ Search options
+    subscription-info: 💳 Subscription info
+    statistics: 📈 Statistics
+    change-locale: 🇬🇧 Change language
+
 handlers:
   enable-search:
     error: error enabling search
-    success: The flat ad search is {{#searchEnabled}}enabled{{/searchEnabled}}{{^searchEnabled}}disabled{{/searchEnabled}}
+    success: The apartment ad search is {{#searchEnabled}}enabled{{/searchEnabled}}{{^searchEnabled}}disabled{{/searchEnabled}}
   set-locale:
     question-message: Choose language
   locale-chosen:
@@ -16,9 +25,7 @@ handlers:
     success: |
       Hello there! Welcome to our apartment hunting bot! We've designed this bot to keep an eye on all the major real estate listing sites for you. Once we spot an apartment that matches your preferences, we'll shoot you a notification right away.
       
-      To make sure you receive only relevant ads, just click on the 
-
-      <code>⚙️ Change search options</code> button below to set your preferences.
+      To make sure you receive only relevant ads, just click on the <code>⚙️ Search options</code> button below to set your preferences.
   set-search-options:
     error: error setting search options
     success: |

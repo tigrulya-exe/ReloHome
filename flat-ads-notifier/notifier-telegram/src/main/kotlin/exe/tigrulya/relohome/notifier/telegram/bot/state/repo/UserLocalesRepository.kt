@@ -4,17 +4,17 @@ import org.eclipse.collections.impl.map.mutable.ConcurrentHashMap
 
 interface UserLocalesRepository {
 
-    suspend fun get(userId: String): String?
+    suspend fun getLocale(userId: String): String?
 
-    suspend fun set(userId: String, locale: String)
+    suspend fun setLocale(userId: String, locale: String)
 }
 
 class InMemoryUserLocalesRepository : UserLocalesRepository {
     private val locales: ConcurrentHashMap<String, String> = ConcurrentHashMap()
 
-    override suspend fun get(userId: String) = locales[userId]
+    override suspend fun getLocale(userId: String) = locales[userId]
 
-    override suspend fun set(userId: String, locale: String) {
+    override suspend fun setLocale(userId: String, locale: String) {
         locales[userId] = locale
     }
 }

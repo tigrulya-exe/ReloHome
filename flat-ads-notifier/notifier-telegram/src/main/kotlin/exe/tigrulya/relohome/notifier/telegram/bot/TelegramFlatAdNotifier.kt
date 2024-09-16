@@ -20,7 +20,7 @@ import java.net.URLEncoder
 
 class TelegramFlatAdNotifier(
     private val telegramBot: TelegramBot,
-    private val keyboardProvider: MainKeyboardProvider,
+    private val keyboardProvider: KeyboardFactory,
     private val templateEngine: TemplateEngine = ObjectReuseMustacheTemplateEngine(),
 ) : FlatAdNotifierGateway {
 
@@ -47,7 +47,7 @@ class TelegramFlatAdNotifier(
             text = message,
             parseMode = MarkdownParseMode,
             // TODO do we need to recreate keyboards?
-            replyMarkup = keyboardProvider.get(user.id, searchEnabled = true)
+            replyMarkup = keyboardProvider.mainReplyKeyboard(user.id, user.locale, searchEnabled = true)
         )
     }
 

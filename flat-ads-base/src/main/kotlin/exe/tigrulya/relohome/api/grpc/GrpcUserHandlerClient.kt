@@ -4,10 +4,7 @@ import exe.tigrulya.relohome.api.UserHandlerGatewayGrpcKt
 import exe.tigrulya.relohome.api.UserHandlerGatewayOuterClass
 import exe.tigrulya.relohome.api.user_handler.UserHandlerGateway
 import exe.tigrulya.relohome.error.WithGrpcClientErrorHandling
-import exe.tigrulya.relohome.model.City
-import exe.tigrulya.relohome.model.NumRange
-import exe.tigrulya.relohome.model.UserCreateDto
-import exe.tigrulya.relohome.model.UserSearchOptionsDto
+import exe.tigrulya.relohome.model.*
 import io.grpc.ManagedChannelBuilder
 
 open class GrpcUserHandlerClient(serverUrl: String) : UserHandlerGateway, WithGrpcClientErrorHandling {
@@ -66,18 +63,30 @@ open class GrpcUserHandlerClient(serverUrl: String) : UserHandlerGateway, WithGr
         grpcClient.setSearchOptions(request)
     }
 
-    override suspend fun toggleSearch(externalId: String): Boolean {
-        val result = withSilentErrorHandling {
-            val request = UserHandlerGatewayOuterClass.ToggleSearchRequest
-                .newBuilder().apply {
-                    this.externalId = externalId
-                }.build()
+    override suspend fun toggleSearch(externalId: String): Boolean = withSilentErrorHandling {
+        val request = UserHandlerGatewayOuterClass.ToggleSearchRequest
+            .newBuilder().apply {
+                this.externalId = externalId
+            }.build()
 
-            grpcClient.toggleSearch(request).searchEnabled
+        grpcClient.toggleSearch(request).searchEnabled
+    }.getOrThrow()
+
+    override suspend fun getUserInfo(externalId: String): UserInfo = withSilentErrorHandling {
+        val request = UserHandlerGatewayOuterClass.GetUserInfoRequest
+            .newBuilder().apply {
+                this.externalId = externalId
+            }.build()
+
+        grpcClient.getUserInfo(request).run {
+            UserInfo(
+                id = id,
+                name = name,
+                locale = locale,
+                searchEnabled = searchEnabled
+            )
         }
-
-        return result.getOrThrow()
-    }
+    }.getOrThrow()
 
     private fun toGrpcNumRange(range: NumRange) = UserHandlerGatewayOuterClass.NumRange.newBuilder().apply {
         from = range.from ?: -1

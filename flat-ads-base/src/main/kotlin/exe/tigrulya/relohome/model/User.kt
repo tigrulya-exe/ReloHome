@@ -30,7 +30,8 @@ data class User(
 data class UserInfo(
     val id: String,
     val name: String,
-    val locale: String
+    val locale: String,
+    val searchEnabled: Boolean
 )
 
 data class NumRange(val from: Int? = null, val to: Int? = null)

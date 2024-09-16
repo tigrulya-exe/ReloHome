@@ -10,15 +10,15 @@ class DefaultUserStatesManager(
     override suspend fun <T> onlyIfNoState(
         userId: String,
         handler: suspend UserStatesManager.() -> T
-    ): T? = repository.get(userId)
-        ?.let { null }
-        ?: handler.invoke(this)
+    ): T? = if (repository.getState(userId) == null) {
+        handler.invoke(this)
+    } else null
 
     override suspend fun <T> onlyOnState(
         userId: String,
         state: UserState,
         handler: suspend UserStatesManager.() -> T
-    ): T? = repository.get(userId)
+    ): T? = repository.getState(userId)
         ?.takeIf { it == state }
         ?.let { return handler.invoke(this) }
 
@@ -26,11 +26,11 @@ class DefaultUserStatesManager(
         userId: String,
         vararg states: UserState,
         handler: suspend UserStatesManager.(UserState) -> T
-    ) = repository.get(userId)
+    ) = repository.getState(userId)
         ?.takeIf { state -> states.any { state == it } }
         ?.let { handler.invoke(this, it) }
 
     override suspend fun transition(userId: String, state: UserState) {
-        repository.set(userId, state)
+        repository.setState(userId, state)
     }
 }

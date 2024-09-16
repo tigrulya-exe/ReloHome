@@ -99,7 +99,8 @@ class FlatAdService(
             UserInfo(
                 id = it[SearchOptions.externalId],
                 name = it[Users.name],
-                locale = it[Users.locale]
+                locale = it[Users.locale],
+                searchEnabled = it[SearchOptions.enabled]
             )
         }
     }

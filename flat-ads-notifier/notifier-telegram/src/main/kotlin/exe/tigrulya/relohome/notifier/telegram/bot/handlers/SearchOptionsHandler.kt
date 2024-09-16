@@ -25,7 +25,8 @@ suspend fun BehaviourContext.handleSearchOptions(ctx: ReloHomeContext) = onWebap
             send(
                 chatId = message.chat.id,
                 text = constant("handlers.set-search-options.success", searchOptions.toConstantCtx()),
-                parseMode = MarkdownParseMode
+                parseMode = MarkdownParseMode,
+                replyMarkup = keyboardFactory.mainReplyKeyboard(message.sender(), locale, searchEnabled = true)
             )
         }
     }

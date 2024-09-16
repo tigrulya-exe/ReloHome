@@ -1,8 +1,6 @@
 package exe.tigrulya.relohome.api.user_handler
 
-import exe.tigrulya.relohome.model.City
-import exe.tigrulya.relohome.model.UserCreateDto
-import exe.tigrulya.relohome.model.UserSearchOptionsDto
+import exe.tigrulya.relohome.model.*
 
 
 interface UserHandlerGateway {
@@ -16,4 +14,6 @@ interface UserHandlerGateway {
     suspend fun setSearchOptions(externalUserId: String, searchOptions: UserSearchOptionsDto)
 
     suspend fun toggleSearch(externalId: String): Boolean
+
+    suspend fun getUserInfo(externalId: String): UserInfo
 }

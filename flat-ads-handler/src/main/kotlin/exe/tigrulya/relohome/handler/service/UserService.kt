@@ -9,7 +9,10 @@ import exe.tigrulya.relohome.handler.repository.SearchOptions
 import exe.tigrulya.relohome.handler.repository.Users
 import exe.tigrulya.relohome.model.*
 import kotlinx.coroutines.Dispatchers
+import org.jetbrains.exposed.sql.JoinType
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.insertIgnore
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -64,6 +67,23 @@ class UserService : UserHandlerGateway {
                 enabled
             }
         }
+
+    // todo move search enabled to Users table
+    override suspend fun getUserInfo(externalId: String): UserInfo = newSuspendedTransaction(Dispatchers.IO) {
+        Users
+            .join(SearchOptions, JoinType.INNER, onColumn = Users.externalId, otherColumn = SearchOptions.externalId)
+            .slice(Users.externalId, Users.name, Users.locale, SearchOptions.enabled)
+            .select(Users.externalId eq externalId)
+            .single()
+            .run {
+                UserInfo(
+                    id = this[Users.externalId],
+                    name = this[Users.name],
+                    locale = this[Users.locale],
+                    searchEnabled = this[SearchOptions.enabled]
+                )
+            }
+    }
 
     override suspend fun setSearchOptions(externalUserId: String, searchOptions: UserSearchOptionsDto) =
         newSuspendedTransaction(Dispatchers.IO) {

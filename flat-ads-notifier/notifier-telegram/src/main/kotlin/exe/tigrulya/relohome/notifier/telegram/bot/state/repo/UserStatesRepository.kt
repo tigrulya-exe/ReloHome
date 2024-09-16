@@ -10,9 +10,9 @@ enum class UserState {
 
 interface UserStatesRepository {
 
-    suspend fun get(userId: String): UserState?
+    suspend fun getState(userId: String): UserState?
 
-    suspend fun set(userId: String, state: UserState)
+    suspend fun setState(userId: String, state: UserState)
 
 }
 
@@ -20,11 +20,11 @@ class InMemoryUserStatesRepository : UserStatesRepository {
 
     private val states: ConcurrentHashMap<String, UserState> = ConcurrentHashMap()
 
-    override suspend fun get(userId: String): UserState? {
+    override suspend fun getState(userId: String): UserState? {
         return states[userId]
     }
 
-    override suspend fun set(userId: String, state: UserState) {
+    override suspend fun setState(userId: String, state: UserState) {
         states[userId] = state
     }
 }

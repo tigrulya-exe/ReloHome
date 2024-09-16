@@ -12,6 +12,8 @@ service UserHandlerGateway {
   rpc SetSearchOptions(SetSearchOptionsRequest) returns (Empty);
 
   rpc ToggleSearch(ToggleSearchRequest) returns (ToggleSearchResponse);
+
+  rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse);
 }
 
 message UserCreateRequest {
@@ -53,6 +55,17 @@ message ToggleSearchRequest {
 
 message ToggleSearchResponse {
   bool searchEnabled = 1;
+}
+
+message GetUserInfoRequest {
+  string externalId = 1;
+}
+
+message GetUserInfoResponse {
+  string id = 1;
+  string name = 2;
+  string locale = 3;
+  bool searchEnabled = 4;
 }
 
 message Empty {

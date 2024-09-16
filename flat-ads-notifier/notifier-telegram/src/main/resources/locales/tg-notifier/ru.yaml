@@ -1,3 +1,12 @@
+keyboards:
+  main:
+    enable-search: 🟢 Включить поиск
+    disable-search: 🔴 Выключить поиск
+    search-options: ⚙️ Параметры поиска
+    subscription-info: 💳 Подписка
+    statistics: 📈 Статистика
+    change-locale: 🇬🇧 Изменить язык
+
 handlers:
   enable-search:
     error: ошибка включения поиска
@@ -14,11 +23,9 @@ handlers:
     set-location:
       error: ошибка указания местоположения
     success: |
-      Hello there! Welcome to our apartment hunting bot! We've designed this bot to keep an eye on all the major real estate listing sites for you. Once we spot an apartment that matches your preferences, we'll shoot you a notification right away.
+      Привет! Добро пожаловать в нашего бота для поиска квартир! Мы создали этого бота, чтобы отслеживать все основные сайты с объявлениями о недвижимости для вас. Как только мы найдем квартиру, которая соответствует вашим предпочтениям, мы сразу же отправим вам уведомление.      
       
-      To make sure you receive only relevant ads, just click on the 
-
-      <code>⚙️ Change search options</code> button below to set your preferences.
+      Чтобы получать только подходящие объявления, просто нажмите на кнопку <code>⚙️ Параметры поиска</code> ниже и настройте свои предпочтения.
   set-search-options:
     error: error setting search options
     success: |
