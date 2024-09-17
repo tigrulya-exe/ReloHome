@@ -47,6 +47,7 @@ class TelegramFlatAdNotifier(
             text = message,
             parseMode = MarkdownParseMode,
             // TODO do we need to recreate keyboards?
+            // TODO it doesn't work for some reason
             replyMarkup = keyboardProvider.mainReplyKeyboard(user.id, user.locale, searchEnabled = true)
         )
     }
@@ -87,6 +88,7 @@ class TelegramFlatAdNotifier(
                 }
             )
         }
+
         val scopes = arrayOf(flatAd, links)
         // todo move templates/ as baseDir option to templateEngine
         return templateEngine.compile("templates/$locale/new-flat-ad.mustache", *scopes)
@@ -100,13 +102,13 @@ class TelegramFlatAdNotifier(
         address,
         info,
         price,
-        description?.maybeShrink(maxSize),
+        description.mapValues { it.value.maybeShrink(maxSize) },
         contacts,
         serviceId,
         images
     )
 
-    private fun String.maybeShrink(maxSize: Int = 700) = if (length >= maxSize) {
+    private fun String.maybeShrink(maxSize: Int = 700): String = if (length >= maxSize) {
         substring(0, maxSize) + "..."
     } else this
 }

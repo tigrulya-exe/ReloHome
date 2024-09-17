@@ -55,7 +55,12 @@ class SsGeFlatAdMapper(private val maxImagesPerAd: Int) : FlatAdMapper<SsGeFlatA
             title = applicationData.title,
             address = address,
             price = price,
-            description = applicationData.description.text,
+            description = mapOf(
+                "en" to applicationData.description.en,
+                "ru" to applicationData.description.ru,
+                "ka" to applicationData.description.ka
+            ).filterValues { it != null }
+                .mapValues { it.value as String },
             info = flatInfo,
             contacts = contacts,
             serviceId = SsGeFetcher.FETCHER_ID,

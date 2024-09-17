@@ -13,7 +13,9 @@ object ListAmFlatAdMapper : FlatAdMapper<ListAmFlatAd> {
     override fun toFlatAd(externalFlatAd: ListAmFlatAd) = FlatAd(
         id = externalFlatAd.id,
         title = "TODO",
-        description = "New flat: ${externalFlatAd.id} - price ${externalFlatAd.price}",
+        description = mapOf(
+            "en" to "New flat: ${externalFlatAd.id} - price ${externalFlatAd.price}"
+        ),
         serviceId = ListAmFetcher.FETCHER_ID,
         address = Address(
             city = City(

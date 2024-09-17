@@ -50,7 +50,7 @@ class FlatAdService(
 
         val query = SearchOptions
             .join(Users, JoinType.INNER, onColumn = SearchOptions.externalId, otherColumn = Users.externalId)
-            .slice(SearchOptions.externalId, Users.name, Users.locale)
+            .slice(SearchOptions.externalId, Users.name, Users.locale, SearchOptions.enabled)
             .select(SearchOptions.cityName eq flatAd.address.city.name)
             .andWhere { SearchOptions.enabled eq true }
             .andWhere {

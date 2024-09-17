@@ -18,7 +18,7 @@ fun FlatAd.toProto(): FlatAdOuterClass.FlatAd = FlatAdOuterClass.FlatAd.newBuild
         proto.info = info.toProto()
         nullSafeSet(price?.amount, proto::setPriceAmount)
         nullSafeSetEnum(price?.currency, proto::setPriceCurrency)
-        nullSafeSet(description, proto::setDescription)
+        proto.putAllDescription(description)
         proto.contacts = contacts.toProto()
         proto.serviceId = serviceId
         proto.addAllImages(images.map { it.url })
@@ -73,7 +73,7 @@ fun FlatAdOuterClass.FlatAd.toDomain(): FlatAd = FlatAd(
     address = address.toDomain(),
     info = info.toDomain(),
     price = Price(priceAmount, Price.Currency.valueOf(priceCurrency)),
-    description = description,
+    description = descriptionMap,
     contacts = contacts.toDomain(),
     serviceId = serviceId,
     images = imagesList.map { Image(it) }

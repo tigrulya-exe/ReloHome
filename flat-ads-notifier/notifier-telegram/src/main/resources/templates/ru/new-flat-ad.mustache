@@ -19,7 +19,12 @@
 *Площадь:* {{info.spaceSquareMeters}} m²
 {{/info.spaceSquareMeters}}
 
-{{description}}
+{{#description.ru}}
+{{description.ru}}
+{{/description.ru}}
+{{^description.ru}}
+{{description.text}}
+{{/description.ru}}
 
 *Цена:* {{price}}
 

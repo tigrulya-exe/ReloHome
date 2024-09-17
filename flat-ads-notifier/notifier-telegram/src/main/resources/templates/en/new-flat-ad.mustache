@@ -19,7 +19,12 @@
 *Area:* {{info.spaceSquareMeters}} m²
 {{/info.spaceSquareMeters}}
 
-{{description}}
+{{#description.en}}
+{{description.en}}
+{{/description.en}}
+{{^description.en}}
+{{description.text}}
+{{/description.en}}
 
 *Price:* {{price}}
 

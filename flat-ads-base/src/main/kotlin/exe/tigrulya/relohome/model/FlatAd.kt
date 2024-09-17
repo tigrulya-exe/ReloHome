@@ -81,7 +81,7 @@ data class FlatAd(
     val address: Address,
     val info: FlatInfo,
     val price: Price? = null,
-    val description: String? = null,
+    val description: Map<String, String> = emptyMap(),
     val contacts: Contacts,
     val serviceId: String,
     val images: List<Image> = listOf(),

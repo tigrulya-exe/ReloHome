@@ -14,7 +14,7 @@ message FlatAd {
   FlatInfo info = 4;
   optional int32 priceAmount = 5;
   optional string priceCurrency = 6;
-  optional string description = 7;
+  map<string, string> description = 7;
   Contacts contacts = 8;
   string serviceId = 9;
   repeated string images = 10;

@@ -8,10 +8,9 @@ import exe.tigrulya.relohome.ssge.model.GetSsGeFlatAdsRequest
 import exe.tigrulya.relohome.ssge.model.SsGeFlatAdContainer
 import exe.tigrulya.relohome.ssge.model.TranslateLanguage
 import exe.tigrulya.relohome.util.LoggerProperty
-import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.count
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import java.time.Instant
 
 class SsGeFetcher(
@@ -42,6 +41,7 @@ class SsGeFetcher(
             .onEach { lastHandledPageAdTime = maxOf(lastHandledPageAdTime, it.orderDate) }
             .asFlow()
             .mapWithFailover { client.fetchAd(it.detailUrl) }
+            .buffer(10)
             .mapWithFailover { maybeTranslateDescription(it) }
             .map { collector.emit(it) }
             .count()
@@ -55,11 +55,22 @@ class SsGeFetcher(
         }
     }
 
-    private suspend fun maybeTranslateDescription(flatAd: SsGeFlatAdContainer): SsGeFlatAdContainer {
-        return flatAd.apply {
+    private suspend fun maybeTranslateDescription(flatAd: SsGeFlatAdContainer): SsGeFlatAdContainer = coroutineScope {
+        flatAd.apply {
             applicationData.description.apply {
-                text = text
-                    ?: ka?.let { client.translate(it, TranslateLanguage.ENG) }
+                text = text ?: ka
+                en ?: ka?.let {
+                    launch {
+                        en = client.translate(it, TranslateLanguage.ENG)
+                        text = text ?: en
+                    }
+                }
+
+                ru ?: ka?.let {
+                    launch {
+                        ru = client.translate(it, TranslateLanguage.RU)
+                    }
+                }
             }
         }
     }

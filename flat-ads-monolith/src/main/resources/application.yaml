@@ -7,7 +7,7 @@ ktor:
         sslPort: 8443
     security:
         ssl:
-            keyStore: 'D:\IdeaProjects\ReloHome\flat-ads-monolith\src\main\resources\keystore.jks'
+            keyStore: src/main/resources/keystore.jks
             keyAlias: ssl
             keyStorePassword: 123456
             privateKeyPassword: 123456
