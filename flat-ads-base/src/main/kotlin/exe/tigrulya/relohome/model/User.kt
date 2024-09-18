@@ -34,7 +34,9 @@ data class UserInfo(
     val searchEnabled: Boolean
 )
 
-data class NumRange(val from: Int? = null, val to: Int? = null)
+data class NumRange(val from: Int? = null, val to: Int? = null) {
+    override fun toString() = "${from ?: "x"}-${to ?: "x"}"
+}
 
 data class UserSearchOptionsDto(
     val priceRange: NumRange,

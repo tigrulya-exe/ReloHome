@@ -8,6 +8,7 @@ import exe.tigrulya.relohome.handler.repository.Locales
 import exe.tigrulya.relohome.handler.repository.SearchOptions
 import exe.tigrulya.relohome.handler.repository.Users
 import exe.tigrulya.relohome.model.*
+import exe.tigrulya.relohome.util.LoggerProperty
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.sql.JoinType
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -17,7 +18,11 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class UserService : UserHandlerGateway {
+    private val logger by LoggerProperty()
+
     override suspend fun registerUser(user: UserCreateDto): Unit = newSuspendedTransaction(Dispatchers.IO) {
+        logger.info("Registering user: $user")
+
         Users.insertIgnore {
             it[name] = user.name
             it[externalId] = user.externalId
@@ -27,6 +32,8 @@ class UserService : UserHandlerGateway {
     }
 
     override suspend fun setLocation(externalId: String, city: City) = newSuspendedTransaction(Dispatchers.IO) {
+        logger.info("Setting location $city for user $externalId ")
+
         val userEntity = Users.getByExternalId(externalId)
 
         userEntity.location = Cities.getByName(city.name)
@@ -34,6 +41,8 @@ class UserService : UserHandlerGateway {
     }
 
     override suspend fun setLocale(externalId: String, locale: String) = newSuspendedTransaction(Dispatchers.IO) {
+        logger.info("Setting locale $locale for user $externalId ")
+
         val userEntity = Users.getByExternalId(externalId)
 
         if (!Locales.exists(locale)) {
@@ -51,6 +60,8 @@ class UserService : UserHandlerGateway {
 
     override suspend fun toggleSearch(externalId: String): Boolean =
         newSuspendedTransaction(Dispatchers.IO) {
+            logger.info("Toggling search for user $externalId ")
+
             val userEntity = Users.getByExternalId(externalId)
             if (!userEntity.state.searchOptionsProvided()) {
                 throw ReloHomeUserException("Please, provide search parameters first")
@@ -64,6 +75,7 @@ class UserService : UserHandlerGateway {
 
             with(searchOptions) {
                 enabled = !enabled
+                logger.info("Now search is ${if (enabled) "enabled" else "disabled"} for user $externalId")
                 enabled
             }
         }
@@ -87,6 +99,8 @@ class UserService : UserHandlerGateway {
 
     override suspend fun setSearchOptions(externalUserId: String, searchOptions: UserSearchOptionsDto) =
         newSuspendedTransaction(Dispatchers.IO) {
+            logger.info("Setting search options $searchOptions for user $externalUserId")
+
             val userEntity = Users.getByExternalId(externalUserId)
 
             if (!userEntity.state.canSetSearchOptions()) {
@@ -102,6 +116,8 @@ class UserService : UserHandlerGateway {
         }
 
     fun getSearchOptions(externalId: String): UserSearchOptionsInfo = transaction {
+        logger.info("Requesting search options for user $externalId")
+
         val user = getUserByExternalId(externalId)
 
         if (!user.state.canSetSearchOptions()) {

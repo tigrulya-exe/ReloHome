@@ -1,6 +1,7 @@
 package exe.tigrulya.relohome.notifier.telegram.bot
 
 import dev.inmo.tgbotapi.bot.TelegramBot
+import dev.inmo.tgbotapi.extensions.api.send.media.sendPhoto
 import dev.inmo.tgbotapi.extensions.api.send.media.sendVisualMediaGroup
 import dev.inmo.tgbotapi.extensions.api.send.send
 import dev.inmo.tgbotapi.requests.abstracts.FileId
@@ -65,6 +66,18 @@ class TelegramFlatAdNotifier(
                     parseMode = MarkdownParseMode,
                 )
             }
+
+        if (imagesGroup.size == 1) {
+            imagesGroup.first().run {
+                telegramBot.sendPhoto(
+                    chatId = ChatId(RawChatId(user.id.toLong())),
+                    fileId = file,
+                    text = text,
+                    parseMode = parseMode,
+                )
+            }
+            return
+        }
 
         telegramBot.sendVisualMediaGroup(
             chatId = ChatId(RawChatId(user.id.toLong())),

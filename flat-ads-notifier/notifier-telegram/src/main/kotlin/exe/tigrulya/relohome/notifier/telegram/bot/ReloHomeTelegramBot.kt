@@ -18,6 +18,7 @@ import exe.tigrulya.relohome.notifier.telegram.serde.JsonSearchOptionsDeserializ
 import exe.tigrulya.relohome.notifier.telegram.serde.SearchOptionsDeserializer
 import exe.tigrulya.relohome.util.LoggerProperty
 import io.ktor.util.logging.*
+import io.ktor.utils.io.*
 import kotlinx.coroutines.Job
 
 class ReloHomeTelegramBot(
@@ -60,7 +61,7 @@ class ReloHomeTelegramBot(
 
     suspend fun start() {
         pollingJob = tgBot.buildBehaviourWithLongPolling(
-            defaultExceptionsHandler = { logger.error(it) }
+            defaultExceptionsHandler = this::handleException
         ) {
             handleStartCommand(ctx)
 
@@ -76,12 +77,18 @@ class ReloHomeTelegramBot(
 
             handleShowSubscriptionInfo(ctx)
 
-            allUpdatesFlow.subscribeSafely(this) { println(it) }
+            allUpdatesFlow.subscribeSafely(this) { logger.info("Incoming tg update: $it") }
         }
     }
 
     override fun close() {
         tgBot.close()
         pollingJob?.cancel()
+    }
+
+    private fun handleException(exception: Throwable) {
+        if (exception !is CancellationException) {
+            logger.error(exception)
+        }
     }
 }

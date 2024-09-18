@@ -4,7 +4,6 @@ import exe.tigrulya.relohome.handler.service.FlatAdService
 import exe.tigrulya.relohome.handler.service.MustacheHtmlRenderService
 import exe.tigrulya.relohome.handler.service.UserService
 import io.ktor.server.application.*
-import io.ktor.server.http.content.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
@@ -14,8 +13,6 @@ fun Application.configureRouting(
     renderService: MustacheHtmlRenderService = MustacheHtmlRenderService()
 ) {
     routing {
-        staticResources("/forms", "templates")
-
         get("/") {
             call.respondText("Hello World!")
         }
