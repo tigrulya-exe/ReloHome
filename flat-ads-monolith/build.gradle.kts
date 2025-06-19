@@ -51,6 +51,7 @@ tasks.withType<ShadowJar> {
     exclude("notifier-tg.yaml")
     exclude("application.yaml")
     exclude("keystore.jks")
+    exclude("locales/")
 
     enabled = true
 }
